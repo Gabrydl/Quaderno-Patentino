@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Frasario e Traduttore SMCP · Quaderno Patentino</title>
+<link rel="icon" href="../icone/icona-192.png" type="image/png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&family=Source+Sans+3:ital,wght@0,400..700;1,400..700&display=swap">
+<script>try{if(!localStorage.getItem('qp-sess'))location.replace('../');var t=localStorage.getItem('qp-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+:root{--paper:#f2f5f8;--sheet:#fff;--ink:#0c1826;--muted:#4a5867;--faint:#66737f;--line:#dce3e9;--chip:#e8edf2;--blue:#0b55c4;--red:#bd2620;--green:#11703a;--orange:#a65800;--on-accent:#fff;--hit:#ffe872;
+  --uk-blue:#012169;--uk-red:#c8102e;--shadow:0 1px 2px rgba(12,24,38,.05),0 8px 24px rgba(12,24,38,.07);
+  --f-body:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;--f-mono:"Source Code Pro",ui-monospace,Menlo,Consolas,monospace;--r:16px;--gut:max(18px,env(safe-area-inset-left,0px));color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#090f16;--sheet:#111a24;--ink:#edf2f6;--muted:#aab6c2;--faint:#8492a0;--line:#223040;--chip:#19242f;--blue:#86b7ff;--red:#ff938b;--green:#7ddc96;--orange:#ffbf69;--on-accent:#06111e;--hit:rgba(255,222,70,.3);--uk-blue:#7d9bff;--uk-red:#ff7d8f;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#090f16;--sheet:#111a24;--ink:#edf2f6;--muted:#aab6c2;--faint:#8492a0;--line:#223040;--chip:#19242f;--blue:#86b7ff;--red:#ff938b;--green:#7ddc96;--orange:#ffbf69;--on-accent:#06111e;--hit:rgba(255,222,70,.3);--uk-blue:#7d9bff;--uk-red:#ff7d8f;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.45);color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 var(--f-body);-webkit-font-smoothing:antialiased;overflow-wrap:break-word}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.wrap{max-width:720px;margin:0 auto;padding-left:var(--gut);padding-right:max(18px,env(safe-area-inset-right,0px))}
+.top{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--paper) 86%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(14px);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.bar{display:flex;align-items:center;gap:8px;padding-block:9px}
+.ib{flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:13px;border:0;background:none;color:var(--ink);cursor:pointer;padding:0;text-decoration:none}
+.ib:active{background:var(--chip)}
+.ib svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bar h1{flex:1;margin:0;font-size:1.06rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.theme .moon{display:none}
+:root[data-theme="dark"] .theme .sun{display:none}:root[data-theme="dark"] .theme .moon{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme .sun{display:none}:root:not([data-theme="light"]) .theme .moon{display:block}}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:var(--chip);border-radius:14px;margin:0 0 10px}
+.tabs button{all:unset;text-align:center;padding:9px 4px;border-radius:11px;font-weight:650;font-size:.95rem;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);box-shadow:var(--shadow)}
+.hero{padding:22px 0 14px}
+.hero h2{margin:0;font-size:clamp(1.8rem,8vw,2.4rem);line-height:1.05;font-weight:700;letter-spacing:-.02em}
+.hero h2 span{color:var(--uk-blue)}
+.hero h2 span b{color:var(--uk-red);font-weight:700}
+.hero p{margin:8px 0 0;color:var(--muted);font-size:.95rem}
+.panel{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin:0 0 16px}
+.dir{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-weight:700;font-size:.9rem}
+.dir .lg{padding:5px 11px;border-radius:999px;background:var(--chip);letter-spacing:.04em}
+.dir button{border:0;background:var(--chip);border-radius:999px;width:40px;height:32px;display:grid;place-items:center;cursor:pointer}
+.dir svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dir small{margin-left:auto;color:var(--faint);font-weight:600;font-size:.78rem}
+.field{position:relative}
+.campo{display:flex;align-items:flex-start;gap:6px;border:1.5px solid var(--line);border-radius:14px;padding:6px 6px 6px 14px;background:var(--paper)}
+.campo:focus-within{border-color:var(--blue)}
+.campo textarea{flex:1;min-width:0;border:0;background:none;resize:none;outline:none;font-size:1.06rem;line-height:1.4;padding:6px 0;min-height:2.2em;max-height:9em}
+.campo button{flex:none;width:38px;height:38px;border:0;border-radius:11px;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.campo button:active{background:var(--chip)}
+.campo svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cnt{display:flex;justify-content:space-between;margin:6px 2px 0;font-size:.78rem;color:var(--faint);font-weight:600}
+.sugg{position:absolute;left:0;right:0;top:calc(100% - 22px);z-index:5;background:var(--sheet);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;max-height:260px;overflow-y:auto}
+.sugg button{all:unset;box-sizing:border-box;display:flex;gap:8px;width:100%;padding:10px 14px;cursor:pointer;border-top:1px solid var(--line);font-size:.95rem}
+.sugg button:first-child{border-top:0}
+.sugg button:active,.sugg button:hover{background:color-mix(in srgb,var(--blue) 8%,var(--sheet))}
+.sugg b{font-weight:650}.sugg span{color:var(--muted);margin-left:auto;text-align:right}
+.res{display:grid;gap:14px;margin-top:14px}
+.blk{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px}
+.blk h3{margin:0;display:flex;align-items:center;gap:8px;font-size:.98rem}
+.st{margin-left:auto;font:700 .68rem/1 var(--f-body);text-transform:uppercase;letter-spacing:.06em;padding:4px 8px;border-radius:999px}
+.st.ok{color:var(--green);background:color-mix(in srgb,var(--green) 14%,transparent)}
+.st.auto{color:var(--orange);background:color-mix(in srgb,var(--orange) 14%,transparent)}
+.voce{border-left:3px solid var(--blue);padding:1px 0 1px 12px;display:grid;gap:2px}
+.voce .r{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.voce .a{font-weight:700;color:var(--blue);font-size:1.04rem}
+.voce .fr{color:var(--faint)}
+.voce .d{color:var(--muted);font-size:.9rem}
+.voce .c{font:600 .7rem/1 var(--f-body);background:var(--chip);color:var(--muted);padding:4px 7px;border-radius:999px;letter-spacing:.03em}
+.fr2{display:grid;gap:3px;padding:10px 12px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
+.fr2 .ref{font:500 .74rem/1 var(--f-mono);color:var(--blue)}
+.fr2 .en{font-weight:600}.fr2 .it{color:var(--muted)}
+mark{background:var(--hit);color:inherit;border-radius:3px;padding:0 1px}
+.lbl{font:700 .72rem/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);display:flex;gap:6px;align-items:center}
+.lbl i{font-style:normal;background:var(--chip);border-radius:999px;padding:3px 7px;letter-spacing:0}
+.vuoto{color:var(--muted);margin:0;font-size:.95rem}
+.btn{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 16px;border-radius:13px;background:var(--blue);color:var(--on-accent);font-weight:700;cursor:pointer}
+.btn[disabled]{opacity:.5;cursor:default}
+.btn.ghost{background:var(--chip);color:var(--ink)}
+.out{font-size:1.06rem;line-height:1.5;white-space:pre-wrap;margin:0}
+.muted{color:var(--muted);font-size:.9rem;margin:0}
+.err{color:var(--red);font-weight:600;font-size:.92rem;margin:0}
+.sec h3{margin:18px 0 8px;font-size:1.12rem;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.sec h3 .ref{font:500 .78rem/1 var(--f-mono);color:var(--blue)}
+.sec h4{margin:14px 0 6px;font-size:1rem}
+.sec .nota{color:var(--muted);font-size:.94rem;margin:6px 0}
+.sec .fr2{margin:0 0 8px}
+.studio .fr2 .it,.studio .tb td:nth-child(n+3){filter:blur(5px);cursor:pointer;transition:filter .2s}
+.studio .fr2 .it.vis,.studio .tb td.vis{filter:none}
+.tbw{overflow-x:auto;margin:0 0 10px;border:1px solid var(--line);border-radius:12px}
+.tb{border-collapse:collapse;width:100%;font-size:.9rem}
+.tb th,.tb td{padding:8px 10px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.tb th{background:var(--chip);border-top:0;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tb td:nth-child(3){color:var(--blue);font-weight:600}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.tools select,.tools input[type=search]{border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--sheet);min-width:0;flex:1}
+.chk{display:flex;align-items:center;gap:8px;font-size:.92rem;font-weight:600;color:var(--muted)}
+.chk input{width:19px;height:19px;accent-color:var(--blue)}
+.lett{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 12px}
+.lett button{all:unset;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:var(--chip);font:600 .82rem/1 var(--f-mono);cursor:pointer}
+.lett button[disabled]{opacity:.35;cursor:default}
+.gl .voce{margin:0 0 12px}
+.gl .let{font:800 1.1rem/1 var(--f-body);color:var(--blue);margin:18px 0 8px;scroll-margin-top:80px}
+.warn{background:color-mix(in srgb,var(--orange) 12%,var(--sheet));border:1px solid color-mix(in srgb,var(--orange) 35%,var(--line));border-radius:14px;padding:12px 14px;margin:0 0 14px;font-size:.92rem}
+.ocr{display:grid;gap:10px;margin-top:12px}
+.ocr canvas{width:100%;border-radius:12px;border:1px solid var(--line);touch-action:none;background:var(--paper)}
+.ocr .row{display:flex;gap:8px;flex-wrap:wrap}
+.ocr .row .btn{flex:1}
+.prog{height:6px;border-radius:999px;background:var(--chip);overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--blue);transition:width .2s}
+.foot{color:var(--faint);font-size:.8rem;text-align:center;margin:20px 0 40px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap bar">
+  <a class="ib" href="../" aria-label="Torna al Quaderno" title="Quaderno"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5.5L8.5 12l6.5 6.5"/></svg></a>
+  <h1>Frasario e Traduttore SMCP</h1>
+  <button type="button" class="ib theme" id="themeBtn" aria-label="Tema chiaro o scuro"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+</div></header>
+
+<main class="wrap">
+  <div class="hero"><h2>Inglese <span>nautico <b>SMCP</b></span></h2><p>Frasi IMO SMCP, glossario dei termini nautici e traduttore italiano ⇄ inglese.</p></div>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" aria-selected="true" data-p="pT">Traduttore</button>
+    <button type="button" role="tab" aria-selected="false" data-p="pF">Frasi SMCP</button>
+    <button type="button" role="tab" aria-selected="false" data-p="pG">Glossario</button>
+  </div>
+
+  <section id="pT">
+    <div class="panel">
+      <div class="dir"><span class="lg" id="l1">IT</span><button type="button" id="swap" aria-label="Inverti le lingue"><svg viewBox="0 0 24 24"><path d="M4 8h15l-4-4M20 16H5l4 4"/></svg></button><span class="lg" id="l2">EN</span><small id="auto">riconosce la lingua da solo</small></div>
+      <div class="field">
+        <div class="campo">
+          <textarea id="q" rows="1" maxlength="600" placeholder="Scrivi una parola o una frase…" autocomplete="off" spellcheck="false"></textarea>
+          <button type="button" id="cam" aria-label="Fotografa un testo" title="Scatta una foto"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+          <button type="button" id="gal" aria-label="Scegli una foto dalla galleria" title="Dalla galleria"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/></svg></button>
+          <button type="button" id="clr" aria-label="Cancella" hidden><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+        </div>
+        <div class="cnt"><span id="hint"></span><span id="len">0 / 300</span></div>
+        <div class="sugg" id="sugg" hidden></div>
+      </div>
+      <input type="file" id="fCam" accept="image/*" capture="environment" hidden><input type="file" id="fGal" accept="image/*" hidden>
+      <div class="ocr" id="ocr" hidden>
+        <p class="muted">Trascina sulla foto per scegliere la parte da leggere (oppure lascia tutta la foto).</p>
+        <canvas id="tela"></canvas>
+        <div class="prog" id="prog" hidden><i></i></div>
+        <p class="muted" id="ocrMsg"></p>
+        <div class="row"><button type="button" class="btn" id="ocrGo">Leggi il testo</button><button type="button" class="btn ghost" id="ocrX">Chiudi</button></div>
+      </div>
+      <div class="res" id="res"></div>
+    </div>
+  </section>
+
+  <section id="pF" hidden>
+    <div class="warn" id="parziale" hidden>Per ora ci sono la parte <b>Generale</b> e le tabelle degli <b>ordini al timone e alla macchina</b>. Le frasi delle parti A e B arrivano con il prossimo aggiornamento.</div>
+    <div class="tools"><select id="cap" aria-label="Capitolo"></select><label class="chk"><input type="checkbox" id="studio"> Studio</label></div>
+    <div class="panel sec" id="frasi"></div>
+  </section>
+
+  <section id="pG" hidden>
+    <div class="tools"><input type="search" id="gq" placeholder="Cerca nel glossario" aria-label="Cerca nel glossario"><select id="gcat" aria-label="Categoria"></select></div>
+    <div class="lett" id="lett"></div>
+    <div class="panel gl" id="glos"></div>
+  </section>
+  <p class="foot">Fonte: IMO Res. A.918(22), Standard Marine Communication Phrases. Traduzione italiana con i termini delle scuole nautiche.</p>
+</main>
+
+<script>
+(function(){
+  const SB = 'https://cvyuytnouuapmazjnebc.supabase.co';
+  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2eXV5dG5vdXVhcG1hempuZWJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI5MTQ4NTcsImV4cCI6MjEwODQ5MDg1N30.xgg9-dmfFTrHazeKV_odAUhhDlf0IWge-8aRwUNhAkQ';
+  const $ = s => document.querySelector(s);
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const norm = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’‘`´]/g, "'");
+  const root = document.documentElement;
+  $('#themeBtn').addEventListener('click', () => { const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); root.dataset.theme = cur === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('qp-theme', root.dataset.theme); } catch (e) {} });
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(x => { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); $('#' + x.dataset.p).hidden = x !== b; });
+  }));
+
+  let NODI = [], GLOS = [];
+  fetch('dati.json').then(r => r.json()).then(d => {
+    NODI = d.nodi; GLOS = d.glos;
+    NODI.forEach(n => { if (n.t === 'p') { n._e = norm(n.en + ' ' + (n.alt || []).map(a => a[0]).join(' ')); n._i = norm(n.it + ' ' + (n.alt || []).map(a => a[1]).join(' ')); } });
+    GLOS.forEach(g => { g._e = norm(g.en); g._i = norm(g.it); });
+    $('#parziale').hidden = !d.parziale;
+    frasi(); glossario(); cerca();
+  }).catch(() => { $('#res').innerHTML = '<p class="err">Non riesco a caricare i dati del frasario. Controlla la connessione e riapri la pagina.</p>'; });
+
+  // ---------- traduttore offline ----------
+  let dir = 'it', manual = false;
+  const q = $('#q');
+  function paintDir(){ $('#l1').textContent = dir.toUpperCase(); $('#l2').textContent = dir === 'it' ? 'EN' : 'IT'; $('#auto').textContent = manual ? 'lingua scelta da te' : 'riconosce la lingua da solo'; }
+  $('#swap').addEventListener('click', () => { dir = dir === 'it' ? 'en' : 'it'; manual = true; paintDir(); cerca(); });
+  const IT_W = new Set('il lo la le gli un una uno di da in con su per tra fra che non sono siamo avete abbiamo nave nella nello della dello delle degli al alla ai alle è e o si ci mi ti vi'.split(' '));
+  const EN_W = new Set('the a an of to in on with for at is are am be have has we you i my your our vessel ship not do does what where which please'.split(' '));
+  function lingua(t){
+    const w = norm(t).split(/[^a-z']+/).filter(Boolean); let it = 0, en = 0;
+    w.forEach(x => { if (IT_W.has(x)) it++; if (EN_W.has(x)) en++; });
+    if (it === en){ const s = norm(t).trim(); GLOS.forEach(g => { if (g._e.startsWith(s)) en += .5; if (g._i.startsWith(s)) it += .5; }); }
+    return it > en ? 'it' : en > it ? 'en' : null;
+  }
+  function hl(t, w){
+    let s = esc(t); if (!w) return s;
+    const n = norm(t), i = n.indexOf(w); if (i < 0) return s;
+    return esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + w.length)) + '</mark>' + esc(t.slice(i + w.length));
+  }
+  function voce(g, w){
+    const da = dir === 'en' ? g.en : g.it, a = dir === 'en' ? g.it : g.en;
+    return '<div class="voce"><div class="r"><span>' + hl(da, w) + '</span><span class="fr">→</span><span class="a">' + hl(a, w) + '</span><span class="c">' + esc(g.c) + '</span></div>' + (g.d ? '<div class="d">' + esc(g.d) + '</div>' : '') + '</div>';
+  }
+  function frase(n, w){ return '<div class="fr2"><span class="ref">' + esc(n.id) + '</span><span class="en">' + hl(n.en, w) + '</span><span class="it">' + hl(n.it, w) + '</span></div>'; }
+  function cerca(){
+    const t = q.value.trim(), w = norm(t);
+    $('#clr').hidden = !t; $('#len').textContent = t.length + ' / 300';
+    q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 180) + 'px';
+    const res = $('#res');
+    if (!t){ res.innerHTML = '<p class="vuoto">Scrivi un termine o una frase in italiano o in inglese: trovi il termine nautico, le frasi SMCP che lo usano e, per le frasi intere, la traduzione con Gemini. Puoi anche fotografare un testo.</p>'; return; }
+    if (!manual){ const l = lingua(t); if (l){ dir = l; paintDir(); } }
+    const key = dir === 'en' ? '_e' : '_i';
+    const g = GLOS.filter(x => x[key].includes(w)).sort((a, b) => (a[key] === w ? 0 : a[key].startsWith(w) ? 1 : 2) - (b[key] === w ? 0 : b[key].startsWith(w) ? 1 : 2) || a[key].length - b[key].length).slice(0, 25);
+    const parole = w.split(/\s+/).filter(x => x.length > 1);
+    const f = NODI.filter(n => n.t === 'p' && parole.length && parole.every(p => n[key].includes(p))).sort((a, b) => a.en.length - b.en.length).slice(0, 30);
+    let h = '';
+    if (g.length) h += '<div class="lbl">Glossario <i>' + g.length + '</i></div>' + g.map(x => voce(x, w)).join('');
+    if (!g.length && parole.length > 1){             // frase intera: i termini del glossario che contiene
+      const pad = ' ' + w.replace(/[^a-z0-9'\u00c0-\u024f]+/g, ' ') + ' ', visti = new Set();
+      const dentro = GLOS.map(x => [x, x[key].replace(/\s*\([^)]*\)/g, '').replace(/[^a-z0-9'\u00c0-\u024f]+/g, ' ').trim()])
+        .filter(([x, b]) => b.length > 2 && pad.includes(' ' + b + ' '))
+        .sort((a, b) => b[1].length - a[1].length)
+        .filter(([x, b]) => { if ([...visti].some(v => v.includes(b))) return false; visti.add(b); return true; }).slice(0, 12).map(([x]) => x);
+      if (dentro.length) h += '<div class="lbl">Termini del glossario nella frase <i>' + dentro.length + '</i></div>' + dentro.map(x => voce(x, '')).join('');
+    }
+    if (f.length) h += '<div class="lbl">Frasi SMCP <i>' + f.length + '</i></div>' + f.map(x => frase(x, parole.length === 1 ? w : '')).join('');
+    if (!h) h = '<p class="vuoto">Nessun termine trovato nel glossario e nelle frasi SMCP.</p>';
+    res.innerHTML = '<div class="blk"><h3>Traduzione offline · glossario e frasi <span class="st ok">verificata</span></h3>' + h + '</div>' +
+      '<div class="blk" id="gem"><h3>Traduzione con Gemini <span class="st auto">automatica</span></h3><p class="muted">Per le frasi intere, con la terminologia nautica. Serve internet e l\'accesso; massimo 300 caratteri.</p><button type="button" class="btn" id="gemGo"' + (t.length > 300 ? ' disabled' : '') + '>Traduci con Gemini</button><div id="gemOut"></div></div>';
+    $('#gemGo').addEventListener('click', gemini);
+  }
+  let sT;
+  q.addEventListener('input', () => { clearTimeout(sT); sT = setTimeout(cerca, 120); sugg(); });
+  q.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); $('#sugg').hidden = true; cerca(); } });
+  $('#clr').addEventListener('click', () => { q.value = ''; manual = false; $('#sugg').hidden = true; cerca(); q.focus(); });
+  // suggerimenti dalla prima lettera
+  function sugg(){
+    const t = norm(q.value.trim()), box = $('#sugg');
+    if (!t || t.includes(' ') && t.length > 25){ box.hidden = true; return; }
+    const l = [];
+    for (const g of GLOS){ if (g._e.startsWith(t)) l.push([g.en, g.it, 'en']); else if (g._i.startsWith(t)) l.push([g.it, g.en, 'it']); if (l.length >= 8) break; }
+    if (!l.length){ box.hidden = true; return; }
+    box.innerHTML = l.map((x, i) => '<button type="button" data-i="' + i + '"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></button>').join('');
+    box.hidden = false;
+    box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { const x = l[+b.dataset.i]; q.value = x[0]; dir = x[2]; manual = false; paintDir(); box.hidden = true; cerca(); }));
+  }
+  document.addEventListener('click', e => { if (!e.target.closest('.field')) $('#sugg').hidden = true; });
+
+  // ---------- Gemini (funzione Supabase "traduci") ----------
+  async function token(){
+    let s = JSON.parse(localStorage.getItem('qp-sess') || 'null'); if (!s) throw new Error('Serve l\'accesso con il tuo account.');
+    if (s.exp - 60 < Date.now() / 1000){
+      const r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: s.rt }) });
+      if (!r.ok) throw new Error('Sessione scaduta: torna al Quaderno ed entra di nuovo.');
+      const j = await r.json(); s = { at: j.access_token, rt: j.refresh_token, exp: j.expires_at || Math.floor(Date.now() / 1000) + (j.expires_in || 3600), user: j.user };
+      localStorage.setItem('qp-sess', JSON.stringify(s));
+    }
+    return s.at;
+  }
+  async function gemini(){
+    const b = $('#gemGo'), out = $('#gemOut'), t = q.value.trim();
+    b.disabled = true; b.textContent = 'Traduco…'; out.innerHTML = '';
+    try {
+      const r = await fetch(SB + '/functions/v1/traduci', { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: JSON.stringify({ testo: t, da: dir }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.messaggio || 'Gemini non risponde: riprova.');
+      out.innerHTML = '<p class="out">' + esc(j.traduzione) + '</p>';
+      const tr = GLOS.filter(g => !g.x && g._e.length > 2 && norm(dir === 'en' ? t : j.traduzione).includes(g._e)).slice(0, 12);
+      if (tr.length) out.innerHTML += '<div class="lbl" style="margin-top:8px">Termini del glossario nella frase</div>' + tr.map(x => voce(x, '')).join('');
+    } catch (e) { out.innerHTML = '<p class="err">' + esc(e.message === 'Failed to fetch' ? 'Gemini non raggiungibile in questo momento: riprova più tardi.' : e.message) + '</p>'; }
+    finally { b.disabled = false; b.textContent = 'Traduci con Gemini'; }
+  }
+
+  // ---------- frasi ----------
+  function frasi(){
+    const caps = NODI.filter(n => n.t === 'h' && /^(G|A[12]|B[1-4])$/.test(n.id));
+    $('#cap').innerHTML = '<option value="">Tutti i capitoli</option>' + caps.map(c => '<option value="' + esc(c.u) + '">' + esc(c.id + ' · ' + c.it) + '</option>').join('');
+    const paint = () => {
+      const sel = $('#cap').value; let on = !sel, h = '';
+      for (const n of NODI){
+        if (n.t === 'h' && /^(G|A[12]|B[1-4])$/.test(n.id)) on = !sel || n.u === sel;
+        if (!on) continue;
+        if (n.t === 'h') h += (/^(G|A[12]|B[1-4])$/.test(n.id) || (n.id.split(/[\/.]/).length <= 2) ? '<h3>' : '<h4>') + '<span class="ref">' + esc(n.id) + '</span>' + esc(n.it || n.en) + (n.it && n.en && n.it !== n.en ? ' <small style="color:var(--faint);font-weight:500">· ' + esc(n.en) + '</small>' : '') + (/^(G|A[12]|B[1-4])$/.test(n.id) || (n.id.split(/[\/.]/).length <= 2) ? '</h3>' : '</h4>');
+        else if (n.t === 'n') h += '<p class="nota">' + esc(n.en) + (n.it ? '<br><i>' + esc(n.it) + '</i>' : '') + '</p>';
+        else if (n.t === 'p') h += '<div class="fr2"><span class="ref">' + esc(n.id) + '</span><span class="en">' + esc(n.en) + '</span><span class="it">' + esc(n.it) + '</span>' + (n.alt || []).map(a => '<span class="en">~ ' + esc(a[0]) + '</span><span class="it">~ ' + esc(a[1]) + '</span>').join('') + '</div>';
+        else if (n.t === 'tab'){ const tb = n.tab; h += '<div class="tbw"><table class="tb"><tr>' + tb.intest.map(x => '<th>' + esc(x) + '</th>').join('') + '</tr>' + tb.righe.map(r => '<tr>' + r.map(c => '<td>' + esc(c) + '</td>').join('') + '</tr>').join('') + '</table></div>'; }
+      }
+      $('#frasi').innerHTML = h || '<p class="vuoto">Nessuna frase.</p>';
+    };
+    $('#cap').addEventListener('change', paint); paint();
+    $('#studio').addEventListener('change', e => $('#frasi').classList.toggle('studio', e.target.checked));
+    $('#frasi').addEventListener('click', e => { const x = e.target.closest('.it, td'); if (x && $('#frasi').classList.contains('studio')) x.classList.toggle('vis'); });
+  }
+
+  // ---------- glossario ----------
+  function glossario(){
+    const cats = [...new Set(GLOS.map(g => g.c))];
+    $('#gcat').innerHTML = '<option value="">Tutte le categorie</option>' + cats.map(c => '<option>' + esc(c) + '</option>').join('');
+    const paint = () => {
+      const w = norm($('#gq').value.trim()), c = $('#gcat').value;
+      const l = GLOS.filter(g => (!c || g.c === c) && (!w || g._e.includes(w) || g._i.includes(w)));
+      const ini = g => (g.en.replace(/^\W+/, '')[0] || '#').toUpperCase();
+      let h = '', last = '';
+      l.forEach(g => { const i = ini(g); if (i !== last){ h += '<div class="let" id="let-' + i + '">' + i + '</div>'; last = i; } h += '<div class="voce"><div class="r"><span>' + hl(g.en, w) + '</span><span class="fr">→</span><span class="a">' + hl(g.it, w) + '</span><span class="c">' + esc(g.c) + '</span></div>' + (g.d ? '<div class="d">' + esc(g.d) + '</div>' : '') + (g.de ? '<div class="d"><i>' + esc(g.de) + '</i></div>' : '') + '</div>'; });
+      $('#glos').innerHTML = h || '<p class="vuoto">Nessun termine trovato.</p>';
+      const pres = new Set(l.map(ini));
+      $('#lett').innerHTML = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(x => '<button type="button"' + (pres.has(x) ? '' : ' disabled') + '>' + x + '</button>').join('');
+      $('#lett').querySelectorAll('button:not([disabled])').forEach(b => b.addEventListener('click', () => { const el = document.getElementById('let-' + b.textContent); if (el) el.scrollIntoView({block:'start'}); }));
+    };
+    $('#gq').addEventListener('input', paint); $('#gcat').addEventListener('change', paint); paint();
+  }
+
+  // ---------- foto: riconoscimento del testo (Tesseract.js, scaricato solo al primo uso) ----------
+  const tela = $('#tela'), ctx = tela.getContext('2d'); let img = null, sel = null, start = null;
+  $('#cam').addEventListener('click', () => $('#fCam').click());
+  $('#gal').addEventListener('click', () => $('#fGal').click());
+  ['#fCam', '#fGal'].forEach(id => $(id).addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+    const u = URL.createObjectURL(f), im = new Image();
+    im.onload = () => { img = im; sel = null; $('#ocr').hidden = false; $('#ocrMsg').textContent = ''; $('#prog').hidden = true; draw(); $('#ocr').scrollIntoView({block:'nearest'}); };
+    im.onerror = () => { $('#ocr').hidden = false; $('#ocrMsg').textContent = 'Non riesco ad aprire questa immagine.'; };
+    im.src = u;
+  }));
+  function draw(){
+    if (!img) return;
+    const W = Math.min(1200, img.naturalWidth), k = W / img.naturalWidth; tela.width = W; tela.height = Math.round(img.naturalHeight * k);
+    ctx.drawImage(img, 0, 0, tela.width, tela.height);
+    if (sel){ ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(0, 0, tela.width, tela.height); ctx.drawImage(img, sel.x / k, sel.y / k, sel.w / k, sel.h / k, sel.x, sel.y, sel.w, sel.h); ctx.strokeStyle = '#0b55c4'; ctx.lineWidth = 3; ctx.strokeRect(sel.x, sel.y, sel.w, sel.h); }
+  }
+  const pos = e => { const r = tela.getBoundingClientRect(); return { x: (e.clientX - r.left) * tela.width / r.width, y: (e.clientY - r.top) * tela.height / r.height }; };
+  tela.addEventListener('pointerdown', e => { start = pos(e); tela.setPointerCapture(e.pointerId); });
+  tela.addEventListener('pointermove', e => { if (!start) return; const p = pos(e); sel = { x: Math.min(p.x, start.x), y: Math.min(p.y, start.y), w: Math.abs(p.x - start.x), h: Math.abs(p.y - start.y) }; draw(); });
+  tela.addEventListener('pointerup', () => { start = null; if (sel && (sel.w < 12 || sel.h < 12)) { sel = null; draw(); } });
+  $('#ocrX').addEventListener('click', () => { $('#ocr').hidden = true; img = null; });
+  let tess = null;
+  function carica(){ return tess || (tess = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; s.onload = () => ok(window.Tesseract); s.onerror = () => no(new Error('Serve internet la prima volta per scaricare il riconoscimento del testo.')); document.head.append(s); })); }
+  $('#ocrGo').addEventListener('click', async () => {
+    if (!img) return; const b = $('#ocrGo'); b.disabled = true; $('#prog').hidden = false; $('#ocrMsg').textContent = 'Preparo il riconoscimento…';
+    try {
+      const T = await carica();
+      let src = tela;
+      if (sel){ const c = document.createElement('canvas'), k = img.naturalWidth / tela.width; c.width = sel.w * k; c.height = sel.h * k; c.getContext('2d').drawImage(img, sel.x * k, sel.y * k, sel.w * k, sel.h * k, 0, 0, c.width, c.height); src = c; }
+      const r = await T.recognize(src, 'eng+ita', { logger: m => { if (m.status === 'recognizing text'){ $('#prog i').style.width = Math.round(m.progress * 100) + '%'; $('#ocrMsg').textContent = 'Leggo il testo…'; } else $('#ocrMsg').textContent = 'Scarico i dati (solo la prima volta)…'; } });
+      const t = r.data.text.replace(/\s+/g, ' ').trim();
+      if (!t) throw new Error('Non ho trovato testo: prova a scegliere solo la parte scritta.');
+      q.value = t.slice(0, 600); manual = false; $('#ocr').hidden = true; cerca();
+    } catch (e) { $('#ocrMsg').textContent = e.message; }
+    finally { b.disabled = false; $('#prog').hidden = true; }
+  });
+  paintDir();
+})();
+</script>
+</body>
+</html>

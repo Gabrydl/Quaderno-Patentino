@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.02.00 · 22/11/2026'
+VER = '1.03.00 · 22/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -62,6 +62,12 @@ arts = [x.replace('<figure class="fig ">', '<figure class="fig">') for x in arts
 i = s.index('<article class="topic" id="meteo-simbologia-fronti"'); j = s.index('</article>', i) + len('</article>')
 s = s[:j] + '\n\n' + '\n\n'.join(arts) + s[j:]
 
+# --- Navigazione 1.3 (dalla chat del 30/10/2026) ---
+sys.path.insert(0, os.path.join(W, 'nav')); import build_nav
+es, nuovi = build_nav.articoli()
+i = s.index('<article class="topic" id="nav-safety-contour"'); j = s.index('</article>', i) + len('</article>')
+s = s[:i] + es + '\n\n' + nuovi + s[j:]
+
 # --- barra in alto: pulsante account ---
 s = sub1(s, '    <span class="vh" id="crumb"></span>',
          '    <button type="button" class="ib acc-btn" id="accBtn" aria-label="Il tuo account" title="Account"><span class="av"></span><span class="dot" hidden></span></button>\n'
@@ -76,7 +82,10 @@ extra = ('<section class="extra" aria-label="Esercizi"><h2>Esercizi</h2><ol clas
  '<li style="--i:10"><a class="card" href="esercizi/assetto.html"><span class="wp">' + EX_IC['assetto'] + '</span><span class="tx"><span class="n">Assetto e pescaggi</span><span class="m">Esercizi svolti</span><span class="d">Esercizi 9–25 del libro: cambio di densità, spostamento, imbarco e sbarco, assetto voluto, punti neutri</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '<li style="--i:11"><a class="card" href="esercizi/carteggio.html"><span class="wp">' + EX_IC['carteggio'] + '</span><span class="tx"><span class="n">Carteggio con carta 5D</span><span class="m">Strumento di carteggio</span><span class="d">Rilevamenti, rotte e punto nave sulla carta 5D dell\'Arcipelago Toscano</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '</ol></section>')
-s = sub1(s, '    <ol class="route" id="cards"></ol>', '    <ol class="route" id="cards"></ol>\n    ' + extra)
+fras = ('<section class="extra frs" aria-label="Frasario"><h2>Inglese nautico</h2><ol class="route">'
+ '<li style="--i:9"><a class="card" href="frasario/"><span class="wp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5h10a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H8l-3 2.5V12H3.5A1.5 1.5 0 0 1 2 10.5V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M17 9h3.5A1.5 1.5 0 0 1 22 10.5V15a1.5 1.5 0 0 1-1.5 1.5H20V19l-3-2.5h-5A1.5 1.5 0 0 1 10.5 15v-1"/><path d="M5.5 8.5h6M13.5 13h5"/></svg></span><span class="tx"><span class="n">Frasario e Traduttore SMCP</span><span class="m">Inglese nautico · IT ⇄ EN</span><span class="d">Frasi IMO SMCP, glossario di 801 termini nautici, traduttore con foto e Gemini</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
+ '</ol></section>')
+s = sub1(s, '    <ol class="route" id="cards"></ol>', '    <ol class="route" id="cards"></ol>\n    ' + fras + '\n    ' + extra)
 s = sub1(s, '        <li>Gli audio si ascoltano online: serve la connessione.</li>',
          '        <li><b>Account</b>: il tondo in alto a destra apre il tuo account: progressi, foto, nome utente, segnalazioni. In fondo a ogni argomento c\'è <b>Segna come letto</b>.</li>\n'
          '        <li><b>Sul telefono</b>: dal menu del browser scegli «Aggiungi a schermata Home» per averla come app.</li>\n'
@@ -93,6 +102,9 @@ css = rd('app/auth.css')
 k = s.index('</style>'); s = s[:k] + '\n' + css + '\n' + s[k:]
 js = rd('app/auth.js')
 sw = ("if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));")
+chip = ("<script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');"
+        "a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>\n")
+k = s.rindex('</body>'); s = s[:k] + chip + s[k:]
 k = s.rindex('</body>')
 s = s[:k] + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + sw + '\n</script>\n' + s[k:]
 
@@ -100,3 +112,13 @@ assert 'Prova grafica' not in s
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(s)
 print('index.html', len(s))
+
+# --- Frasario e Traduttore SMCP (pagina a parte) ---
+import shutil, subprocess
+FD = os.path.join(W, 'fras'); FO = os.path.join(OUT, 'frasario'); os.makedirs(FO, exist_ok=True)
+shutil.copy(os.path.join(FD, 'pagina.html'), os.path.join(FO, 'index.html'))
+completo = os.path.exists(os.path.join(FD, 'lavoro', 'smcp_en.json'))
+script = 'build_dati.py' if completo else 'build_parziale.py'
+r = subprocess.run([sys.executable, '-I', os.path.join(FD, 'lavoro', script), os.path.join(FO, 'dati.json')], capture_output=True, text=True)
+print('frasario', 'completo' if completo else 'parziale', r.stdout.strip()[-200:], r.stderr.strip()[-300:])
+assert r.returncode == 0

@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.02.00 (22/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.03.00 (22/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -11,11 +11,17 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
 - `index.html`: tutta l'app (generata, non modificarla a mano).
 - `sw.js`, `manifest.webmanifest`, `icone/`: installazione sul telefono e funzionamento senza rete.
 - `esercizi/`: Assetto e pescaggi, Carteggio con carta 5D (dai loro artefatti, con tasto "Quaderno" e controllo dell'accesso).
+- `frasario/`: Frasario e Traduttore SMCP (pagina a parte): `index.html` da `strumenti/fras/pagina.html`, `dati.json` e i due TSV
+  del glossario generati da `strumenti/fras/lavoro/` (li legge anche la funzione `traduci`).
 - `strumenti/`: sorgenti per ricostruire `index.html`.
   - `prova.html`: la nuova grafica (artefatto "Prova grafica Quaderno Patentino", anteprima 11 del 21/11/2026), contenuti del 24/10/2026.
   - `build.py`: applica le modifiche e aggiunge account, carta sinottica, esercizi. Uso: `python3 -I strumenti/build.py .`
   - `app/`: schermata d'accesso, pannello account e amministrazione (`auth.html`, `auth.css`, `auth.js`), termini di servizio (`tos.html`).
-  - `test_telefono.py`: prova a misura di telefono con Supabase simulato (Playwright).
+  - `nav/`: argomenti di Navigazione 1.3 (`build_nav.py`) e i loro disegni (`fig/safety.py`, `fig/altri.py`, `fig/pp_extra.py`,
+    `sin/gen_oceaniche.js` per pilot chart e routeing chart: `npm i d3-geo d3-contour topojson-client world-atlas`).
+  - `fras/`: Frasario. `lavoro/it_*.txt` = traduzioni italiane delle frasi (riga `numero|testo`), `generale.py`, `tavole.json`,
+    `glos_smcp_it.py`, `glos_extra.txt` (801 termini). `funzione/index.ts` = sorgente della funzione Supabase `traduci` (Gemini).
+  - `test_telefono.py`, `test_frasario_nav.py`: prove a misura di telefono con Supabase simulato (Playwright).
 
 ## Audio
 Le 168 lezioni (circa 1 GB) sono servite dal vecchio artefatto pubblico "Quaderno Patentino"
@@ -33,9 +39,20 @@ Se quell'artefatto viene cancellato o reso privato gli audio smettono di funzion
   `codice_accesso`, `cambia_codice`. Tabelle lette direttamente: `progressi`, `segnalazioni`. Allegati nel bucket `allegati`.
 - Pulizia automatica (`pulizia()`, pg_cron): accessi dopo 6 mesi, messaggi dopo 12 mesi, account non usati da 12 mesi.
 
-## Da recuperare (c'erano nella 1.01.01, il cui codice è andato perso con il vecchio account GitHub)
-- Frasario e Traduttore SMCP (2.265 frasi, glossario di 801 termini, traduttore con Gemini, foto con riconoscimento del testo).
-  La funzione `traduci` (Gemini) è ancora attiva su Supabase.
-- Navigazione 1.3: safety contour migliorato, safety contour/safety depth/colori ECDIS, passage planning, pilot chart e routeing chart
-  (testi e disegni nella chat del 30/10/2026).
+## Frasario: cosa manca ancora
+Le traduzioni italiane di tutte le 2.265 frasi (parti A e B) ci sono già in `strumenti/fras/lavoro/it_*.txt`, ma il testo inglese
+va riletto dal PDF "frasi inglesi" (Camogli, IMO Res. A.918(22)). Per completarlo:
+```
+pdftotext -layout frasi_inglesi.pdf strumenti/fras/lavoro/smcp_layout.txt
+cd strumenti/fras/lavoro && python3 parse_smcp.py smcp_layout.txt smcp_en.json && python3 glos_parse.py
+cd ../../.. && python3 -I strumenti/build.py .
+```
+Con `smcp_en.json` presente il build usa `build_dati.py` (tutte le frasi) invece di `build_parziale.py`; controllare che
+`build_dati.py` scriva "mancano 0" (gli indici `k` delle traduzioni devono coincidere con quelli del PDF).
+
+La funzione Supabase `traduci` va ripubblicata con `strumenti/fras/funzione/index.ts` (nuovo sito tra le origini ammesse):
+finché non è fatto, il tasto "Traduci con Gemini" dal nuovo sito viene bloccato dal browser.
+
+## Da recuperare
 - Foto del professore come sfondo della pagina iniziale.
+- Costruzione navale ed emergenze (collisione, porto): bozze mai pubblicate nella chat del 30/10/2026 (`fig/altri.py` ha già i disegni).

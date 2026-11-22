@@ -1,0 +1,31 @@
+<svg viewBox="0 0 760 420" role="img" aria-label="Wheel over point: dove dare il timone per accostare" xmlns="http://www.w3.org/2000/svg">
+<path class="s cr" d="M40,300.0H470.0"/>
+<path class="s cr" d="M470.0,300.0L600.0,74.8"/>
+<circle cx="470.0" cy="300.0" r="7" style="fill:var(--sheet);stroke:var(--red);stroke-width:2.4"/>
+<text class="sm tr" x="480.0" y="322.0" text-anchor="start">WP</text>
+<path d="M40,300.0H371.9A170.0,170.0 0 0 0 519.1,215.0L599.1,76.4" style="fill:none;stroke:var(--blue);stroke-width:3;stroke-dasharray:10 5"/>
+<path class="t" style="stroke-dasharray:3 4" d="M371.9,130.0L371.9,300.0M371.9,130.0L519.1,215.0"/>
+<circle class="pt" cx="371.9" cy="130.0" r="3"/>
+<text class="sm" x="363.85045423776364" y="184.0" text-anchor="end">r</text>
+<text class="xs" x="375.85045423776364" y="120.0" text-anchor="start">centro di evoluzione</text>
+<path d="M325.9,284.0V316.0" style="stroke:var(--orange);stroke-width:4"/>
+<text class="sm to" x="325.85045423776364" y="334.0" text-anchor="middle">WOP</text>
+<text class="xs to" x="325.85045423776364" y="350.0" text-anchor="middle">si dà il timone</text>
+<circle class="pt" cx="371.9" cy="300.0" r="3.5"/>
+<text class="xs" x="365.85045423776364" y="270.0" text-anchor="end">la nave inizia</text>
+<text class="xs" x="365.85045423776364" y="285.0" text-anchor="end">ad accostare</text>
+<circle class="pt" cx="519.1" cy="215.0" r="3.5"/>
+<text class="xs" x="529.0747728811182" y="221.0" text-anchor="start">sulla nuova rotta</text>
+<path class="t" d="M325.9,376.0H470.0M325.9,370.0V382.0M371.9,372.0V380.0M470.0,370.0V382.0"/>
+<text class="xs" x="367.85045423776364" y="394.0" text-anchor="end">tempo di risposta</text>
+<text class="xs" x="375.85045423776364" y="394.0" text-anchor="start">r · tan(Δ/2)</text>
+<text class="xs tr" x="150" y="288.0" text-anchor="middle">rotta 090°</text>
+<text class="xs tr" x="579.0" y="135.45517328095667" text-anchor="start">rotta 030°</text>
+<path d="M530.0,300.0A60,60 0 0 0 500.0,248.0" style="fill:none;stroke:currentColor;stroke-width:1.2"/>
+<path class="t" style="stroke-dasharray:3 4" d="M470.0,300.0H590.0"/>
+<text class="xs" x="536.0" y="282.0" text-anchor="start">Δ = 60°</text>
+<text class="xs tb" x="40" y="40" text-anchor="start">traiettoria della nave</text>
+<path d="M40,50h60" style="stroke:var(--blue);stroke-width:3;stroke-dasharray:10 5"/>
+<text class="xs tr" x="40" y="76" text-anchor="start">rotta pianificata</text>
+<path d="M40,86h60" style="stroke:var(--red);stroke-width:2.4"/>
+</svg>

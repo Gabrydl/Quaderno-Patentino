@@ -1,0 +1,33 @@
+<svg viewBox="0 0 700 396" role="img" aria-label="Le quattro fasi del passage plan" xmlns="http://www.w3.org/2000/svg">
+<rect x="40" y="40" width="280" height="130" rx="12" style="fill:color-mix(in srgb,var(--blue) 8%,var(--sheet));stroke:var(--blue);stroke-width:2"/>
+<text class="sm tb" x="58" y="70" text-anchor="start">1 · VALUTAZIONE</text>
+<text class="xs" x="302" y="70" text-anchor="end">Appraisal</text>
+<text class="xs" x="58" y="102" text-anchor="start">• carte e pubblicazioni aggiornate</text>
+<text class="xs" x="58" y="124" text-anchor="start">• maree, correnti, meteo</text>
+<text class="xs" x="58" y="146" text-anchor="start">• pescaggio e condizioni nave</text>
+<rect x="380" y="40" width="280" height="130" rx="12" style="fill:color-mix(in srgb,var(--blue) 8%,var(--sheet));stroke:var(--blue);stroke-width:2"/>
+<text class="sm tb" x="398" y="70" text-anchor="start">2 · PIANIFICAZIONE</text>
+<text class="xs" x="642" y="70" text-anchor="end">Planning</text>
+<text class="xs" x="398" y="102" text-anchor="start">• rotta, waypoint, WOP</text>
+<text class="xs" x="398" y="124" text-anchor="start">• no-go area, margini, UKC</text>
+<text class="xs" x="398" y="146" text-anchor="start">• abort point, ancoraggi</text>
+<rect x="380" y="230" width="280" height="130" rx="12" style="fill:color-mix(in srgb,var(--green) 8%,var(--sheet));stroke:var(--green);stroke-width:2"/>
+<text class="sm tg" x="398" y="260" text-anchor="start">3 · ESECUZIONE</text>
+<text class="xs" x="642" y="260" text-anchor="end">Execution</text>
+<text class="xs" x="398" y="292" text-anchor="start">• approvazione del comandante</text>
+<text class="xs" x="398" y="314" text-anchor="start">• ETA, briefing della guardia</text>
+<text class="xs" x="398" y="336" text-anchor="start">• quando chiamare il comandante</text>
+<rect x="40" y="230" width="280" height="130" rx="12" style="fill:color-mix(in srgb,var(--green) 8%,var(--sheet));stroke:var(--green);stroke-width:2"/>
+<text class="sm tg" x="58" y="260" text-anchor="start">4 · MONITORAGGIO</text>
+<text class="xs" x="302" y="260" text-anchor="end">Monitoring</text>
+<text class="xs" x="58" y="292" text-anchor="start">• punto nave con 2 metodi</text>
+<text class="xs" x="58" y="314" text-anchor="start">• controllo XTE e allarmi</text>
+<text class="xs" x="58" y="336" text-anchor="start">• registrazione sul giornale</text>
+<path d="M326.0,105.0L362.0,105.0" style="fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round"/><path d="M372.0,105.0L362.0,109.5L362.0,100.5Z" style="fill:currentColor;stroke:none"/>
+<path d="M520.0,176.0L520.0,214.0" style="fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round"/><path d="M520.0,224.0L515.5,214.0L524.5,214.0Z" style="fill:currentColor;stroke:none"/>
+<path d="M374.0,295.0L338.0,295.0" style="fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round"/><path d="M328.0,295.0L338.0,290.5L338.0,299.5Z" style="fill:currentColor;stroke:none"/>
+<path d="M180.0,224.0L180.0,188.0" style="fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round"/><path d="M180.0,178.0L184.5,188.0L175.5,188.0Z" style="fill:currentColor;stroke:none"/>
+<text class="xs" x="350" y="382" text-anchor="middle">da banchina a banchina (berth to berth) · SOLAS V/34 · IMO A.893(21)</text>
+<text class="xs tb" x="350" y="186" text-anchor="middle">PREPARAZIONE</text>
+<text class="xs tg" x="350" y="222" text-anchor="middle">IN NAVIGAZIONE</text>
+</svg>

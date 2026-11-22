@@ -1,0 +1,66 @@
+<svg viewBox="0 0 820 400" role="img" aria-label="Passage plan su carta: waypoint, WOP, no-go area, safety contour, parallel index, rilevamento limite, abort point" xmlns="http://www.w3.org/2000/svg">
+<defs><pattern id="pp-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0,0V7" style="stroke:var(--red);stroke-width:1.6"/></pattern></defs>
+<path d="M820,0H700Q672,40 690,80Q700,104 650,112Q610,120 620,150Q630,175 580,190Q600,215 660,230Q720,260 690,320L700,400H820Z" style="fill:color-mix(in srgb,var(--orange) 13%,var(--sheet));stroke:currentColor;stroke-width:1.6"/>
+<path d="M0,0H300Q280,40 230,52Q170,62 150,100Q130,140 60,150Q20,156 0,180Z" style="fill:color-mix(in srgb,var(--orange) 13%,var(--sheet));stroke:currentColor;stroke-width:1.6"/>
+<circle cx="530" cy="165" r="18" style="fill:url(#pp-hatch);stroke:var(--red);stroke-width:1.4"/>
+<circle cx="530" cy="165" r="27" style="fill:none;stroke:var(--blue);stroke-width:2.4"/>
+<circle cx="430" cy="118" r="20" style="fill:url(#pp-hatch);stroke:var(--red);stroke-width:1.4"/>
+<circle cx="430" cy="118" r="29" style="fill:none;stroke:var(--blue);stroke-width:2.4"/>
+<circle cx="340" cy="292" r="24" style="fill:url(#pp-hatch);stroke:var(--red);stroke-width:1.4"/>
+<circle cx="340" cy="292" r="33" style="fill:none;stroke:var(--blue);stroke-width:2.4"/>
+<path d="M640,96Q600,104 604,140Q608,170 562,188Q570,216 632,236Q690,256 672,320" style="fill:none;stroke:var(--blue);stroke-width:2.4"/>
+<path d="M79.0,375.6L269.0,265.6" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<path d="M61.0,344.4L251.0,234.4" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<path d="M264.1,267.5L434.1,227.5" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<path d="M255.9,232.5L425.9,192.5" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<path d="M444.3,220.9L574.3,50.9" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<path d="M415.7,199.1L545.7,29.1" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<path d="M70,360L260,250L430,210L560,40" style="fill:none;stroke:var(--red);stroke-width:2.8;stroke-linejoin:round"/>
+<circle cx="70" cy="360" r="7" style="fill:var(--sheet);stroke:var(--red);stroke-width:2.4"/>
+<circle cx="260" cy="250" r="7" style="fill:var(--sheet);stroke:var(--red);stroke-width:2.4"/>
+<circle cx="430" cy="210" r="7" style="fill:var(--sheet);stroke:var(--red);stroke-width:2.4"/>
+<circle cx="560" cy="40" r="7" style="fill:var(--sheet);stroke:var(--red);stroke-width:2.4"/>
+<text class="xs tr" x="84" y="380" text-anchor="start">WP1</text>
+<text class="xs tr" x="250" y="280" text-anchor="end">WP2</text>
+<text class="xs tr" x="440" y="236" text-anchor="start">WP3</text>
+<text class="xs tr" x="548" y="36" text-anchor="end">WP4</text>
+<text class="xs tr" x="176" y="316" text-anchor="middle">060° · 11,0 M</text>
+<text class="xs tr" x="318" y="224" text-anchor="middle">077° · 8,7 M</text>
+<text class="xs tr" x="476" y="72" text-anchor="end">037° · 10,7 M</text>
+<path d="M234,249L246,275" style="stroke:var(--orange);stroke-width:3.4"/>
+<path d="M408,201L420,227" style="stroke:var(--orange);stroke-width:3.4"/>
+<path style="fill:none;stroke:var(--muted);stroke-width:1.1" d="M240,262L160,214"/><circle cx="240" cy="262" r="2.4" style="fill:var(--muted)"/>
+<text class="xs to" x="156" y="210" text-anchor="end">WOP (wheel over point)</text>
+<path d="M433.5,172.5L465.5,196.5" style="stroke:var(--red);stroke-width:4"/>
+<path style="fill:none;stroke:var(--muted);stroke-width:1.1" d="M463.5,194.5L520,252"/><circle cx="463.5" cy="194.5" r="2.4" style="fill:var(--muted)"/>
+<text class="xs tr" x="524" y="256" text-anchor="start">punto di abort</text>
+<text class="xs tr" x="524" y="271" text-anchor="start">(ultimo punto per rinunciare)</text>
+<circle class="pt" cx="575" cy="190" r="4"/>
+<text class="xs" x="610" y="204" text-anchor="start">Capo Nero</text>
+<path d="M510,275L600,157" style="stroke:var(--green);stroke-width:2.2;stroke-dasharray:10 4"/>
+<path d="M493,127L575,190" style="stroke:var(--green);stroke-width:1.3"/>
+<text class="xs tg" x="548" y="146" text-anchor="start">5,2 M</text>
+<path style="fill:none;stroke:var(--muted);stroke-width:1.1" d="M520,262L470,330"/><circle cx="520" cy="262" r="2.4" style="fill:var(--muted)"/>
+<text class="xs tg" x="470" y="346" text-anchor="middle">parallel index (radar): Capo Nero</text>
+<text class="xs tg" x="470" y="361" text-anchor="middle">deve scorrere su questa linea</text>
+<path d="M638,116l8,-20l8,20z" style="fill:var(--violet)"/><circle cx="646" cy="92" r="4.5" style="fill:var(--orange)"/>
+<text class="xs" x="660" y="112" text-anchor="start">Faro</text>
+<path d="M646,108L380,136" style="stroke:var(--violet);stroke-width:2;stroke-dasharray:12 4 2 4"/>
+<text class="xs tv" x="372" y="152" text-anchor="end">rilevamento limite: faro NMT 084°</text>
+<circle cx="300" cy="120" r="16" style="fill:var(--sheet);stroke:var(--blue);stroke-width:1.6"/><circle cx="300" cy="106" r="2.6" style="fill:none;stroke:var(--blue);stroke-width:1.6"/><path d="M300,108V128M292,114H308M288,122Q300,136 312,122" style="fill:none;stroke:var(--blue);stroke-width:1.8"/>
+<text class="xs tb" x="276" y="112" text-anchor="end">ancoraggio</text>
+<text class="xs tb" x="276" y="127" text-anchor="end">d’emergenza</text>
+<path d="M300,330L360,170" style="stroke:var(--blue);stroke-width:1.8;stroke-dasharray:2 4"/>
+<text class="xs tb" x="296" y="344" text-anchor="end">linea di chiamata VTS</text>
+<circle cx="536" cy="70" r="10" style="fill:var(--sheet);stroke:var(--blue);stroke-width:2"/>
+<text class="xs tb" x="536" y="75" text-anchor="middle">P</text>
+<text class="xs tb" x="552" y="75" text-anchor="start">imbarco pilota</text>
+<path d="M20,384h40" style="stroke:var(--blue);stroke-width:2.6"/>
+<text class="xs tb" x="66" y="389" text-anchor="start">safety contour</text>
+<rect x="176" y="378" width="28" height="12" style="fill:url(#pp-hatch);stroke:var(--red)"/>
+<text class="xs tr" x="210" y="389" text-anchor="start">no-go area</text>
+<path d="M296,384h40" style="stroke:var(--violet);stroke-width:1.2;stroke-dasharray:5 4"/>
+<text class="xs tv" x="342" y="389" text-anchor="start">limiti XTD</text>
+<path d="M772,370V330" style="stroke:currentColor;stroke-width:2"/><path d="M772,324l-6,12h12z" class="pt"/>
+<text class="xs" x="772" y="318" text-anchor="middle">N</text>
+</svg>
