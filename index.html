@@ -835,6 +835,14 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
 :root[data-theme="dark"] .frs .card .n { background:linear-gradient(90deg,#9db4ff,#ff8a9a);-webkit-background-clip:text;background-clip:text }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .frs .card .n { background:linear-gradient(90deg,#9db4ff,#ff8a9a);-webkit-background-clip:text;background-clip:text } }
 
+/* ---------- tasto Installa ---------- */
+.inst-btn { flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px 0 10px;border:0;border-radius:999px;background:var(--blue);color:var(--on-accent);font:700 .88rem/1 var(--f-body);cursor:pointer }
+.inst-btn svg { width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round }
+.inst-btn:active { filter:brightness(.9) }
+@media (max-width:380px){ .inst-btn span { display:none } .inst-btn { padding:0 10px } }
+.msgbox ol { margin:0 0 16px;padding-left:20px;line-height:1.55 }
+.msgbox ol svg { width:18px;height:18px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round }
+
 </style>
 </head>
 <body data-view="home" class="locked">
@@ -860,7 +868,7 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
       <p class="err" id="gateErr" role="alert"></p>
       <button class="btn" id="gSubmit" type="submit">Entra</button>
     </form>
-    <p class="ver">Versione 1.03.01 · 22/11/2026</p>
+    <p class="ver">Versione 1.03.02 · 22/11/2026</p>
   </div>
 </div>
 <template id="tosText"><p><b>Chi gestisce l'app.</b> Il Quaderno Patentino è un progetto personale di studio, gestito dal suo autore (super-admin). È gratuito e non ha pubblicità.</p>
@@ -901,6 +909,7 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
       <input id="q" type="search" placeholder="Cerca negli appunti" autocomplete="off" enterkeyhint="search" aria-label="Cerca negli appunti">
       <button class="clear" id="clr" type="button" aria-label="Cancella ricerca" hidden>×</button>
     </div>
+    <button type="button" class="inst-btn" id="instBtn" hidden aria-label="Installa l'app" title="Installa l'app"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span>Installa</span></button>
     <button type="button" class="ib theme" id="themeBtn" aria-label="Cambia tra modalità chiara e scura" title="Chiaro / scuro">
       <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
       <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
@@ -935,7 +944,7 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
         <li>Gli audio si ascoltano online: serve la connessione.</li>
       </ul>
     </details>
-    <p class="foot-ver">Versione 1.03.01 · 22/11/2026</p>
+    <p class="foot-ver">Versione 1.03.02 · 22/11/2026</p>
   </div>
   <div id="results" hidden></div>
   <div id="sections">
@@ -17850,8 +17859,9 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
 })();
 </script>
 <script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>
+<div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l'app"><div class="card2"><p class="txt" style="font-weight:700;margin-bottom:10px">Installa il Quaderno sull'iPhone</p><ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li><li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l'icona compare tra le tue app.</li></ol><button type="button" class="btn">Ho capito</button></div></div>
 <script>
-window.QP_VERSIONE = "1.03.01 \u00b7 22/11/2026";
+window.QP_VERSIONE = "1.03.02 \u00b7 22/11/2026";
 // Account: accesso con nome utente e password (Supabase), registrazione con codice, progressi, segnalazioni,
 // messaggi in primo piano, area amministrazione. Il codice di registrazione sta solo nel database.
 (function(){
@@ -18309,6 +18319,27 @@ window.QP_VERSIONE = "1.03.01 \u00b7 22/11/2026";
   setMode(false);
   if (sess) { unlock(false); token().catch(() => {}); } else lock();
   window.QP = { rpc, api };
+})();
+
+// Tasto "Installa" in alto: Android/PC usano la richiesta del browser, iPhone/iPad mostrano come aggiungerla alla Home.
+(function(){
+  const b = document.getElementById('instBtn'); if (!b) return;
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let evento = null;
+  const mostra = on => { b.hidden = !on; };
+  mostra(false);
+  if (standalone) return;
+  if (ios) mostra(true);
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); evento = e; mostra(true); });
+  addEventListener('appinstalled', () => { evento = null; mostra(false); });
+  const box = document.getElementById('instBox');
+  b.addEventListener('click', async () => {
+    if (evento) { evento.prompt(); const r = await evento.userChoice.catch(() => null); if (r && r.outcome === 'accepted') mostra(false); evento = null; return; }
+    box.hidden = false; box.querySelector('.btn').focus();
+  });
+  box.querySelector('.btn').addEventListener('click', () => { box.hidden = true; });
+  box.addEventListener('click', e => { if (e.target === box) box.hidden = true; });
 })();
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));

@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.03.01 · 22/11/2026'
+VER = '1.03.02 · 22/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -69,6 +69,9 @@ i = s.index('<article class="topic" id="nav-safety-contour"'); j = s.index('</ar
 s = s[:i] + es + '\n\n' + nuovi + s[j:]
 
 # --- barra in alto: pulsante account ---
+s = sub1(s, '    <button type="button" class="ib theme" id="themeBtn"',
+         '    <button type="button" class="inst-btn" id="instBtn" hidden aria-label="Installa l\'app" title="Installa l\'app"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span>Installa</span></button>\n'
+         '    <button type="button" class="ib theme" id="themeBtn"')
 s = sub1(s, '    <span class="vh" id="crumb"></span>',
          '    <button type="button" class="ib acc-btn" id="accBtn" aria-label="Il tuo account" title="Account"><span class="av"></span><span class="dot" hidden></span></button>\n'
          '    <span class="vh" id="crumb"></span>')
@@ -101,12 +104,17 @@ s = sub1(s, '<body data-view="home">', '<body data-view="home" class="locked">\n
 css = rd('app/auth.css')
 k = s.index('</style>'); s = s[:k] + '\n' + css + '\n' + s[k:]
 js = rd('app/auth.js')
+INST = ('<div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l\'app"><div class="card2">'
+        '<p class="txt" style="font-weight:700;margin-bottom:10px">Installa il Quaderno sull\'iPhone</p>'
+        '<ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li>'
+        '<li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l\'icona compare tra le tue app.</li></ol>'
+        '<button type="button" class="btn">Ho capito</button></div></div>\n')
 sw = ("if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));")
 chip = ("<script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');"
         "a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>\n")
 k = s.rindex('</body>'); s = s[:k] + chip + s[k:]
 k = s.rindex('</body>')
-s = s[:k] + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + sw + '\n</script>\n' + s[k:]
+s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + sw + '\n</script>\n' + s[k:]
 
 assert 'Prova grafica' not in s
 os.makedirs(OUT, exist_ok=True)

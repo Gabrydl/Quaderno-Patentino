@@ -159,3 +159,11 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
 .frs .card .n { background:linear-gradient(90deg,#012169,#c8102e);-webkit-background-clip:text;background-clip:text;color:transparent }
 :root[data-theme="dark"] .frs .card .n { background:linear-gradient(90deg,#9db4ff,#ff8a9a);-webkit-background-clip:text;background-clip:text }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .frs .card .n { background:linear-gradient(90deg,#9db4ff,#ff8a9a);-webkit-background-clip:text;background-clip:text } }
+
+/* ---------- tasto Installa ---------- */
+.inst-btn { flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px 0 10px;border:0;border-radius:999px;background:var(--blue);color:var(--on-accent);font:700 .88rem/1 var(--f-body);cursor:pointer }
+.inst-btn svg { width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round }
+.inst-btn:active { filter:brightness(.9) }
+@media (max-width:380px){ .inst-btn span { display:none } .inst-btn { padding:0 10px } }
+.msgbox ol { margin:0 0 16px;padding-left:20px;line-height:1.55 }
+.msgbox ol svg { width:18px;height:18px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round }
