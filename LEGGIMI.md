@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.03.00 (22/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.03.01 (22/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -39,19 +39,11 @@ Se quell'artefatto viene cancellato o reso privato gli audio smettono di funzion
   `codice_accesso`, `cambia_codice`. Tabelle lette direttamente: `progressi`, `segnalazioni`. Allegati nel bucket `allegati`.
 - Pulizia automatica (`pulizia()`, pg_cron): accessi dopo 6 mesi, messaggi dopo 12 mesi, account non usati da 12 mesi.
 
-## Frasario: cosa manca ancora
-Le traduzioni italiane di tutte le 2.265 frasi (parti A e B) ci sono già in `strumenti/fras/lavoro/it_*.txt`, ma il testo inglese
-va riletto dal PDF "frasi inglesi" (Camogli, IMO Res. A.918(22)). Per completarlo:
-```
-pdftotext -layout frasi_inglesi.pdf strumenti/fras/lavoro/smcp_layout.txt
-cd strumenti/fras/lavoro && python3 parse_smcp.py smcp_layout.txt smcp_en.json && python3 glos_parse.py
-cd ../../.. && python3 -I strumenti/build.py .
-```
-Con `smcp_en.json` presente il build usa `build_dati.py` (tutte le frasi) invece di `build_parziale.py`; controllare che
-`build_dati.py` scriva "mancano 0" (gli indici `k` delle traduzioni devono coincidere con quelli del PDF).
-
-La funzione Supabase `traduci` va ripubblicata con `strumenti/fras/funzione/index.ts` (nuovo sito tra le origini ammesse):
-finché non è fatto, il tasto "Traduci con Gemini" dal nuovo sito viene bloccato dal browser.
+## Frasario: testo inglese
+Il testo inglese viene dal PDF "frasi inglesi" (Camogli, IMO Res. A.918(22)): `strumenti/fras/lavoro/smcp_layout.txt` è il suo
+`pdftotext -layout`, da cui `parse_smcp.py` crea `smcp_en.json` e `glos_parse.py` crea `glos_smcp_en.json`. Il build usa
+`build_dati.py` (2.265 frasi, deve dire "mancano 0"); se `smcp_en.json` manca ripiega su `build_parziale.py`.
+La funzione Supabase `traduci` (sorgente `strumenti/fras/funzione/index.ts`) accetta il nuovo sito dal 22/11/2026.
 
 ## Da recuperare
 - Foto del professore come sfondo della pagina iniziale.

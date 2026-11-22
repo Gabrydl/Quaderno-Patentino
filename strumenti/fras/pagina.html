@@ -216,11 +216,16 @@ mark{background:var(--hit);color:inherit;border-radius:3px;padding:0 1px}
     q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight, 180) + 'px';
     const res = $('#res');
     if (!t){ res.innerHTML = '<p class="vuoto">Scrivi un termine o una frase in italiano o in inglese: trovi il termine nautico, le frasi SMCP che lo usano e, per le frasi intere, la traduzione con Gemini. Puoi anche fotografare un testo.</p>'; return; }
-    if (!manual){ const l = lingua(t); if (l){ dir = l; paintDir(); } }
-    const key = dir === 'en' ? '_e' : '_i';
-    const g = GLOS.filter(x => x[key].includes(w)).sort((a, b) => (a[key] === w ? 0 : a[key].startsWith(w) ? 1 : 2) - (b[key] === w ? 0 : b[key].startsWith(w) ? 1 : 2) || a[key].length - b[key].length).slice(0, 25);
     const parole = w.split(/\s+/).filter(x => x.length > 1);
-    const f = NODI.filter(n => n.t === 'p' && parole.length && parole.every(p => n[key].includes(p))).sort((a, b) => a.en.length - b.en.length).slice(0, 30);
+    const trova = k => [GLOS.filter(x => x[k].includes(w)).sort((a, b) => (a[k] === w ? 0 : a[k].startsWith(w) ? 1 : 2) - (b[k] === w ? 0 : b[k].startsWith(w) ? 1 : 2) || a[k].length - b[k].length).slice(0, 25),
+      NODI.filter(n => n.t === 'p' && parole.length && parole.every(p => n[k].includes(p))).sort((a, b) => a.en.length - b.en.length).slice(0, 30)];
+    if (!manual){
+      let l = lingua(t);
+      if (!l){ const e = trova('_e'), i = trova('_i'); l = (e[0].length + e[1].length) >= (i[0].length + i[1].length) ? 'en' : 'it'; }
+      dir = l; paintDir();
+    }
+    const key = dir === 'en' ? '_e' : '_i';
+    const [g, f] = trova(key);
     let h = '';
     if (g.length) h += '<div class="lbl">Glossario <i>' + g.length + '</i></div>' + g.map(x => voce(x, w)).join('');
     if (!g.length && parole.length > 1){             // frase intera: i termini del glossario che contiene
