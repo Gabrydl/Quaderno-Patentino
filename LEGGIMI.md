@@ -48,3 +48,12 @@ La funzione Supabase `traduci` (sorgente `strumenti/fras/funzione/index.ts`) acc
 ## Da recuperare
 - Foto del professore come sfondo della pagina iniziale.
 - Costruzione navale ed emergenze (collisione, porto): bozze mai pubblicate nella chat del 30/10/2026 (`fig/altri.py` ha già i disegni).
+
+## App Android (APK)
+
+- Il progetto Android è in `android/`: una WebView che apre la stessa web app (copiata negli asset a ogni build) da `https://appassets.androidplatform.net/assets/www/`.
+- GitHub costruisce l'APK da solo (`.github/workflows/apk.yml`) a ogni push su `main` e la pubblica nelle **Release** con tag `apk-N` (N = 100 + numero della build).
+- All'apertura l'app legge l'ultima Release e, se è più nuova, propone di aggiornarsi.
+- Firma: segreti del repo `KEYSTORE_B64` e `KEYSTORE_PASS`. La chiave (alias `quaderno`) è salvata sul PC in `G:\Progetti\4. keys\Quaderno Patentino`. Senza segreti la build è solo di prova e non viene pubblicata.
+- Nell'app non ci sono il tasto Installa e il service worker (riconosciuta da `QuadernoApp` nello user agent).
+- Audio: partono in streaming; alla prima riproduzione un avviso chiede se scaricare la lezione per l'offline (Cache `qp-audio-off`, sia sul sito sia nell'app). Si gestiscono da Account → Audio scaricati.

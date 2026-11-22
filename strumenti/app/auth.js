@@ -263,9 +263,18 @@
       '<label class="fld"><span>Messaggio</span><textarea id="sMsg" maxlength="2000" placeholder="Scrivi qui. Puoi allegare fino a 3 foto o file qui sotto."></textarea></label>' +
       '<div class="files" id="sFiles"></div><input type="file" id="sFile" multiple hidden accept="image/*,application/pdf,.txt,.doc,.docx">' +
       '<div class="acts" style="margin-top:0;grid-template-columns:auto 1fr"><button type="button" class="btn ghost sm" id="sAdd">Allega</button><button class="btn" type="submit">Invia</button></div><p class="err" id="sErr"></p></form></div></details>' +
+      '<details class="panel" id="pOff"><summary>Audio scaricati</summary><div class="in"><p id="offTx">…</p><button type="button" class="btn ghost sm" id="offDel" hidden>Elimina gli audio scaricati</button></div></details>' +
       '<details class="panel" id="pTos"' + was.t + '><summary>Termini di servizio</summary><div class="in">' + $('#tosText').innerHTML + '</div></details>' +
       '<div class="acts"><button type="button" class="btn ghost" id="logout">Esci</button>' + (me.ruolo === 'superadmin' ? '' : '<button type="button" class="btn danger" id="delMe">Elimina il mio account</button>') + '</div>' +
       '<p class="foot-ver">Versione ' + esc(VER) + '</p>';
+    const offPaint = () => window.QPA && QPA.lista().then(l => {
+      const tx = accBody.querySelector('#offTx'), b = accBody.querySelector('#offDel'); if (!tx) return;
+      const mb = l.reduce((a, x) => a + x.size, 0) / 1048576;
+      tx.textContent = l.length ? l.length + (l.length === 1 ? ' lezione scaricata' : ' lezioni scaricate') + ' · ' + mb.toFixed(mb < 10 ? 1 : 0).replace('.', ',') + ' MB. Si ascoltano anche senza rete.' : 'Nessuna lezione scaricata. Quando ascolti un audio ti chiedo se vuoi scaricarlo per l\'offline.';
+      b.hidden = !l.length;
+    });
+    offPaint();
+    accBody.querySelector('#offDel').addEventListener('click', async () => { if (!confirm('Eliminare tutti gli audio scaricati dal telefono?')) return; await QPA.svuota(); offPaint(); toast('Audio scaricati eliminati'); });
     accBody.querySelector('#phBtn').addEventListener('click', () => accBody.querySelector('#phFile').click());
     accBody.querySelector('#phFile').addEventListener('change', e => setPhoto(e.target.files[0]));
     const ga = accBody.querySelector('#goAdmin'); if (ga) ga.addEventListener('click', () => { view = 'admin'; paintAccount(true); });

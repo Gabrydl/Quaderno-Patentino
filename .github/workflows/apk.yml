@@ -1,0 +1,79 @@
+# Costruisce l'APK "Quaderno Patentino" con dentro la web app e la pubblica nelle Release.
+# L'app, all'apertura, guarda l'ultima Release (tag apk-N) e propone l'aggiornamento.
+name: APK
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['strumenti/**', 'LEGGIMI.md']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apk
+  cancel-in-progress: false
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Copia la web app negli asset
+        run: |
+          W=android/app/src/main/assets/www
+          rm -rf "$W"; mkdir -p "$W"
+          cp -r index.html manifest.webmanifest icone esercizi frasario "$W"/
+          echo "VNAME=$(grep -oP "VERSIONE = '\K[^']+" sw.js)" >> "$GITHUB_ENV"
+          echo "VCODE=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
+
+      - name: Chiave di firma
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::warning::Mancano i segreti KEYSTORE_B64 / KEYSTORE_PASS: costruisco solo una prova (non pubblicata)."
+            echo "FIRMA=no" >> "$GITHUB_ENV"
+          else
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/chiave.jks"
+            echo "KS_FILE=$RUNNER_TEMP/chiave.jks" >> "$GITHUB_ENV"
+            echo "FIRMA=si" >> "$GITHUB_ENV"
+          fi
+
+      - name: Costruisci
+        working-directory: android
+        env:
+          KS_PASS: ${{ secrets.KEYSTORE_PASS }}
+        run: |
+          if [ "$FIRMA" = si ]; then gradle --no-daemon assembleRelease; cp app/build/outputs/apk/release/app-release.apk ../QuadernoPatentino.apk
+          else gradle --no-daemon assembleDebug; cp app/build/outputs/apk/debug/app-debug.apk ../QuadernoPatentino-prova.apk; fi
+
+      - name: Prova (senza firma ufficiale)
+        if: env.FIRMA == 'no'
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuadernoPatentino-prova
+          path: QuadernoPatentino-prova.apk
+
+      - name: Pubblica la Release
+        if: env.FIRMA == 'si'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ env.VCODE }}
+          name: Quaderno Patentino ${{ env.VNAME }}
+          body: |
+            Versione ${{ env.VNAME }} (build ${{ env.VCODE }}).
+            Scarica **QuadernoPatentino.apk** e installalo. Le versioni successive si aggiornano da sole all'apertura dell'app.
+          files: QuadernoPatentino.apk
+          make_latest: true

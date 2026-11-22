@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.03.02 · 22/11/2026'
+VER = '1.04.00 · 23/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -92,8 +92,20 @@ s = sub1(s, '    <ol class="route" id="cards"></ol>', '    <ol class="route" id=
 s = sub1(s, '        <li>Gli audio si ascoltano online: serve la connessione.</li>',
          '        <li><b>Account</b>: il tondo in alto a destra apre il tuo account: progressi, foto, nome utente, segnalazioni. In fondo a ogni argomento c\'è <b>Segna come letto</b>.</li>\n'
          '        <li><b>Sul telefono</b>: dal menu del browser scegli «Aggiungi a schermata Home» per averla come app.</li>\n'
-         '        <li>Gli audio si ascoltano online: serve la connessione.</li>')
+         '        <li>Gli audio partono online. La prima volta che ne ascolti uno puoi scaricarlo per sentirlo anche offline; li gestisci dall\'account, in <b>Audio scaricati</b>.</li>')
 s = sub1(s, '<p class="foot-ver">Prova grafica · contenuti della versione del 24/10/2026</p>', '<p class="foot-ver">Versione ' + VER + '</p>')
+
+# --- audio: lezioni scaricate per l'offline (vedi app/audio-off.js) ---
+s = sub1(s, "    au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed;\n",
+         "    waitId = null;\n"
+         "    if (!MEM[id] && window.QPA && QPA.ha(t.src)){ waitId = id; wantPlay = false; au.removeAttribute('src'); au.load();\n"
+         "      QPA.blob(t.src).then(u => { if (waitId !== id) return; waitId = null; if (u) MEM[id] = u; au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed; if (wantPlay) play(); }); }\n"
+         "    else { au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed; }\n")
+s = sub1(s, "  function play(){ const p = au.play();", "  function play(){ if (waitId && waitId === curId){ wantPlay = true; return; } const p = au.play();")
+s = sub1(s, "  const MEM = {}; let memTry = null;", "  const MEM = {}; let memTry = null, waitId = null, wantPlay = false;\n"
+         "  au.addEventListener('playing', () => { const t = curId && tracks[curId]; if (t && window.QPA) QPA.chiedi(curId, t.src, t.title); });")
+s = sub1(s, "'In questa prova grafica sono caricati solo alcuni audio (es. Sfera celeste, Effetto squat, Williamson, Radar, GPS).'",
+         "'Audio non disponibile: serve la connessione. Le lezioni scaricate per l\\'offline si ascoltano anche senza rete.'")
 
 # --- schermata d'accesso e pannelli ---
 tos = rd('app/tos.html')
@@ -109,12 +121,12 @@ INST = ('<div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true"
         '<ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li>'
         '<li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l\'icona compare tra le tue app.</li></ol>'
         '<button type="button" class="btn">Ho capito</button></div></div>\n')
-sw = ("if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));")
+sw = ("if ('serviceWorker' in navigator && location.protocol === 'https:' && !/QuadernoApp/.test(navigator.userAgent)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));")
 chip = ("<script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');"
         "a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>\n")
 k = s.rindex('</body>'); s = s[:k] + chip + s[k:]
 k = s.rindex('</body>')
-s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + sw + '\n</script>\n' + s[k:]
+s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + sw + '\n</script>\n' + s[k:]
 
 assert 'Prova grafica' not in s
 os.makedirs(OUT, exist_ok=True)

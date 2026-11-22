@@ -6,7 +6,7 @@
   let evento = null;
   const mostra = on => { b.hidden = !on; };
   mostra(false);
-  if (standalone) return;
+  if (standalone || /QuadernoApp/.test(navigator.userAgent)) return;
   if (ios) mostra(true);
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); evento = e; mostra(true); });
   addEventListener('appinstalled', () => { evento = null; mostra(false); });

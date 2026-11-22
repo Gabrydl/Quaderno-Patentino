@@ -843,6 +843,10 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
 .msgbox ol { margin:0 0 16px;padding-left:20px;line-height:1.55 }
 .msgbox ol svg { width:18px;height:18px;vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round }
 
+.dlask { position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--pl-h,0px) + 14px + env(safe-area-inset-bottom,0px));z-index:75;width:min(92vw,380px);background:var(--sheet);border-radius:16px;padding:14px 16px;box-shadow:0 12px 40px rgba(0,0,0,.3);animation:sheetin .25s ease }
+.dlask p { margin:0 0 10px;font-size:.95rem;line-height:1.4 }
+.dlask div { display:flex;gap:8px;justify-content:flex-end }
+
 </style>
 </head>
 <body data-view="home" class="locked">
@@ -868,7 +872,7 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
       <p class="err" id="gateErr" role="alert"></p>
       <button class="btn" id="gSubmit" type="submit">Entra</button>
     </form>
-    <p class="ver">Versione 1.03.02 · 22/11/2026</p>
+    <p class="ver">Versione 1.04.00 · 23/11/2026</p>
   </div>
 </div>
 <template id="tosText"><p><b>Chi gestisce l'app.</b> Il Quaderno Patentino è un progetto personale di studio, gestito dal suo autore (super-admin). È gratuito e non ha pubblicità.</p>
@@ -941,10 +945,10 @@ body.locked > :not(#gate):not(svg):not(script) { display:none !important }
         <li><b>Casa e tema</b>: la casetta in alto a sinistra torna a questa pagina; il tasto a destra passa da chiaro a scuro.</li>
         <li><b>Account</b>: il tondo in alto a destra apre il tuo account: progressi, foto, nome utente, segnalazioni. In fondo a ogni argomento c'è <b>Segna come letto</b>.</li>
         <li><b>Sul telefono</b>: dal menu del browser scegli «Aggiungi a schermata Home» per averla come app.</li>
-        <li>Gli audio si ascoltano online: serve la connessione.</li>
+        <li>Gli audio partono online. La prima volta che ne ascolti uno puoi scaricarlo per sentirlo anche offline; li gestisci dall'account, in <b>Audio scaricati</b>.</li>
       </ul>
     </details>
-    <p class="foot-ver">Versione 1.03.02 · 22/11/2026</p>
+    <p class="foot-ver">Versione 1.04.00 · 23/11/2026</p>
   </div>
   <div id="results" hidden></div>
   <div id="sections">
@@ -17164,7 +17168,10 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
     if (curId === id){ if (pl.hidden){ pl.hidden = false; document.body.classList.add('pl-on'); setH(); state(); } return; }
     if (curId) store.set('qp-pos-' + curId, Math.floor(au.currentTime));
     curId = id; pl.querySelector('.pl-err')?.remove();
-    au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed;
+    waitId = null;
+    if (!MEM[id] && window.QPA && QPA.ha(t.src)){ waitId = id; wantPlay = false; au.removeAttribute('src'); au.load();
+      QPA.blob(t.src).then(u => { if (waitId !== id) return; waitId = null; if (u) MEM[id] = u; au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed; if (wantPlay) play(); }); }
+    else { au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed; }
     const pos = +store.get('qp-pos-' + id) || 0;
     if (pos > 5 && (!t.dur || pos < t.dur - 5)) au.addEventListener('loadedmetadata', () => { au.currentTime = pos; paint(); }, {once: true});
     $p('.pl-tit b').textContent = t.title;
@@ -17177,9 +17184,10 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
     if (curId !== id){ load(id); play(); return; }
     au.paused ? play() : au.pause();
   }
-  function play(){ const p = au.play(); if (p && p.catch) p.catch(e => { if (e && e.name === 'NotSupportedError') retryOrFail(); else if (e && e.name !== 'AbortError' && e.name !== 'NotAllowedError') fail(); else state(); }); }
+  function play(){ if (waitId && waitId === curId){ wantPlay = true; return; } const p = au.play(); if (p && p.catch) p.catch(e => { if (e && e.name === 'NotSupportedError') retryOrFail(); else if (e && e.name !== 'AbortError' && e.name !== 'NotAllowedError') fail(); else state(); }); }
   // iPhone: se il file non parte in streaming, lo scarico intero e lo suono dalla memoria del telefono
-  const MEM = {}; let memTry = null;
+  const MEM = {}; let memTry = null, waitId = null, wantPlay = false;
+  au.addEventListener('playing', () => { const t = curId && tracks[curId]; if (t && window.QPA) QPA.chiedi(curId, t.src, t.title); });
   function retryOrFail(){
     const id = curId, t = id && tracks[id];
     if (!t || !t.src || t.src.indexOf('local:') === 0 || MEM[id] || memTry === id) { fail(); return; }
@@ -17198,7 +17206,7 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
   }
   function fail(){
     state();
-    if (!pl.querySelector('.pl-err')){ const e = document.createElement('p'); e.className = 'pl-err'; e.textContent = location.protocol === 'file:' ? 'Questa è una copia scaricata: l\'audio funziona solo aprendo l\'app dal link online.' : 'In questa prova grafica sono caricati solo alcuni audio (es. Sfera celeste, Effetto squat, Williamson, Radar, GPS).'; $p('.pl-in').append(e); setH(); }
+    if (!pl.querySelector('.pl-err')){ const e = document.createElement('p'); e.className = 'pl-err'; e.textContent = location.protocol === 'file:' ? 'Questa è una copia scaricata: l\'audio funziona solo aprendo l\'app dal link online.' : 'Audio non disponibile: serve la connessione. Le lezioni scaricate per l\'offline si ascoltano anche senza rete.'; $p('.pl-in').append(e); setH(); }
   }
   au.addEventListener('timeupdate', paint); au.addEventListener('loadedmetadata', paint);
   au.addEventListener('play', state); au.addEventListener('pause', () => { state(); if (curId) store.set('qp-pos-' + curId, Math.floor(au.currentTime)); });
@@ -17861,7 +17869,7 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
 <script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>
 <div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l'app"><div class="card2"><p class="txt" style="font-weight:700;margin-bottom:10px">Installa il Quaderno sull'iPhone</p><ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li><li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l'icona compare tra le tue app.</li></ol><button type="button" class="btn">Ho capito</button></div></div>
 <script>
-window.QP_VERSIONE = "1.03.02 \u00b7 22/11/2026";
+window.QP_VERSIONE = "1.04.00 \u00b7 23/11/2026";
 // Account: accesso con nome utente e password (Supabase), registrazione con codice, progressi, segnalazioni,
 // messaggi in primo piano, area amministrazione. Il codice di registrazione sta solo nel database.
 (function(){
@@ -18127,9 +18135,18 @@ window.QP_VERSIONE = "1.03.02 \u00b7 22/11/2026";
       '<label class="fld"><span>Messaggio</span><textarea id="sMsg" maxlength="2000" placeholder="Scrivi qui. Puoi allegare fino a 3 foto o file qui sotto."></textarea></label>' +
       '<div class="files" id="sFiles"></div><input type="file" id="sFile" multiple hidden accept="image/*,application/pdf,.txt,.doc,.docx">' +
       '<div class="acts" style="margin-top:0;grid-template-columns:auto 1fr"><button type="button" class="btn ghost sm" id="sAdd">Allega</button><button class="btn" type="submit">Invia</button></div><p class="err" id="sErr"></p></form></div></details>' +
+      '<details class="panel" id="pOff"><summary>Audio scaricati</summary><div class="in"><p id="offTx">…</p><button type="button" class="btn ghost sm" id="offDel" hidden>Elimina gli audio scaricati</button></div></details>' +
       '<details class="panel" id="pTos"' + was.t + '><summary>Termini di servizio</summary><div class="in">' + $('#tosText').innerHTML + '</div></details>' +
       '<div class="acts"><button type="button" class="btn ghost" id="logout">Esci</button>' + (me.ruolo === 'superadmin' ? '' : '<button type="button" class="btn danger" id="delMe">Elimina il mio account</button>') + '</div>' +
       '<p class="foot-ver">Versione ' + esc(VER) + '</p>';
+    const offPaint = () => window.QPA && QPA.lista().then(l => {
+      const tx = accBody.querySelector('#offTx'), b = accBody.querySelector('#offDel'); if (!tx) return;
+      const mb = l.reduce((a, x) => a + x.size, 0) / 1048576;
+      tx.textContent = l.length ? l.length + (l.length === 1 ? ' lezione scaricata' : ' lezioni scaricate') + ' · ' + mb.toFixed(mb < 10 ? 1 : 0).replace('.', ',') + ' MB. Si ascoltano anche senza rete.' : 'Nessuna lezione scaricata. Quando ascolti un audio ti chiedo se vuoi scaricarlo per l\'offline.';
+      b.hidden = !l.length;
+    });
+    offPaint();
+    accBody.querySelector('#offDel').addEventListener('click', async () => { if (!confirm('Eliminare tutti gli audio scaricati dal telefono?')) return; await QPA.svuota(); offPaint(); toast('Audio scaricati eliminati'); });
     accBody.querySelector('#phBtn').addEventListener('click', () => accBody.querySelector('#phFile').click());
     accBody.querySelector('#phFile').addEventListener('change', e => setPhoto(e.target.files[0]));
     const ga = accBody.querySelector('#goAdmin'); if (ga) ga.addEventListener('click', () => { view = 'admin'; paintAccount(true); });
@@ -18329,7 +18346,7 @@ window.QP_VERSIONE = "1.03.02 \u00b7 22/11/2026";
   let evento = null;
   const mostra = on => { b.hidden = !on; };
   mostra(false);
-  if (standalone) return;
+  if (standalone || /QuadernoApp/.test(navigator.userAgent)) return;
   if (ios) mostra(true);
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); evento = e; mostra(true); });
   addEventListener('appinstalled', () => { evento = null; mostra(false); });
@@ -18342,7 +18359,59 @@ window.QP_VERSIONE = "1.03.02 \u00b7 22/11/2026";
   box.addEventListener('click', e => { if (e.target === box) box.hidden = true; });
 })();
 
-if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+// Audio offline: ogni lezione parte in streaming; alla prima riproduzione un piccolo avviso chiede se scaricarla.
+// Le lezioni scaricate stanno nella Cache del browser/app ('qp-audio-off') e si ascoltano anche senza rete.
+(function(){
+  const CN = 'qp-audio-off', HAS = new Set(), ASKED = new Set();
+  const ok = 'caches' in window;
+  const abs = u => { try { return new URL(u, location.href).href; } catch (e) { return u; } };
+  const ls = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+  const pronto = ok ? caches.open(CN).then(c => c.keys()).then(ks => { ks.forEach(r => HAS.add(r.url)); }).catch(() => {}) : Promise.resolve();
+  const toast = t => { const el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.append(el); setTimeout(() => el.remove(), 2600); };
+  let box = null;
+  function chiudi(){ if (box) { box.remove(); box = null; } }
+  async function scarica(src, title){
+    try {
+      const r = await fetch(src, { credentials: 'omit' }); if (!r.ok) throw new Error(r.status);
+      const c = await caches.open(CN); await c.put(abs(src), r); HAS.add(abs(src));
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+      toast('Scaricata: ' + title);
+      document.dispatchEvent(new CustomEvent('qp-audio-off'));
+    } catch (e) { toast('Download non riuscito: controlla la connessione'); }
+  }
+  window.QPA = {
+    ha: src => ok && !!src && HAS.has(abs(src)),
+    // URL locale (blob) della lezione scaricata, oppure null
+    blob: src => !ok ? Promise.resolve(null) : caches.open(CN).then(c => c.match(abs(src))).then(r => r ? r.blob() : null)
+      .then(b => b ? URL.createObjectURL(new Blob([b], { type: 'audio/mp4' })) : null).catch(() => null),
+    // dopo che lo streaming è partito: chiede una volta se scaricarla
+    chiedi(id, src, title){
+      if (!ok || !src || src.indexOf('local:') === 0 || location.protocol === 'file:') return;
+      pronto.then(() => {
+        if (HAS.has(abs(src)) || ASKED.has(id) || ls.get('qp-dl-no-' + id)) return;
+        ASKED.add(id); chiudi();
+        box = document.createElement('div'); box.className = 'dlask'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Scarica per l\'offline');
+        box.innerHTML = '<p>Scaricare questa lezione per ascoltarla anche offline?</p><div><button type="button" class="btn ghost sm" data-r="no">No</button><button type="button" class="btn sm" data-r="si">Sì</button></div>';
+        document.body.append(box);
+        box.addEventListener('click', e => {
+          const b = e.target.closest('button'); if (!b) return;
+          if (b.dataset.r === 'si') scarica(src, title); else ls.set('qp-dl-no-' + id, '1');
+          chiudi();
+        });
+        setTimeout(() => { if (box && box.isConnected && !box.matches(':hover')) chiudi(); }, 15000);
+      });
+    },
+    async lista(){
+      if (!ok) return [];
+      await pronto; const c = await caches.open(CN), ks = await c.keys(), out = [];
+      for (const r of ks){ const x = await c.match(r); const b = x ? await x.clone().blob() : null; out.push({ url: r.url, size: b ? b.size : 0 }); }
+      return out;
+    },
+    async svuota(){ if (!ok) return; await caches.delete(CN); HAS.clear(); Object.keys(localStorage).filter(k => k.indexOf('qp-dl-no-') === 0).forEach(k => localStorage.removeItem(k)); }
+  };
+})();
+
+if ('serviceWorker' in navigator && location.protocol === 'https:' && !/QuadernoApp/.test(navigator.userAgent)) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>

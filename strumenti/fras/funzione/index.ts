@@ -17,7 +17,7 @@ const GEM = "https://generativelanguage.googleapis.com/v1beta";
 const GEMINI_PER_TUTTI = true;   // false = solo admin e account abilitati uno per uno
 const MAX_CARATTERI = 300;
 const LIMITE = 30, FINESTRA_MS = 10 * 60 * 1000;
-const ORIGINI = [/^https:\/\/gabrydl\.github\.io$/, /^https:\/\/gabrydl99\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
+const ORIGINI = [/^https:\/\/gabrydl\.github\.io$/, /^https:\/\/gabrydl99\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^https:\/\/appassets\.androidplatform\.net$/];
 
 const gkey = () => Deno.env.get("GEMINI_KEY") ?? "";
 
