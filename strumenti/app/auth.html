@@ -1,0 +1,28 @@
+<div id="gate" class="gate" hidden>
+  <svg class="rose" viewBox="0 0 200 200" aria-hidden="true">__ROSE__</svg>
+  <div class="gate-box">
+    <h1>Quaderno <span>Patentino</span></h1>
+    <p class="sub">Entra con il tuo nome utente e la tua password.</p>
+    <div class="gseg" id="gateSeg" role="group" aria-label="Entra o registrati"><span class="seg-th" aria-hidden="true"></span><button type="button" aria-pressed="true">Entra</button><button type="button" aria-pressed="false">Registrati</button></div>
+    <form id="gateForm" novalidate>
+      <label class="fld"><span>Nome utente</span><input id="gUser" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20" required></label>
+      <label class="fld"><span>Password</span><span class="pw"><input id="gPw" type="password" autocomplete="current-password" required><button type="button" aria-label="Mostra la password" aria-pressed="false"><svg class="eye-o" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-c" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5l17 17M10.6 6.1A9.6 9.6 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-3 3.6M6.4 7.4A16.6 16.6 0 0 0 2.5 12S6 18 12 18a9 9 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button></span></label>
+      <label class="fld" id="gPw2" hidden><span>Ripeti la password</span><span class="pw"><input id="gPw2i" type="password" autocomplete="new-password"><button type="button" aria-label="Mostra la password" aria-pressed="false"><svg class="eye-o" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-c" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 3.5l17 17M10.6 6.1A9.6 9.6 0 0 1 12 6c6 0 9.5 6 9.5 6a17 17 0 0 1-3 3.6M6.4 7.4A16.6 16.6 0 0 0 2.5 12S6 18 12 18a9 9 0 0 0 4-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button></span></label>
+      <label class="fld" id="fCode" hidden><span>Codice di registrazione</span><input id="gCode" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="30"></label>
+      <details class="tos" id="gateTos" hidden><summary>Registrandoti accetti i termini di servizio</summary><div>__TOS__</div></details>
+      <p class="err" id="gateErr" role="alert"></p>
+      <button class="btn" id="gSubmit" type="submit">Entra</button>
+    </form>
+    <p class="ver">Versione __VER__</p>
+  </div>
+</div>
+<template id="tosText">__TOS__</template>
+
+<div id="acc" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="accTitle">
+  <div class="sheet-top"><div class="wrap"><button type="button" class="ib" id="accClose" aria-label="Chiudi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5.5L8.5 12l6.5 6.5"/></svg></button><h2 id="accTitle">Il tuo account</h2></div></div>
+  <div class="wrap" id="accBody"></div>
+</div>
+
+<div class="msgbox" id="msgBox" hidden role="alertdialog" aria-modal="true" aria-label="Messaggio">
+  <div class="card2"><div class="from"></div><p class="txt"></p><button type="button" class="btn">OK</button></div>
+</div>
