@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.07.00 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.07.01 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -43,8 +43,9 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
     parte solo oltre 26 px di lato e con movimento almeno 2,1 volte quello verticale; l'argomento segue il dito, il vicino entra dal lato
     (copia temporanea), oltre il 32 % della larghezza o con un colpo veloce si passa, altrimenti torna indietro. Escluse le zone con cursori,
     tabelle, galleria delle carte, lettore audio.
-    Suggerimento muto: nelle prime 10 aperture l'argomento accenna uno scorrimento e compare una linguetta sul bordo destro; smette dopo
-    10 volte o dopo 4 scorrimenti fatti dall'utente (`localStorage` qp-swp-hint / qp-swp-ok).
+    Suggerimento muto: aprendo un argomento, l'argomento accenna uno scorrimento e compare una linguetta sul bordo destro, finché
+    l'utente non ha scorso da solo 5 volte (`localStorage` qp-swp-ok), poi mai più.
+    1.07.01: tolto lo «scatto» dopo il cambio di argomento (l'animazione d'ingresso ripartiva da sola dopo mezzo secondo).
   - `prova.html`: la nuova grafica (artefatto "Prova grafica Quaderno Patentino", anteprima 11 del 21/11/2026), contenuti del 24/10/2026.
   - `build.py`: applica le modifiche e aggiunge account, carta sinottica, esercizi. Uso: `python3 -I strumenti/build.py .`
   - `app/`: schermata d'accesso, pannello account e amministrazione (`auth.html`, `auth.css`, `auth.js`), termini di servizio (`tos.html`).

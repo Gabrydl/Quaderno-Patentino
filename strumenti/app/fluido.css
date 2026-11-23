@@ -16,9 +16,7 @@ html.vt-theme::view-transition-group(qp-top),html.vt-theme::view-transition-grou
 html.vt-theme .top,html.vt-theme .pl{view-transition-name:none}
 /* senza View Transitions: dissolvenza fatta a mano */
 main.in > :not([hidden]){animation:qp-in .24s ease-out}
-html.vt-run main.in > :not([hidden]){animation:none}
 main.qp-out{opacity:0;transition:opacity .12s ease-in}
-html.qp-fast main.in > :not([hidden]){animation:none}
 .qp-veil{position:fixed;inset:0;z-index:9998;pointer-events:none;background:var(--qp-veil);opacity:1;transition:opacity .5s cubic-bezier(.3,.6,.3,1)}
 .qp-veil.go{opacity:0}
 

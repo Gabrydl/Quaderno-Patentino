@@ -107,14 +107,14 @@
   main.addEventListener('pointercancel', end);
 
   /* ---------- suggerimento muto per le prime volte ----------
-     Nelle prime 10 aperture di un argomento l'argomento accenna uno scorrimento verso sinistra e sul bordo destro
-     compare per un attimo una piccola linguetta. Smette dopo 10 volte o quando l'utente ha già scorso da solo 4 volte. */
+     Aprendo un argomento, l'argomento accenna uno scorrimento verso sinistra e sul bordo destro compare per un attimo
+     una piccola linguetta. Continua finché l'utente non ha scorso da solo tra gli argomenti 5 volte, poi mai più. */
   const num = k => { try { return +localStorage.getItem(k) || 0; } catch (e) { return 99; } };
   function conta(k){ try { localStorage.setItem(k, num(k) + 1); } catch (e) {} }
   let hintT = 0;
   function hint(){
     clearTimeout(hintT);
-    if (num('qp-swp-ok') >= 4 || num('qp-swp-hint') >= 10) return;
+    if (num('qp-swp-ok') >= 5) return;
     hintT = setTimeout(() => {
       const a = cur(); if (!a || g || scrollY > 40) return;
       const L = list(a); if (L.indexOf(a) >= L.length - 1) return;

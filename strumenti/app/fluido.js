@@ -82,12 +82,14 @@
   let busy = false, lastNav = 0;
   window.QP_SOFT = function (fn){
     const now = performance.now(), quick = now - lastNav < 900; lastNav = now;
-    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; R.classList.add('qp-fast'); fn(); setTimeout(() => R.classList.remove('qp-fast'), 400); return; }
-    if (busy || quick){ R.classList.add('qp-fast'); fn(); clearTimeout(window.QP_SOFT.t); window.QP_SOFT.t = setTimeout(() => R.classList.remove('qp-fast'), 900); return; }
+    // senza animazione d'ingresso: si toglie subito la classe "in" (se si togliesse solo l'animazione, ripartirebbe dopo: era lo scatto)
+    const still = () => { fn(); main.classList.remove('in'); };
+    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; still(); return; }
+    if (busy || quick){ still(); return; }
     if (vtOk()){
-      busy = true; R.classList.add('vt-run');
-      const t = document.startViewTransition(() => { fn(); });
-      t.finished.finally(() => { R.classList.remove('vt-run'); busy = false; });
+      busy = true;
+      const t = document.startViewTransition(still);
+      t.finished.finally(() => { busy = false; });
       return;
     }
     if (lite()){ fn(); return; }

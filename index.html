@@ -994,9 +994,7 @@ html.vt-theme::view-transition-group(qp-top),html.vt-theme::view-transition-grou
 html.vt-theme .top,html.vt-theme .pl{view-transition-name:none}
 /* senza View Transitions: dissolvenza fatta a mano */
 main.in > :not([hidden]){animation:qp-in .24s ease-out}
-html.vt-run main.in > :not([hidden]){animation:none}
 main.qp-out{opacity:0;transition:opacity .12s ease-in}
-html.qp-fast main.in > :not([hidden]){animation:none}
 .qp-veil{position:fixed;inset:0;z-index:9998;pointer-events:none;background:var(--qp-veil);opacity:1;transition:opacity .5s cubic-bezier(.3,.6,.3,1)}
 .qp-veil.go{opacity:0}
 
@@ -1177,7 +1175,7 @@ html.lite .sg-fig{box-shadow:none}
       <p class="err" id="gateErr" role="alert"></p>
       <button class="btn" id="gSubmit" type="submit">Entra</button>
     </form>
-    <p class="ver">Versione 1.07.00 · 23/11/2026</p>
+    <p class="ver">Versione 1.07.01 · 23/11/2026</p>
   </div>
 </div>
 <template id="tosText"><p><b>Chi gestisce l'app.</b> Il Quaderno Patentino è un progetto personale di studio, gestito dal suo autore (super-admin). È gratuito e non ha pubblicità.</p>
@@ -1253,7 +1251,7 @@ html.lite .sg-fig{box-shadow:none}
         <li>Gli audio partono online. La prima volta che ne ascolti uno puoi scaricarlo per sentirlo anche offline; li gestisci dall'account, in <b>Audio scaricati</b>.</li>
       </ul>
     </details>
-    <p class="foot-ver">Versione 1.07.00 · 23/11/2026</p>
+    <p class="foot-ver">Versione 1.07.01 · 23/11/2026</p>
   </div>
   <div id="results" hidden></div>
   <div id="sections">
@@ -18133,7 +18131,7 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
 <script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>
 <div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l'app"><div class="card2"><p class="txt" style="font-weight:700;margin-bottom:10px">Installa il Quaderno sull'iPhone</p><ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li><li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l'icona compare tra le tue app.</li></ol><button type="button" class="btn">Ho capito</button></div></div>
 <script>
-window.QP_VERSIONE = "1.07.00 \u00b7 23/11/2026";
+window.QP_VERSIONE = "1.07.01 \u00b7 23/11/2026";
 // Account: accesso con nome utente e password (Supabase), registrazione con codice, progressi, segnalazioni,
 // messaggi in primo piano, area amministrazione. Il codice di registrazione sta solo nel database.
 (function(){
@@ -18773,12 +18771,14 @@ window.QP_VERSIONE = "1.07.00 \u00b7 23/11/2026";
   let busy = false, lastNav = 0;
   window.QP_SOFT = function (fn){
     const now = performance.now(), quick = now - lastNav < 900; lastNav = now;
-    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; R.classList.add('qp-fast'); fn(); setTimeout(() => R.classList.remove('qp-fast'), 400); return; }
-    if (busy || quick){ R.classList.add('qp-fast'); fn(); clearTimeout(window.QP_SOFT.t); window.QP_SOFT.t = setTimeout(() => R.classList.remove('qp-fast'), 900); return; }
+    // senza animazione d'ingresso: si toglie subito la classe "in" (se si togliesse solo l'animazione, ripartirebbe dopo: era lo scatto)
+    const still = () => { fn(); main.classList.remove('in'); };
+    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; still(); return; }
+    if (busy || quick){ still(); return; }
     if (vtOk()){
-      busy = true; R.classList.add('vt-run');
-      const t = document.startViewTransition(() => { fn(); });
-      t.finished.finally(() => { R.classList.remove('vt-run'); busy = false; });
+      busy = true;
+      const t = document.startViewTransition(still);
+      t.finished.finally(() => { busy = false; });
       return;
     }
     if (lite()){ fn(); return; }
@@ -18939,14 +18939,14 @@ window.QP_VERSIONE = "1.07.00 \u00b7 23/11/2026";
   main.addEventListener('pointercancel', end);
 
   /* ---------- suggerimento muto per le prime volte ----------
-     Nelle prime 10 aperture di un argomento l'argomento accenna uno scorrimento verso sinistra e sul bordo destro
-     compare per un attimo una piccola linguetta. Smette dopo 10 volte o quando l'utente ha già scorso da solo 4 volte. */
+     Aprendo un argomento, l'argomento accenna uno scorrimento verso sinistra e sul bordo destro compare per un attimo
+     una piccola linguetta. Continua finché l'utente non ha scorso da solo tra gli argomenti 5 volte, poi mai più. */
   const num = k => { try { return +localStorage.getItem(k) || 0; } catch (e) { return 99; } };
   function conta(k){ try { localStorage.setItem(k, num(k) + 1); } catch (e) {} }
   let hintT = 0;
   function hint(){
     clearTimeout(hintT);
-    if (num('qp-swp-ok') >= 4 || num('qp-swp-hint') >= 10) return;
+    if (num('qp-swp-ok') >= 5) return;
     hintT = setTimeout(() => {
       const a = cur(); if (!a || g || scrollY > 40) return;
       const L = list(a); if (L.indexOf(a) >= L.length - 1) return;
