@@ -58,10 +58,12 @@
       const other = dir === 1 ? gg.prev : gg.next; if (other) other.el.style.opacity = '0';
       setTimeout(() => {
         conta('qp-swp-ok');
-        if (window.QP_SOFT) QP_SOFT.skip = true;
+        // la copia sparisce nello stesso istante in cui compare l'argomento vero (prima restavano tutti e due per un attimo:
+        // i riquadri gialli semitrasparenti si sommavano e lampeggiavano)
+        const fine = () => { if (g === gg) clean(); };
+        if (window.QP_SOFT){ QP_SOFT.skip = true; QP_SOFT.after = fine; }
         location.hash = pk.n.id;
-        // il nuovo argomento è già al suo posto: il velo sparisce subito dopo
-        requestAnimationFrame(() => requestAnimationFrame(() => { if (g === gg) clean(); }));
+        setTimeout(fine, 400);
       }, dur);
     } else {
       gg.a.style.transform = 'translate3d(0,0,0)'; gg.a.style.opacity = '1';

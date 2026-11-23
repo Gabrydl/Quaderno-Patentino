@@ -84,7 +84,7 @@
     const now = performance.now(), quick = now - lastNav < 900; lastNav = now;
     // senza animazione d'ingresso: si toglie subito la classe "in" (se si togliesse solo l'animazione, ripartirebbe dopo: era lo scatto)
     const still = () => { fn(); main.classList.remove('in'); };
-    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; still(); return; }
+    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; still(); const af = window.QP_SOFT.after; window.QP_SOFT.after = null; if (af) af(); return; }
     if (busy || quick){ still(); return; }
     if (vtOk()){
       busy = true;

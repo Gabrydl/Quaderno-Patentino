@@ -1193,7 +1193,7 @@ html.lite .sg-fig{box-shadow:none}
       <p class="err" id="gateErr" role="alert"></p>
       <button class="btn" id="gSubmit" type="submit">Entra</button>
     </form>
-    <p class="ver">Versione 1.07.05 · 23/11/2026</p>
+    <p class="ver">Versione 1.07.06 · 23/11/2026</p>
   </div>
 </div>
 <template id="tosText"><p><b>Chi gestisce l'app.</b> Il Quaderno Patentino è un progetto personale di studio, gestito dal suo autore (super-admin). È gratuito e non ha pubblicità.</p>
@@ -1269,7 +1269,7 @@ html.lite .sg-fig{box-shadow:none}
         <li>Gli audio partono online. La prima volta che ne ascolti uno puoi scaricarlo per sentirlo anche offline; li gestisci dall'account, in <b>Audio scaricati</b>.</li>
       </ul>
     </details>
-    <p class="foot-ver">Versione 1.07.05 · 23/11/2026</p>
+    <p class="foot-ver">Versione 1.07.06 · 23/11/2026</p>
   </div>
   <div id="results" hidden></div>
   <div id="sections">
@@ -18149,7 +18149,7 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
 <script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>
 <div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l'app"><div class="card2"><p class="txt" style="font-weight:700;margin-bottom:10px">Installa il Quaderno sull'iPhone</p><ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li><li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l'icona compare tra le tue app.</li></ol><button type="button" class="btn">Ho capito</button></div></div>
 <script>
-window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
+window.QP_VERSIONE = "1.07.06 \u00b7 23/11/2026";
 // Account: accesso con nome utente e password (Supabase), registrazione con codice, progressi, segnalazioni,
 // messaggi in primo piano, area amministrazione. Il codice di registrazione sta solo nel database.
 (function(){
@@ -18726,14 +18726,29 @@ window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
 // Le lezioni scaricate stanno nella Cache del browser/app ('qp-audio-off') e si ascoltano anche senza rete.
 (function(){
   const CN = 'qp-audio-off', HAS = new Set(), ASKED = new Set();
-  const ok = 'caches' in window;
+  // nell'APK gli audio li scarica l'app (Java): il sito degli audio non permette di scaricarli dal browser (CORS)
+  const NAT = !!(window.QPApp && typeof QPApp.scaricaAudio === 'function');
+  const FILE = {};
+  const ok = NAT || 'caches' in window;
+  const natLista = () => { try { return JSON.parse(QPApp.audioScaricati() || '[]'); } catch (e) { return []; } };
+  const ATTESE = {};
+  let corsP = null;
+  const corsOk = src => corsP || (corsP = fetch(src, { method: 'HEAD', mode: 'cors', credentials: 'omit' }).then(r => r.ok).catch(() => false));
+  window.QPA_FATTO = (url, fatto) => { const f = ATTESE[url]; delete ATTESE[url]; if (f) f(fatto); };
   const abs = u => { try { return new URL(u, location.href).href; } catch (e) { return u; } };
   const ls = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
-  const pronto = ok ? caches.open(CN).then(c => c.keys()).then(ks => { ks.forEach(r => HAS.add(r.url)); }).catch(() => {}) : Promise.resolve();
+  const pronto = NAT ? Promise.resolve().then(() => natLista().forEach(x => { HAS.add(x.url); FILE[x.url] = x.file; })) : ok ? caches.open(CN).then(c => c.keys()).then(ks => { ks.forEach(r => HAS.add(r.url)); }).catch(() => {}) : Promise.resolve();
   const toast = t => { const el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.append(el); setTimeout(() => el.remove(), 2600); };
   let box = null;
   function chiudi(){ if (box) { box.remove(); box = null; } }
   async function scarica(src, title){
+    if (NAT){
+      const u = abs(src);
+      const fatto = await new Promise(res => { ATTESE[u] = res; try { QPApp.scaricaAudio(u); } catch (e) { res(false); } });
+      if (fatto){ natLista().forEach(x => { HAS.add(x.url); FILE[x.url] = x.file; }); toast('Scaricata: ' + title); document.dispatchEvent(new CustomEvent('qp-audio-off')); }
+      else toast('Download non riuscito: controlla la connessione');
+      return;
+    }
     try {
       const r = await fetch(src, { credentials: 'omit' }); if (!r.ok) throw new Error(r.status);
       const c = await caches.open(CN); await c.put(abs(src), r); HAS.add(abs(src));
@@ -18745,12 +18760,14 @@ window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
   window.QPA = {
     ha: src => ok && !!src && HAS.has(abs(src)),
     // URL locale (blob) della lezione scaricata, oppure null
-    blob: src => !ok ? Promise.resolve(null) : caches.open(CN).then(c => c.match(abs(src))).then(r => r ? r.blob() : null)
+    blob: src => NAT ? Promise.resolve(FILE[abs(src)] ? location.origin + '/offline/' + FILE[abs(src)] : null) : !ok ? Promise.resolve(null) : caches.open(CN).then(c => c.match(abs(src))).then(r => r ? r.blob() : null)
       .then(b => b ? URL.createObjectURL(new Blob([b], { type: 'audio/mp4' })) : null).catch(() => null),
     // dopo che lo streaming è partito: chiede una volta se scaricarla
     chiedi(id, src, title){
       if (!ok || !src || src.indexOf('local:') === 0 || location.protocol === 'file:') return;
-      pronto.then(() => {
+      // dal browser si chiede solo se il sito degli audio permette di scaricarli (CORS); nell'APK li scarica l'app
+      Promise.all([pronto, NAT ? true : corsOk(src)]).then(([, si]) => {
+        if (!si) return;
         if (HAS.has(abs(src)) || ASKED.has(id) || ls.get('qp-dl-no-' + id)) return;
         ASKED.add(id); chiudi();
         box = document.createElement('div'); box.className = 'dlask'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Scarica per l\'offline');
@@ -18766,6 +18783,10 @@ window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
     },
     async lista(){
       if (!ok) return [];
+      if (NAT){
+        const T = {}; document.querySelectorAll('.aud[data-src]').forEach(el => { T[abs(el.dataset.src)] = el.dataset.title || ''; });
+        return natLista().map(x => ({ url: x.url, size: x.size, title: T[x.url] || 'Lezione' })).sort((p, q) => p.title.localeCompare(q.title, 'it'));
+      }
       await pronto; const c = await caches.open(CN), ks = await c.keys(), out = [];
       // titolo della lezione: dal riquadro audio dell'argomento con lo stesso indirizzo
       const T = {}; document.querySelectorAll('.aud[data-src]').forEach(el => { T[abs(el.dataset.src)] = el.dataset.title || ((el.closest('article') || {}).querySelector ? el.closest('article').querySelector('h3').firstChild.textContent.trim() : ''); });
@@ -18774,8 +18795,8 @@ window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
       return out;
     },
     // elimina una sola lezione scaricata (torna in streaming)
-    async togli(url){ if (!ok) return; const c = await caches.open(CN); await c.delete(url); HAS.delete(url); document.dispatchEvent(new CustomEvent('qp-audio-off')); },
-    async svuota(){ if (!ok) return; await caches.delete(CN); HAS.clear(); Object.keys(localStorage).filter(k => k.indexOf('qp-dl-no-') === 0).forEach(k => localStorage.removeItem(k)); }
+    async togli(url){ if (NAT){ try { QPApp.togliAudio(url); } catch (e) {} HAS.delete(url); delete FILE[url]; document.dispatchEvent(new CustomEvent('qp-audio-off')); return; } if (!ok) return; const c = await caches.open(CN); await c.delete(url); HAS.delete(url); document.dispatchEvent(new CustomEvent('qp-audio-off')); },
+    async svuota(){ if (NAT){ try { QPApp.svuotaAudio(); } catch (e) {} HAS.clear(); Object.keys(FILE).forEach(k => delete FILE[k]); Object.keys(localStorage).filter(k => k.indexOf('qp-dl-no-') === 0).forEach(k => localStorage.removeItem(k)); return; } if (!ok) return; await caches.delete(CN); HAS.clear(); Object.keys(localStorage).filter(k => k.indexOf('qp-dl-no-') === 0).forEach(k => localStorage.removeItem(k)); }
   };
 })();
 
@@ -18865,7 +18886,7 @@ window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
     const now = performance.now(), quick = now - lastNav < 900; lastNav = now;
     // senza animazione d'ingresso: si toglie subito la classe "in" (se si togliesse solo l'animazione, ripartirebbe dopo: era lo scatto)
     const still = () => { fn(); main.classList.remove('in'); };
-    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; still(); return; }
+    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; still(); const af = window.QP_SOFT.after; window.QP_SOFT.after = null; if (af) af(); return; }
     if (busy || quick){ still(); return; }
     if (vtOk()){
       busy = true;
@@ -18982,10 +19003,12 @@ window.QP_VERSIONE = "1.07.05 \u00b7 23/11/2026";
       const other = dir === 1 ? gg.prev : gg.next; if (other) other.el.style.opacity = '0';
       setTimeout(() => {
         conta('qp-swp-ok');
-        if (window.QP_SOFT) QP_SOFT.skip = true;
+        // la copia sparisce nello stesso istante in cui compare l'argomento vero (prima restavano tutti e due per un attimo:
+        // i riquadri gialli semitrasparenti si sommavano e lampeggiavano)
+        const fine = () => { if (g === gg) clean(); };
+        if (window.QP_SOFT){ QP_SOFT.skip = true; QP_SOFT.after = fine; }
         location.hash = pk.n.id;
-        // il nuovo argomento è già al suo posto: il velo sparisce subito dopo
-        requestAnimationFrame(() => requestAnimationFrame(() => { if (g === gg) clean(); }));
+        setTimeout(fine, 400);
       }, dur);
     } else {
       gg.a.style.transform = 'translate3d(0,0,0)'; gg.a.style.opacity = '1';

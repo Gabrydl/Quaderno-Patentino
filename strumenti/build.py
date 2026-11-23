@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.07.05 · 23/11/2026'
+VER = '1.07.06 · 23/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()

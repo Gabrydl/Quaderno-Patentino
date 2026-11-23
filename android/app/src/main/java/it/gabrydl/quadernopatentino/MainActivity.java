@@ -97,6 +97,7 @@ public class MainActivity extends Activity {
 
         loader = new WebViewAssetLoader.Builder()
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/offline/", new WebViewAssetLoader.InternalStoragePathHandler(this, dirAudio()))
                 .build();
 
         WebSettings s = web.getSettings();
@@ -245,6 +246,58 @@ public class MainActivity extends Activity {
 
     // ---------- colore barre ----------
     class Ponte {
+        // ---------- audio delle lezioni scaricati dall'app (il sito degli audio non permette il download dal browser) ----------
+        @JavascriptInterface
+        public String audioScaricati() {
+            JSONArray out = new JSONArray();
+            android.content.SharedPreferences sp = getSharedPreferences("audio", MODE_PRIVATE);
+            for (java.util.Map.Entry<String, ?> e : sp.getAll().entrySet()) {
+                File f = new File(dirAudio(), String.valueOf(e.getValue()));
+                if (!f.exists()) continue;
+                try { out.put(new JSONObject().put("url", e.getKey()).put("file", f.getName()).put("size", f.length())); } catch (Exception ignored) { }
+            }
+            return out.toString();
+        }
+
+        @JavascriptInterface
+        public void scaricaAudio(String url) {
+            new Thread(() -> {
+                boolean ok = false;
+                try {
+                    String nome = nomeAudio(url);
+                    File tmp = new File(dirAudio(), nome + ".part"), f = new File(dirAudio(), nome);
+                    HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+                    c.setInstanceFollowRedirects(true); c.setConnectTimeout(15000); c.setReadTimeout(30000);
+                    c.setRequestProperty("User-Agent", "QuadernoApp");
+                    if (c.getResponseCode() / 100 != 2) throw new Exception("HTTP " + c.getResponseCode());
+                    try (InputStream in = c.getInputStream(); OutputStream out = new FileOutputStream(tmp)) {
+                        byte[] buf = new byte[64 * 1024]; int n;
+                        while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+                    }
+                    if (tmp.length() < 1024 || !tmp.renameTo(f)) throw new Exception("file");
+                    getSharedPreferences("audio", MODE_PRIVATE).edit().putString(url, nome).apply();
+                    ok = true;
+                } catch (Exception ignored) { }
+                final boolean fine = ok;
+                ui.post(() -> web.evaluateJavascript("window.QPA_FATTO && QPA_FATTO(" + JSONObject.quote(url) + "," + fine + ")", null));
+            }).start();
+        }
+
+        @JavascriptInterface
+        public void togliAudio(String url) {
+            android.content.SharedPreferences sp = getSharedPreferences("audio", MODE_PRIVATE);
+            String nome = sp.getString(url, null);
+            if (nome != null) new File(dirAudio(), nome).delete();
+            sp.edit().remove(url).apply();
+        }
+
+        @JavascriptInterface
+        public void svuotaAudio() {
+            File[] fs = dirAudio().listFiles();
+            if (fs != null) for (File f : fs) f.delete();
+            getSharedPreferences("audio", MODE_PRIVATE).edit().clear().apply();
+        }
+
         @JavascriptInterface
         public void aggiorna() { String u = updUrl; if (u != null) ui.post(() -> scarica(u)); }
 
@@ -387,6 +440,15 @@ public class MainActivity extends Activity {
         i.setDataAndType(u, "application/vnd.android.package-archive");
         i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
         try { startActivity(i); } catch (Exception e) { Toast.makeText(this, "Impossibile avviare l'installazione", Toast.LENGTH_LONG).show(); }
+    }
+
+    File dirAudio() { File d = new File(getFilesDir(), "audio"); d.mkdirs(); return d; }
+
+    static String nomeAudio(String url) throws Exception {
+        java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-1");
+        StringBuilder sb = new StringBuilder();
+        for (byte b : md.digest(url.getBytes("UTF-8"))) sb.append(String.format("%02x", b));
+        return sb + ".mp4";
     }
 
     static String leggi(InputStream in) throws Exception {

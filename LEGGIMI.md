@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.07.05 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.07.06 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -65,6 +65,12 @@ tolleranza 1° da confermare col professore. Mancano l'es. 3 (λ tagliata) e gli
 ## Carta sinottica completa (archiviata)
 Dalla 1.06.00 la «Carta sinottica: esempio completo» non è più nell'app (restano le carte reali con le foto, «Fenomeni della carta sinottica» e
 «Modello di stazione»). Il codice è tutto in `strumenti/sinottica.html`: per rimetterla basta `CARTA_COMPLETA = True` in `build.py`.
+
+## Audio scaricati per l'offline
+Gli audio stanno sul vecchio artefatto (`AUDIO_ORIGIN` in build.py), che non permette di scaricarli dal browser (CORS): per questo dalla 1.07.06
+**nell'APK li scarica l'app** (`QPApp.scaricaAudio/audioScaricati/togliAudio/svuotaAudio` in MainActivity.java, file in `files/audio/`,
+serviti alla pagina da `https://appassets.androidplatform.net/offline/…`). Dal sito la domanda «Scaricare…?» compare solo se il server
+degli audio permette il download. Elenco con cestino in «Il tuo account» → Audio scaricati.
 
 ## Aggiornamento dell'APK
 All'apertura l'APK controlla l'ultima Release su GitHub; se è più nuova chiama `QP_UPD()` nella pagina (`strumenti/app/aggiorna.js`):
