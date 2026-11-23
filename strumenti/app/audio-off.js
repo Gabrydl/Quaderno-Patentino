@@ -2,8 +2,9 @@
 // Le lezioni scaricate stanno nella Cache del browser/app ('qp-audio-off') e si ascoltano anche senza rete.
 // Dalla 1.07.07 gli audio si ascoltano da GitHub Pages (repository Quaderno-Audio), che permette di saltare a qualsiasi minuto
 // (richieste Range). Il vecchio indirizzo dell'artefatto (data-src) resta il "nome" della lezione: le lezioni già scaricate restano valide.
-window.QP_AUD_BASE = 'https://gabrydl.github.io/Quaderno-Audio/a/';
-window.QP_AUD = u => { const m = /^https:\/\/[^/]+\.claudeusercontent\.com\/_blob\/([0-9a-f]+)$/.exec(u || ''); return m ? QP_AUD_BASE + m[1] + '.m4a' : u; };
+// Gli audio sono divisi in due repository (max 1 GB per sito Pages): id che iniziano con 0–7 in Quaderno-Audio-1, 8–f in Quaderno-Audio-2.
+window.QP_AUD_BASE = 'https://gabrydl.github.io/Quaderno-Audio-';
+window.QP_AUD = u => { const m = /^https:\/\/[^/]+\.claudeusercontent\.com\/_blob\/([0-9a-f]+)$/.exec(u || ''); return m ? QP_AUD_BASE + ('01234567'.indexOf(m[1][0]) >= 0 ? '1' : '2') + '/a/' + m[1] + '.m4a' : u; };
 (function(){
   const CN = 'qp-audio-off', HAS = new Set(), ASKED = new Set();
   // nell'APK gli audio li scarica l'app (Java): il sito degli audio non permette di scaricarli dal browser (CORS)
