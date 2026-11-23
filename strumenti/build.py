@@ -146,6 +146,15 @@ s = sub1(s, "  const MEM = {}; let memTry = null;", "  const MEM = {}; let memTr
 s = sub1(s, "'In questa prova grafica sono caricati solo alcuni audio (es. Sfera celeste, Effetto squat, Williamson, Radar, GPS).'",
          "'Audio non disponibile: serve la connessione. Le lezioni scaricate per l\\'offline si ascoltano anche senza rete.'")
 
+# --- 1.07.07: audio in streaming da GitHub Pages (si può saltare a qualsiasi minuto), vedi QP_AUD in app/audio-off.js ---
+s = sub1(s, "    if (!s || s.indexOf('local:') !== 0) return s;\n", "    if (!s || s.indexOf('local:') !== 0) return window.QP_AUD ? QP_AUD(s) : s;\n")
+s = sub1(s, "    fetch(t.src).then(r => {", "    fetch(window.QP_AUD ? QP_AUD(t.src) : t.src).then(r => {")
+# se il file su GitHub Pages non risponde, si riprova una volta dal vecchio indirizzo
+s = sub1(s, "  au.addEventListener('error', () => { if (au.getAttribute('src')) retryOrFail(); });",
+  "  au.addEventListener('error', () => { const t = curId && tracks[curId], a = au.getAttribute('src');\n"
+  "    if (t && a && window.QP_AUD_BASE && a.indexOf(QP_AUD_BASE) === 0 && t.src && t.src !== a){ const pos = au.currentTime; au.src = t.src; au.playbackRate = speed; if (pos > 1) au.addEventListener('loadedmetadata', () => { au.currentTime = pos; paint(); }, {once: true}); play(); return; }\n"
+  "    if (a) retryOrFail(); });")
+
 # --- schermata d'accesso e pannelli ---
 tos = rd('app/tos.html')
 ah = rd('app/auth.html').replace('__ROSE__', rd('app/rose.txt')).replace('__TOS__', tos).replace('__VER__', VER)
@@ -168,6 +177,12 @@ k = s.rindex('</body>')
 s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + rd('app/fluido.js') + '\n' + rd('app/swipe.js') + '\n' + rd('app/aggiorna.js') + '\n' + rd('sinottiche/sgal.js') + '\n' + sw + '\n</script>\n' + s[k:]
 
 assert 'Prova grafica' not in s
+# --- 1.07.07: i riquadri interattivi «Prova tu» vanno in fondo all'argomento (dopo il testo, prima di «Segna come letto») ---
+_live = re.compile(r'<div class="live"[^>]*data-live="(?!\.\.\.)[^"]+"[^>]*></div>')
+def _in_fondo(m):
+    a = m.group(0); ls = _live.findall(a)
+    return a if not ls else _live.sub('', a)[:-len('</article>')] + '\n' + '\n'.join(ls) + '\n</article>'
+s = re.sub(r'<article class="topic"[\s\S]*?</article>', _in_fondo, s)
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf8').write(s)
 print('index.html', len(s))

@@ -260,13 +260,17 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void scaricaAudio(String url) {
+        public void scaricaAudio(String url) { scaricaAudioDa(url, url); }
+
+        // 1.07.07: "url" resta il nome della lezione (vecchio indirizzo), "da" è l'indirizzo da cui scaricarla (GitHub Pages)
+        @JavascriptInterface
+        public void scaricaAudioDa(String url, String da) {
             new Thread(() -> {
                 boolean ok = false;
                 try {
                     String nome = nomeAudio(url);
                     File tmp = new File(dirAudio(), nome + ".part"), f = new File(dirAudio(), nome);
-                    HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+                    HttpURLConnection c = (HttpURLConnection) new URL(da).openConnection();
                     c.setInstanceFollowRedirects(true); c.setConnectTimeout(15000); c.setReadTimeout(30000);
                     c.setRequestProperty("User-Agent", "QuadernoApp");
                     if (c.getResponseCode() / 100 != 2) throw new Exception("HTTP " + c.getResponseCode());

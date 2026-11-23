@@ -1,5 +1,9 @@
 // Audio offline: ogni lezione parte in streaming; alla prima riproduzione un piccolo avviso chiede se scaricarla.
 // Le lezioni scaricate stanno nella Cache del browser/app ('qp-audio-off') e si ascoltano anche senza rete.
+// Dalla 1.07.07 gli audio si ascoltano da GitHub Pages (repository Quaderno-Audio), che permette di saltare a qualsiasi minuto
+// (richieste Range). Il vecchio indirizzo dell'artefatto (data-src) resta il "nome" della lezione: le lezioni già scaricate restano valide.
+window.QP_AUD_BASE = 'https://gabrydl.github.io/Quaderno-Audio/a/';
+window.QP_AUD = u => { const m = /^https:\/\/[^/]+\.claudeusercontent\.com\/_blob\/([0-9a-f]+)$/.exec(u || ''); return m ? QP_AUD_BASE + m[1] + '.m4a' : u; };
 (function(){
   const CN = 'qp-audio-off', HAS = new Set(), ASKED = new Set();
   // nell'APK gli audio li scarica l'app (Java): il sito degli audio non permette di scaricarli dal browser (CORS)
@@ -9,7 +13,7 @@
   const natLista = () => { try { return JSON.parse(QPApp.audioScaricati() || '[]'); } catch (e) { return []; } };
   const ATTESE = {};
   let corsP = null;
-  const corsOk = src => corsP || (corsP = fetch(src, { method: 'HEAD', mode: 'cors', credentials: 'omit' }).then(r => r.ok).catch(() => false));
+  const corsOk = src => corsP || (corsP = fetch(QP_AUD(src), { method: 'HEAD', mode: 'cors', credentials: 'omit' }).then(r => r.ok).catch(() => false));
   window.QPA_FATTO = (url, fatto) => { const f = ATTESE[url]; delete ATTESE[url]; if (f) f(fatto); };
   const abs = u => { try { return new URL(u, location.href).href; } catch (e) { return u; } };
   const ls = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
@@ -20,13 +24,13 @@
   async function scarica(src, title){
     if (NAT){
       const u = abs(src);
-      const fatto = await new Promise(res => { ATTESE[u] = res; try { QPApp.scaricaAudio(u); } catch (e) { res(false); } });
+      const fatto = await new Promise(res => { ATTESE[u] = res; try { if (typeof QPApp.scaricaAudioDa === 'function') QPApp.scaricaAudioDa(u, QP_AUD(u)); else QPApp.scaricaAudio(u); } catch (e) { res(false); } });
       if (fatto){ natLista().forEach(x => { HAS.add(x.url); FILE[x.url] = x.file; }); toast('Scaricata: ' + title); document.dispatchEvent(new CustomEvent('qp-audio-off')); }
       else toast('Download non riuscito: controlla la connessione');
       return;
     }
     try {
-      const r = await fetch(src, { credentials: 'omit' }); if (!r.ok) throw new Error(r.status);
+      const r = await fetch(QP_AUD(src), { credentials: 'omit' }); if (!r.ok) throw new Error(r.status);
       const c = await caches.open(CN); await c.put(abs(src), r); HAS.add(abs(src));
       if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
       toast('Scaricata: ' + title);
