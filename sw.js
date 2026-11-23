@@ -3,7 +3,7 @@
 const VERSIONE = '1.05.00';
 const CACHE = 'qp-' + VERSIONE;
 const FILE = ['./', 'index.html', 'manifest.webmanifest', 'icone/icona-192.png', 'icone/icona-512.png',
-  'esercizi/assetto.html', 'esercizi/maree.html', 'esercizi/carteggio.html', 'frasario/', 'frasario/dati.json'];
+  'esercizi/assetto.html', 'esercizi/maree.html', 'esercizi/bussole.html', 'esercizi/carteggio.html', 'frasario/', 'frasario/dati.json'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('qp-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

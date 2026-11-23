@@ -1,0 +1,120 @@
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Controllo bussole <span class="ver" title="Versione">v1</span></h1>
+      <p>Verifica di girobussola e bussola magnetica con l'azimut del Sole o di un pianeta, passo per passo.</p>
+    </div>
+    <div class="ship num">effemeridi calcolate<br>per qualsiasi <b>anno</b></div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sezioni">
+    <button class="tab" role="tab" id="tab-es" aria-controls="sec-es" aria-selected="true" data-sec="es"><span class="lg">Esercizi del libro</span><span class="sm">Esercizi</span></button>
+    <button class="tab" role="tab" id="tab-calc" aria-controls="sec-calc" aria-selected="false" data-sec="calc"><span class="lg">Calcolo</span><span class="sm">Calcolo</span></button>
+    <button class="tab" role="tab" id="tab-teo" aria-controls="sec-teo" aria-selected="false" data-sec="teo"><span class="lg">Come si fa</span><span class="sm">Come si fa</span></button>
+  </nav>
+
+  <section id="sec-es" role="tabpanel" aria-labelledby="tab-es">
+    <p class="esintro">Esercizi del libro (Modulo 1, «Navigazione astronomica», Controllo delle bussole). Gli esercizi 1–6 usano le effemeridi del 2015, l'anno degli estratti del libro; dal 7 al 10 la declinazione è data dal testo. Ogni soluzione comincia con l'elenco di cosa fare, poi i calcoli.</p>
+    <div id="es-list"></div>
+  </section>
+
+  <section id="sec-calc" role="tabpanel" aria-labelledby="tab-calc" hidden>
+    <div class="grid">
+      <form class="panel inputs" id="f-b" autocomplete="off" novalidate>
+        <h2>Osservazione</h2>
+        <div class="field"><label for="b-corpo">Astro</label><div class="inbox"><select id="b-corpo"><option>Sole</option><option>Venere</option><option>Marte</option><option>Giove</option><option>Saturno</option></select></div></div>
+        <div class="seg mb wrap4" role="radiogroup" aria-label="Momento del rilevamento">
+          <label><input type="radio" name="bev" value="sorgere" checked>al sorgere</label>
+          <label><input type="radio" name="bev" value="tramonto">al tramonto</label>
+          <label><input type="radio" name="bev" value="istante">a un istante (crepuscolo)</label>
+        </div>
+        <div class="seg mb" role="radiogroup" aria-label="Crepuscolo" id="w-cre" hidden>
+          <label><input type="radio" name="bcre" value="mattino">crepuscolo mattutino</label>
+          <label><input type="radio" name="bcre" value="sera" checked>crepuscolo serale</label>
+        </div>
+        <div class="seg mb" role="radiogroup" aria-label="Da dove prendere la declinazione" id="w-src">
+          <label><input type="radio" name="bsrc" value="calc" checked>δ dalle effemeridi</label>
+          <label><input type="radio" name="bsrc" value="testo">δ data dal testo</label>
+        </div>
+        <fieldset id="w-calc"><legend>Data e ora</legend>
+          <div class="row3">
+            <div class="field"><label for="b-g">Giorno</label><div class="inbox"><input id="b-g" inputmode="numeric" value="18"></div></div>
+            <div class="field"><label for="b-m">Mese</label><div class="inbox"><input id="b-m" inputmode="numeric" value="4"></div></div>
+            <div class="field"><label for="b-y">Anno</label><div class="inbox"><input id="b-y" inputmode="numeric" value="2015"></div></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="b-tc">T<sub>c</sub> <small>cronometro</small></label><div class="inbox"><input id="b-tc" inputmode="numeric" value="11:05:10"><span>h:m:s</span></div></div>
+            <div class="field"><label for="b-k">K <small>correzione</small></label><div class="inbox"><input id="b-k" value="-1:05"><span>m:s</span></div></div>
+          </div>
+          <p class="hint">Data locale dell'osservazione. K col segno: −1:05 = −1<sup>m</sup>5<sup>s</sup>.</p>
+        </fieldset>
+        <fieldset id="w-testo" hidden><legend>Declinazione dell'astro</legend>
+          <div class="row3">
+            <div class="field"><label for="b-dg">Gradi</label><div class="inbox"><input id="b-dg" inputmode="numeric"><span>°</span></div></div>
+            <div class="field"><label for="b-dp">Primi</label><div class="inbox"><input id="b-dp" inputmode="decimal"><span>′</span></div></div>
+            <div class="seg ns" role="radiogroup" aria-label="Nord o Sud"><label><input type="radio" name="bdns" value="N" checked>N</label><label><input type="radio" name="bdns" value="S">S</label></div>
+          </div>
+        </fieldset>
+        <fieldset><legend>Posizione</legend>
+          <div class="row3">
+            <div class="field"><label for="b-fg">φ gradi</label><div class="inbox"><input id="b-fg" inputmode="numeric" value="15"><span>°</span></div></div>
+            <div class="field"><label for="b-fp">primi</label><div class="inbox"><input id="b-fp" inputmode="decimal" value="02,8"><span>′</span></div></div>
+            <div class="seg ns" role="radiogroup" aria-label="Nord o Sud"><label><input type="radio" name="bfns" value="N">N</label><label><input type="radio" name="bfns" value="S" checked>S</label></div>
+          </div>
+          <div class="row3" id="w-lam">
+            <div class="field"><label for="b-lg">λ gradi</label><div class="inbox"><input id="b-lg" inputmode="numeric" value="105"><span>°</span></div></div>
+            <div class="field"><label for="b-lp">primi</label><div class="inbox"><input id="b-lp" inputmode="decimal" value="43,7"><span>′</span></div></div>
+            <div class="seg ns" role="radiogroup" aria-label="Est o Ovest"><label><input type="radio" name="blew" value="E" checked>E</label><label><input type="radio" name="blew" value="W">W</label></div>
+          </div>
+        </fieldset>
+        <fieldset><legend>Rilevamenti</legend>
+          <div class="row2">
+            <div class="field"><label for="b-ag">a<sub>g</sub> <small>girobussola</small></label><div class="inbox"><input id="b-ag" inputmode="decimal" value="78,7"><span>°</span></div></div>
+            <div class="field"><label for="b-ab">a<sub>b</sub> <small>magnetica</small></label><div class="inbox"><input id="b-ab" inputmode="decimal"><span>°</span></div></div>
+          </div>
+          <p class="hint">Lascia vuota la bussola che non è stata usata.</p>
+        </fieldset>
+        <fieldset id="w-mag"><legend>Bussola magnetica</legend>
+          <div class="row2">
+            <div class="field"><label for="b-d">d <small>declinazione magnetica</small></label><div class="inbox"><input id="b-d" inputmode="decimal"><span>°</span></div></div>
+            <div class="seg ns" role="radiogroup" aria-label="Est o Ovest"><label><input type="radio" name="bdew" value="E" checked>E</label><label><input type="radio" name="bdew" value="W">W</label></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="b-dev">δ<sub>b</sub> <small>deviazione (tabella)</small></label><div class="inbox"><input id="b-dev" inputmode="decimal"><span>°</span></div></div>
+            <div class="seg ns" role="radiogroup" aria-label="Est o Ovest"><label><input type="radio" name="bvew" value="E" checked>E</label><label><input type="radio" name="bvew" value="W">W</label></div>
+          </div>
+        </fieldset>
+        <fieldset id="w-gyro"><legend>Moto della nave (girobussola)</legend>
+          <div class="row2">
+            <div class="field"><label for="b-rv">R<sub>v</sub></label><div class="inbox"><input id="b-rv" inputmode="decimal" value="126"><span>°</span></div></div>
+            <div class="field"><label for="b-v">V</label><div class="inbox"><input id="b-v" inputmode="decimal" value="14"><span>kts</span></div></div>
+          </div>
+          <label class="opt"><input type="checkbox" id="b-auto"><span>Gyro munita di autocorrettore (niente errore di velocità)</span></label>
+        </fieldset>
+        <div class="btns"><button type="button" class="btn" id="b-reset">Ripristina esempio</button></div>
+      </form>
+      <div class="results" id="r-b" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="sec-teo" role="tabpanel" aria-labelledby="tab-teo" hidden>
+    <div class="teo">
+      <article class="panel"><h2>Cosa fare, in ordine</h2>
+        <ol class="todo">
+          <li><b>Tempo.</b> T<sub>m</sub>Gr = T<sub>c</sub> + K. Il cronometro segna 12 ore: con la longitudine si capisce se è mattina o sera a Greenwich e se la data di Greenwich è quella locale, il giorno prima o il giorno dopo.</li>
+          <li><b>Effemeridi.</b> Si entra con la data e l'ora intera di Greenwich, si legge la declinazione δ (e per un pianeta l'angolo orario t<sub>Gr</sub>) e si interpola per minuti e secondi. Negli esercizi con δ data dal testo questo passo non serve.</li>
+          <li><b>Azimut vero.</b> Al sorgere o al tramonto: formula dell'ampiezza. A un istante qualsiasi (pianeti al crepuscolo): angolo orario locale t = t<sub>Gr</sub> + λ (λ Est positiva, Ovest negativa) e formula dell'azimut.</li>
+          <li><b>Girobussola.</b> Errore e<sub>g</sub> = Z<sub>v</sub> − a<sub>g</sub>. Se la gyro non ha l'autocorrettore si confronta con l'errore di velocità dovuto a R<sub>v</sub> e V.</li>
+          <li><b>Bussola magnetica.</b> Variazione Δ = Z<sub>v</sub> − a<sub>b</sub>; deviazione trovata δ<sub>b</sub> = Δ − d; si confronta con quella della tabella.</li>
+          <li><b>Giudizio.</b> Se la differenza è piccola la bussola funziona bene; altrimenti va controllata.</li>
+        </ol>
+      </article>
+      <article class="panel"><h2>Formule</h2><div id="teo-f"></div>
+        <p>Segni: Nord, Est e gli errori verso Est positivi; Sud, Ovest e gli errori verso Ovest negativi. Errore Est: la bussola segna meno del vero.</p>
+      </article>
+      <article class="panel"><h2>Le effemeridi dell'app</h2>
+        <p>Declinazione e angolo orario sono calcolati per la data e l'anno scelti (libreria Astronomy Engine, errore massimo 1′). Sono le stesse grandezze delle Effemeridi Nautiche italiane e del Nautical Almanac: possono differire di qualche decimo di primo, che sull'azimut non si vede al decimo di grado.</p>
+      </article>
+    </div>
+  </section>
+</div>
