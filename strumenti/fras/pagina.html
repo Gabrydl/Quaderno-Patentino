@@ -80,6 +80,11 @@ mark{background:var(--hit);color:inherit;border-radius:3px;padding:0 1px}
 .btn.ghost{background:var(--chip);color:var(--ink)}
 .out{font-size:1.06rem;line-height:1.5;white-space:pre-wrap;margin:0}
 .muted{color:var(--muted);font-size:.9rem;margin:0}
+.out.bozza{color:var(--muted);font-style:italic}
+.gem-st{margin-top:6px;font-size:.85rem;display:flex;align-items:center;gap:7px}
+.gem-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:gemp 1s ease-in-out infinite alternate;flex:none}
+@keyframes gemp{from{opacity:.25}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.gem-dot{animation:none}}
 .err{color:var(--red);font-weight:600;font-size:.92rem;margin:0}
 .sec h3{margin:18px 0 8px;font-size:1.12rem;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .sec h3 .ref{font:500 .78rem/1 var(--f-mono);color:var(--blue)}
@@ -270,17 +275,34 @@ mark{background:var(--hit);color:inherit;border-radius:3px;padding:0 1px}
     }
     return s.at;
   }
+  // Due richieste insieme: la bozza veloce (flash-lite, ~1 s) compare subito, poi la sostituisce la traduzione
+  // accurata (modelli flash con ragionamento). Se quella accurata non arriva resta la bozza, segnata come tale.
   async function gemini(){
-    const b = $('#gemGo'), out = $('#gemOut'), t = q.value.trim();
-    b.disabled = true; b.textContent = 'Traduco…'; out.innerHTML = '';
+    const b = $('#gemGo'), out = $('#gemOut'), t = q.value.trim(), lingua = dir;
+    b.disabled = true; b.textContent = 'Traduco…'; out.innerHTML = '<p class="muted">Traduco…</p>';
+    let fatto = false, bozza = '';
+    const termini = tr => {
+      const l = GLOS.filter(g => !g.x && g._e.length > 2 && norm(lingua === 'en' ? t : tr).includes(g._e)).slice(0, 12);
+      return l.length ? '<div class="lbl" style="margin-top:8px">Termini del glossario nella frase</div>' + l.map(x => voce(x, '')).join('') : '';
+    };
     try {
-      const r = await fetch(SB + '/functions/v1/traduci', { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + await token(), 'Content-Type': 'application/json' }, body: JSON.stringify({ testo: t, da: dir }) });
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.messaggio || 'Gemini non risponde: riprova.');
-      out.innerHTML = '<p class="out">' + esc(j.traduzione) + '</p>';
-      const tr = GLOS.filter(g => !g.x && g._e.length > 2 && norm(dir === 'en' ? t : j.traduzione).includes(g._e)).slice(0, 12);
-      if (tr.length) out.innerHTML += '<div class="lbl" style="margin-top:8px">Termini del glossario nella frase</div>' + tr.map(x => voce(x, '')).join('');
-    } catch (e) { out.innerHTML = '<p class="err">' + esc(e.message === 'Failed to fetch' ? 'Gemini non raggiungibile in questo momento: riprova più tardi.' : e.message) + '</p>'; }
+      const tk = await token();
+      const chiedi = modo => fetch(SB + '/functions/v1/traduci', { method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + tk, 'Content-Type': 'application/json' }, body: JSON.stringify({ testo: t, da: lingua, modo }) })
+        .then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.messaggio || 'Gemini non risponde: riprova.'); return j.traduzione; });
+      chiedi('veloce').then(tr => {
+        if (fatto) return; bozza = tr;
+        out.innerHTML = '<p class="out bozza">' + esc(tr) + '</p><p class="muted gem-st"><span class="gem-dot"></span>Bozza veloce · controllo i termini nautici…</p>';
+      }).catch(() => {});
+      const tr = await chiedi('preciso');
+      fatto = true;
+      out.innerHTML = '<p class="out">' + esc(tr) + '</p>' + termini(tr);
+    } catch (e) {
+      fatto = true;
+      const msg = esc(e.message === 'Failed to fetch' ? 'Gemini non raggiungibile in questo momento: riprova più tardi.' : e.message);
+      out.innerHTML = bozza
+        ? '<p class="out">' + esc(bozza) + '</p><p class="muted">Bozza veloce: la traduzione accurata non è arrivata (' + msg + ')</p>' + termini(bozza)
+        : '<p class="err">' + msg + '</p>';
+    }
     finally { b.disabled = false; b.textContent = 'Traduci con Gemini'; }
   }
 

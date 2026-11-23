@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.03.02 (22/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.04.01 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -44,6 +44,9 @@ Il testo inglese viene dal PDF "frasi inglesi" (Camogli, IMO Res. A.918(22)): `s
 `pdftotext -layout`, da cui `parse_smcp.py` crea `smcp_en.json` e `glos_parse.py` crea `glos_smcp_en.json`. Il build usa
 `build_dati.py` (2.265 frasi, deve dire "mancano 0"); se `smcp_en.json` manca ripiega su `build_parziale.py`.
 La funzione Supabase `traduci` (sorgente `strumenti/fras/funzione/index.ts`) accetta il nuovo sito dal 22/11/2026.
+Dal 23/11/2026 la traduzione è in due passi: l'app chiede insieme `modo: "veloce"` (flash-lite senza ragionamento, bozza
+in ~1 s) e `modo: "preciso"` (i 4 flash più recenti con ragionamento "low", in gara: vince il primo che risponde, così un
+modello sovraccarico non fa aspettare). La bozza compare subito e viene sostituita dalla traduzione accurata.
 
 ## Da recuperare
 - Foto del professore come sfondo della pagina iniziale.

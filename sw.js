@@ -1,6 +1,6 @@
 // Quaderno Patentino: le pagine dell'app funzionano anche senza rete.
 // Rete per prima (4 s), poi la copia salvata. Supabase e audio non passano di qui.
-const VERSIONE = '1.04.00';
+const VERSIONE = '1.04.01';
 const CACHE = 'qp-' + VERSIONE;
 const FILE = ['./', 'index.html', 'manifest.webmanifest', 'icone/icona-192.png', 'icone/icona-512.png',
   'esercizi/assetto.html', 'esercizi/carteggio.html', 'frasario/', 'frasario/dati.json'];

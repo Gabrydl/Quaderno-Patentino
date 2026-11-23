@@ -1,6 +1,6 @@
 // Funzione "traduci" del Quaderno Patentino: traduzione tecnica di inglese nautico con Gemini.
 // - Solo per chi ha fatto l'accesso nell'app (token dell'utente verificato su Supabase Auth).
-// - Massimo 300 caratteri per richiesta, massimo 30 richieste ogni 10 minuti per utente.
+// - Massimo 300 caratteri per richiesta, massimo 60 richieste ogni 10 minuti per utente.
 // - La chiave resta qui, nel segreto GEMINI_KEY: l'app non la vede mai.
 // - GEMINI_PER_TUTTI = true: la usano tutti gli account registrati (scelta dell'utente, 26/10/2026).
 //   Con false solo gli account con app_metadata.ruolo = 'superadmin' o 'admin' oppure app_metadata.gemini = true.
@@ -10,13 +10,17 @@
 // - I termini del glossario del sito (frasario/deepl_it_en.tsv e deepl_en_it.tsv) presenti nella frase vengono passati a Gemini.
 // - GET ?stato=1 : controllo (chiave presente, modelli) senza tradurre nulla.
 // - POST {controllo: true} : dice all'app se l'account può usare Gemini.
+// 23/11/2026: più veloce. {modo: "veloce"} = bozza in ~1 s con i modelli flash-lite senza ragionamento;
+//   {modo: "preciso"} (predefinito) = i modelli flash con ragionamento "low", interrogati insieme: vince il primo che
+//   risponde, così un modello sovraccarico (503) non fa più aspettare. Limite per utente portato a 60 richieste ogni
+//   10 minuti, perché l'app ne fa due per traduzione.
 // 22/11/2026: nuovo sito (Gabrydl/Quaderno-Patentino su GitHub Pages) tra le origini ammesse e come fonte del glossario.
 const SITO = "https://gabrydl.github.io/Quaderno-Patentino/frasario/";
 const GEM = "https://generativelanguage.googleapis.com/v1beta";
 
 const GEMINI_PER_TUTTI = true;   // false = solo admin e account abilitati uno per uno
 const MAX_CARATTERI = 300;
-const LIMITE = 30, FINESTRA_MS = 10 * 60 * 1000;
+const LIMITE = 60, FINESTRA_MS = 10 * 60 * 1000;
 const ORIGINI = [/^https:\/\/gabrydl\.github\.io$/, /^https:\/\/gabrydl99\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^https:\/\/appassets\.androidplatform\.net$/];
 
 const gkey = () => Deno.env.get("GEMINI_KEY") ?? "";
@@ -110,33 +114,76 @@ function istruzioni(da: string, voci: [string, string][]) {
   ].filter(Boolean).join("\n");
 }
 
-async function gemini(testo: string, da: string): Promise<{ ok: true; testo: string; modello: string } | { ok: false; stato: number; messaggio: string }> {
-  const corpo = JSON.stringify({
+type Esito = { ok: true; testo: string; modello: string } | { ok: false; stato: number };
+
+/* ragionamento: i modelli Gemini 3 usano thinkingLevel, i 2.x thinkingBudget */
+function ragionamento(m: string, livello: "minimal" | "low") {
+  if (/gemini-[3-9]/.test(m)) return { thinkingLevel: livello };
+  return { thinkingBudget: livello === "minimal" ? 0 : 512 };
+}
+
+async function prova(m: string, corpo: Record<string, unknown>, livello: "minimal" | "low", segnale: AbortSignal): Promise<Esito> {
+  const invia = (lv: "minimal" | "low") => fetch(`${GEM}/models/${m}:generateContent`, {
+    method: "POST", signal: AbortSignal.any([segnale, AbortSignal.timeout(lv === "minimal" ? 8000 : 15000)]),
+    headers: { "x-goog-api-key": gkey(), "Content-Type": "application/json" },
+    body: JSON.stringify({ ...corpo, generationConfig: { temperature: 0.2, maxOutputTokens: 2048, thinkingConfig: ragionamento(m, lv) } }),
+  });
+  let r: Response;
+  try {
+    r = await invia(livello);
+    if (r.status === 400 && livello === "minimal") {   // alcuni modelli non accettano "minimal": si riprova con "low"
+      const t = await r.text();
+      if (/thinking/i.test(t)) r = await invia("low"); else { console.error("gemini", m, 400, t.slice(0, 300)); return { ok: false, stato: 400 }; }
+    }
+  } catch (e) {
+    if (!segnale.aborted) { console.error("gemini", m, "tempo scaduto"); fermo.set(m, Date.now() + 300 * 1000); }
+    return { ok: false, stato: 504 };
+  }
+  if ([429, 503, 404, 500].includes(r.status)) {   // al limite, occupato o ritirato: lo si salta per un po'
+    console.error("gemini", m, r.status);
+    fermo.set(m, Date.now() + (r.status === 404 ? 24 * 3600 : r.status === 429 ? 120 : 300) * 1000);
+    return { ok: false, stato: r.status };
+  }
+  if (!r.ok) { console.error("gemini", m, r.status, (await r.text()).slice(0, 300)); return { ok: false, stato: r.status }; }
+  const j = await r.json();
+  const parti: { text?: string; thought?: boolean }[] = j.candidates?.[0]?.content?.parts ?? [];
+  const out = parti.filter((p) => !p.thought).map((p) => p.text ?? "").join("").trim();
+  if (!out) { console.error("gemini vuoto", m, JSON.stringify(j).slice(0, 300)); return { ok: false, stato: 502 }; }
+  return { ok: true, testo: out, modello: m };
+}
+
+/* gara: gli stessi dati a più modelli insieme; vince il primo che risponde bene, gli altri vengono interrotti */
+async function gara(nomi: string[], corpo: Record<string, unknown>, livello: "minimal" | "low"): Promise<Esito[]> {
+  const stop = new AbortController(), esiti: Esito[] = [];
+  return await new Promise((fine) => {
+    let rimasti = nomi.length;
+    if (!rimasti) return fine([]);
+    for (const m of nomi) prova(m, corpo, livello, stop.signal).then((e) => {
+      esiti.push(e);
+      if (e.ok) { stop.abort(); fine([e]); }
+      else if (--rimasti === 0) fine(esiti);
+    });
+  });
+}
+
+async function gemini(testo: string, da: string, veloce: boolean): Promise<{ ok: true; testo: string; modello: string } | { ok: false; stato: number; messaggio: string }> {
+  const corpo = {
     systemInstruction: { parts: [{ text: istruzioni(da, await termini(testo, da)) }] },
     contents: [{ role: "user", parts: [{ text: testo }] }],
-    generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
-  });
-  let limite = false;
+  };
   const tutti = await modelli(), lite = (n: string) => /lite/.test(n);
-  const prove = [...tutti.filter((n) => !lite(n)).slice(0, 2), ...tutti.filter(lite).slice(0, 2)];   // al massimo 2 flash, poi 2 flash-lite
-  for (const m of prove.length ? prove : tutti.slice(0, 4)) {
-    const r = await fetch(`${GEM}/models/${m}:generateContent`, {
-      method: "POST", headers: { "x-goog-api-key": gkey(), "Content-Type": "application/json" }, body: corpo,
-    });
-    if (r.status === 429 || r.status === 503 || r.status === 404 || r.status === 500) {   // occupato, al limite o ritirato: prova il prossimo
-      if (r.status === 429) limite = true;
-      console.error("gemini", m, r.status);
-      fermo.set(m, Date.now() + (r.status === 404 ? 24 * 3600 : 180) * 1000);
-      continue;
-    }
-    if (!r.ok) { console.error("gemini", m, r.status, await r.text()); return { ok: false, stato: 502, messaggio: "Gemini non risponde: riprova." }; }
-    const j = await r.json();
-    const parti: { text?: string; thought?: boolean }[] = j.candidates?.[0]?.content?.parts ?? [];
-    const out = parti.filter((p) => !p.thought).map((p) => p.text ?? "").join("").trim();
-    if (!out) { console.error("gemini vuoto", m, JSON.stringify(j).slice(0, 500)); continue; }
-    return { ok: true, testo: out, modello: m };
+  const flash = tutti.filter((n) => !lite(n)).slice(0, 4), leggeri = tutti.filter(lite).slice(0, 2);
+  const turni: [string[], "minimal" | "low"][] = veloce
+    ? [[leggeri, "minimal"], [flash.slice(0, 2), "minimal"]]
+    : [[flash, "low"], [leggeri, "low"]];
+  const esiti: Esito[] = [];
+  for (const [nomi, livello] of turni) {
+    const e = await gara(nomi, corpo, livello);
+    const vinto = e.find((x) => x.ok);
+    if (vinto && vinto.ok) return vinto;
+    esiti.push(...e);
   }
-  return limite
+  return esiti.some((e) => !e.ok && e.stato === 429)
     ? { ok: false, stato: 429, messaggio: "Limite gratuito di Gemini raggiunto: riprova tra un minuto." }
     : { ok: false, stato: 503, messaggio: "Gemini è molto occupato in questo momento: riprova tra poco." };
 }
@@ -150,7 +197,7 @@ Deno.serve(async (req) => {
   }
   if (req.method !== "POST") return json(req, { errore: "metodo" }, 405);
 
-  let corpo: { testo?: string; da?: string; controllo?: boolean };
+  let corpo: { testo?: string; da?: string; controllo?: boolean; modo?: string };
   try { corpo = await req.json(); } catch { return json(req, { errore: "formato" }, 400); }
 
   const ut = await utente(req);
@@ -165,7 +212,7 @@ Deno.serve(async (req) => {
   if (!testo) return json(req, { errore: "vuoto" }, 400);
   if (testo.length > MAX_CARATTERI) return json(req, { errore: "lungo", messaggio: `Massimo ${MAX_CARATTERI} caratteri.` }, 400);
 
-  const g = await gemini(testo, da);
+  const g = await gemini(testo, da, corpo.modo === "veloce");
   if (!g.ok) return json(req, { errore: "gemini", messaggio: g.messaggio }, g.stato);
-  return json(req, { traduzione: g.testo, da, a: da === "en" ? "it" : "en", modello: g.modello });
+  return json(req, { traduzione: g.testo, da, a: da === "en" ? "it" : "en", modello: g.modello, modo: corpo.modo === "veloce" ? "veloce" : "preciso" });
 });
