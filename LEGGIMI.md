@@ -11,6 +11,8 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
 - `index.html`: tutta l'app (generata, non modificarla a mano).
 - `sw.js`, `manifest.webmanifest`, `icone/`: installazione sul telefono e funzionamento senza rete.
 - `esercizi/`: Assetto e pescaggi, Maree, Controllo bussole, Carteggio con carta 5D (con tasto "Quaderno" e controllo dell'accesso).
+  `esercizi/sinottiche.html`: galleria di 15 carte sinottiche Met Office a colori, generata da `strumenti/sinottiche/galleria.html` con
+  `python3 -I strumenti/sinottiche/gen_sinottiche.py .` (riquadro in home e argomento "Carte sinottiche reali a colori" in Meteorologia).
   - Assetto e pescaggi: `strumenti/assetto.html` è la stessa pagina senza controllo dell'accesso; le modifiche vanno fatte a tutte e due.
     Dal 23/11/2026 ha anche gli esercizi di pag. 216 (4, 6–14, 16–18; il 5 e il 15 hanno T<sub>m</sub> sotto la tabella) e la scheda "Movimento zavorra".
   - Maree: sorgenti in `strumenti/maree/` (`corpo.html`, `maree.js`, `extra.css`); `python3 -I strumenti/maree/gen_maree.py .` crea

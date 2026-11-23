@@ -61,6 +61,16 @@ arts = [re.sub(r'<article class="topic" id="([^"]+)"[^>]*>', r'<article class="t
 arts = [x.replace('<figure class="fig ">', '<figure class="fig">') for x in arts]
 i = s.index('<article class="topic" id="meteo-simbologia-fronti"'); j = s.index('</article>', i) + len('</article>')
 s = s[:j] + '\n\n' + '\n\n'.join(arts) + s[j:]
+# --- carte sinottiche reali (galleria Met Office a colori, pagina a parte) ---
+REALI = ('<article class="topic" id="meteo-sinottiche-reali" data-ref="Esempio">\n'
+  '<h3>Carte sinottiche reali a colori<span class="pg">Esempio</span></h3>\n'
+  '<p>15 carte di <b>analisi</b> del Met Office ridisegnate a colori, a partire da quella del professore (06 UTC del 2 febbraio 2015). '
+  'Per ogni carta: data e ora, fenomeni, legenda dei simboli presenti e la spiegazione di ogni numero. Si scorrono con le frecce o col dito.</p>\n'
+  '<p><a href="esercizi/sinottiche.html" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;'
+  'background:var(--blue);color:var(--on-accent);font-weight:700;text-decoration:none">Apri le carte sinottiche reali</a></p>\n'
+  '</article>')
+i = s.index('<article class="topic" id="meteo-sinottica-esempio"')
+s = s[:i] + REALI + '\n\n' + s[i:]
 
 # --- Navigazione 1.3 (dalla chat del 30/10/2026) ---
 sys.path.insert(0, os.path.join(W, 'nav')); import build_nav
@@ -81,13 +91,15 @@ EX_IC = {
  'assetto': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5h18"/><path d="M5 9.5h14l-1.6 6h-10.8z" transform="rotate(-5 12 12)"/><path d="M12 4v4M10 5.5h4"/></svg>',
  'bussole': '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5l2.2 5.5-2.2 5.5-2.2-5.5z"/><path d="M12 1.5v2M12 20.5v2M1.5 12h2M20.5 12h2"/></svg>',
  'maree': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5c2.4-3 4.8-3 7.2 0s4.8 3 7.2 0 3.4-1.6 4.6-1.2"/><path d="M2.5 15.5c2.4-3 4.8-3 7.2 0s4.8 3 7.2 0 3.4-1.6 4.6-1.2"/><path d="M12 3v3M12 18v3"/></svg>',
+ 'sinottiche': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7c3-3 6 3 9 0s6 3 9 0"/><path d="M3 13c3-3 6 3 9 0s6 3 9 0"/><circle cx="7" cy="18.5" r="2"/><path d="M15 17l2 3 2-3"/></svg>',
  'carteggio': '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5l5-2 6 2 5-2v15l-5 2-6-2-5 2z"/><path d="M9 3.5v15M15 5.5v15"/></svg>',
 }
 extra = ('<section class="extra" aria-label="Esercizi"><h2>Esercizi</h2><ol class="route">'
  '<li style="--i:10"><a class="card" href="esercizi/assetto.html"><span class="wp">' + EX_IC['assetto'] + '</span><span class="tx"><span class="n">Assetto e pescaggi</span><span class="m">Esercizi svolti</span><span class="d">Esercizi del libro (pag. 216 e 9–25): cambio di densità, spostamento pesi, movimento di zavorra, imbarco e sbarco, assetto voluto, punti neutri</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '<li style="--i:11"><a class="card" href="esercizi/maree.html"><span class="wp">' + EX_IC['maree'] + '</span><span class="tx"><span class="n">Maree</span><span class="m">Esercizi svolti</span><span class="d">Esercizi 2–10 del libro: altezza e ora di marea, ingresso in porto (UKC), passaggio sotto i ponti (OC), finestre di marea</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '<li style="--i:12"><a class="card" href="esercizi/bussole.html"><span class="wp">' + EX_IC['bussole'] + '</span><span class="tx"><span class="n">Controllo bussole</span><span class="m">Esercizi svolti</span><span class="d">Azimut del Sole e dei pianeti, errore della girobussola e deviazione della magnetica, effemeridi per qualsiasi anno</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
- '<li style="--i:13"><a class="card" href="esercizi/carteggio.html"><span class="wp">' + EX_IC['carteggio'] + '</span><span class="tx"><span class="n">Carteggio con carta 5D</span><span class="m">Strumento di carteggio</span><span class="d">Rilevamenti, rotte e punto nave sulla carta 5D dell\'Arcipelago Toscano</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
+ '<li style="--i:13"><a class="card" href="esercizi/sinottiche.html"><span class="wp">' + EX_IC['sinottiche'] + '</span><span class="tx"><span class="n">Carte sinottiche</span><span class="m">Carte reali a colori</span><span class="d">15 carte di analisi Met Office ridisegnate a colori, con la spiegazione di ogni fenomeno</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
+ '<li style="--i:14"><a class="card" href="esercizi/carteggio.html"><span class="wp">' + EX_IC['carteggio'] + '</span><span class="tx"><span class="n">Carteggio con carta 5D</span><span class="m">Strumento di carteggio</span><span class="d">Rilevamenti, rotte e punto nave sulla carta 5D dell\'Arcipelago Toscano</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '</ol></section>')
 fras = ('<section class="extra frs" aria-label="Frasario"><h2>Inglese nautico</h2><ol class="route">'
  '<li style="--i:9"><a class="card" href="frasario/"><span class="wp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5h10a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H8l-3 2.5V12H3.5A1.5 1.5 0 0 1 2 10.5V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M17 9h3.5A1.5 1.5 0 0 1 22 10.5V15a1.5 1.5 0 0 1-1.5 1.5H20V19l-3-2.5h-5A1.5 1.5 0 0 1 10.5 15v-1"/><path d="M5.5 8.5h6M13.5 13h5"/></svg></span><span class="tx"><span class="n">Frasario e Traduttore SMCP</span><span class="m">Inglese nautico · IT ⇄ EN</span><span class="d">Frasi IMO SMCP, glossario di 803 termini nautici, traduttore con foto e Gemini</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
