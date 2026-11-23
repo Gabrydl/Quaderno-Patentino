@@ -3,14 +3,19 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.04.02 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.05.00 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
 ## Com'è fatta
 - `index.html`: tutta l'app (generata, non modificarla a mano).
 - `sw.js`, `manifest.webmanifest`, `icone/`: installazione sul telefono e funzionamento senza rete.
-- `esercizi/`: Assetto e pescaggi, Carteggio con carta 5D (dai loro artefatti, con tasto "Quaderno" e controllo dell'accesso).
+- `esercizi/`: Assetto e pescaggi, Maree, Carteggio con carta 5D (con tasto "Quaderno" e controllo dell'accesso).
+  - Assetto e pescaggi: `strumenti/assetto.html` è la stessa pagina senza controllo dell'accesso; le modifiche vanno fatte a tutte e due.
+    Dal 23/11/2026 ha anche gli esercizi di pag. 216 (4, 6–14, 16–18; il 5 e il 15 hanno T<sub>m</sub> sotto la tabella) e la scheda "Movimento zavorra".
+  - Maree: sorgenti in `strumenti/maree/` (`corpo.html`, `maree.js`, `extra.css`); `python3 -I strumenti/maree/gen_maree.py .` crea
+    `strumenti/maree.html` (anteprima) ed `esercizi/maree.html` prendendo grafica e controllo dell'accesso da Assetto e pescaggi.
+    Metodo del coseno (come il libro, Cap. 22: esercizi 2–10 tornano tutti) con controllo coi dodicesimi. Manca l'esercizio 1 (testo non fotografato).
 - `frasario/`: Frasario e Traduttore SMCP (pagina a parte): `index.html` da `strumenti/fras/pagina.html`, `dati.json` e i due TSV
   del glossario generati da `strumenti/fras/lavoro/` (li legge anche la funzione `traduci`).
 - `strumenti/`: sorgenti per ricostruire `index.html`.
@@ -22,6 +27,11 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
   - `fras/`: Frasario. `lavoro/it_*.txt` = traduzioni italiane delle frasi (riga `numero|testo`), `generale.py`, `tavole.json`,
     `glos_smcp_it.py`, `glos_extra.txt` (803 termini). `funzione/index.ts` = sorgente della funzione Supabase `traduci` (Gemini).
   - `test_telefono.py`, `test_frasario_nav.py`: prove a misura di telefono con Supabase simulato (Playwright).
+
+## Controllo delle bussole (in lavorazione, non ancora nell'app)
+`strumenti/bussole/modello.js`: modello di calcolo (azimut al sorgere/tramonto, azimut a un istante, errori di gyro e magnetica, errore di velocità
+da confermare) con effemeridi calcolate da Astronomy Engine (`lib/astronomy.browser.min.js`, MIT, ±1′). Prova: `node strumenti/bussole/prova_modello.js`.
+Mancano: estratti delle effemeridi del Cap. 4 (esercizi 1–6), un esercizio svolto dal professore, gli esercizi 11–12 (pagina tagliata), la pagina.
 
 ## Audio
 Le 168 lezioni (circa 1 GB) sono servite dal vecchio artefatto pubblico "Quaderno Patentino"

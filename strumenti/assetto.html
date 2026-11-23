@@ -226,6 +226,7 @@ footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--line);
     <button class="tab" role="tab" id="tab-es" aria-controls="sec-es" aria-selected="true" data-sec="es"><span class="lg">Esercizi del libro</span><span class="sm">Esercizi del libro</span></button>
     <button class="tab" role="tab" id="tab-dwa" aria-controls="sec-dwa" aria-selected="false" data-sec="dwa"><span class="lg">Cambio densità</span><span class="sm">Densità</span></button>
     <button class="tab" role="tab" id="tab-pesi" aria-controls="sec-pesi" aria-selected="false" data-sec="pesi"><span class="lg">Spostamento pesi</span><span class="sm">Spostamento</span></button>
+    <button class="tab" role="tab" id="tab-zav" aria-controls="sec-zav" aria-selected="false" data-sec="zav"><span class="lg">Movimento zavorra</span><span class="sm">Zavorra</span></button>
     <button class="tab" role="tab" id="tab-imb" aria-controls="sec-imb" aria-selected="false" data-sec="imb"><span class="lg">Imbarco e sbarco</span><span class="sm">Imbarco</span></button>
     <button class="tab" role="tab" id="tab-ass" aria-controls="sec-ass" aria-selected="false" data-sec="ass"><span class="lg">Assetto voluto</span><span class="sm">Assetto</span></button>
     <button class="tab" role="tab" id="tab-neu" aria-controls="sec-neu" aria-selected="false" data-sec="neu"><span class="lg">Punti neutri</span><span class="sm">Neutri</span></button>
@@ -234,7 +235,7 @@ footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--line);
 
   <!-- ============ ESERCIZI ============ -->
   <section id="sec-es" role="tabpanel" aria-labelledby="tab-es">
-    <p class="esintro">Gli esercizi 9 – 25 del libro (Modulo 3, «Spostamento e imbarco/sbarco pesi»). Ogni scheda ha il risultato; «Risolvi passo per passo» apre l'esercizio con i dati già inseriti e la soluzione spiegata con le formule degli appunti.</p>
+    <p class="esintro">Gli esercizi del libro: pagina 216 («Movimentazione pesi a bordo», 4 – 18) e 9 – 25 («Spostamento e imbarco/sbarco pesi»). Ogni scheda ha il risultato; «Risolvi passo per passo» apre l'esercizio con i dati già inseriti e la soluzione spiegata con le formule degli appunti.</p>
     <div id="es-list"></div>
   </section>
 
@@ -308,6 +309,54 @@ footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--line);
         <div class="btns"><button type="button" class="btn" id="p-reset">Ripristina esempio</button></div>
       </form>
       <div class="results" id="r-pesi" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="sec-zav" role="tabpanel" aria-labelledby="tab-zav" hidden>
+    <div class="grid">
+      <form class="panel inputs" id="f-zav" autocomplete="off" novalidate>
+        <h2>Dati del problema</h2>
+        <p class="hint">Si sposta zavorra tra due casse a distanza nota: il programma trova quante tonnellate spostare. Il peso della nave non cambia.</p>
+        <div class="seg mb" role="radiogroup" aria-label="Cosa si vuole ottenere">
+          <label><input type="radio" name="zmode" value="even" checked>chiglia piana</label>
+          <label><input type="radio" name="zmode" value="sband">raddrizzare</label>
+          <label><input type="radio" name="zmode" value="gm">aumentare GM</label>
+        </div>
+        <fieldset>
+          <legend>Pescaggi</legend>
+          <div class="row2">
+            <div class="field"><label for="z-TA">T<sub>A</sub> <small>poppa</small></label><div class="inbox"><input id="z-TA" inputmode="decimal" value="7,51"><span>m</span></div></div>
+            <div class="field"><label for="z-TF">T<sub>F</sub> <small>prora</small></label><div class="inbox"><input id="z-TF" inputmode="decimal" value="7,37"><span>m</span></div></div>
+          </div>
+        </fieldset>
+        <fieldset id="z-even-wrap">
+          <legend>Distanza longitudinale tra le casse</legend>
+          <div class="field"><div class="inbox"><input id="z-x" inputmode="decimal" value="60" aria-label="x"><span>m</span></div></div>
+        </fieldset>
+        <fieldset id="z-sband-wrap" hidden>
+          <legend>Sbandamento attuale</legend>
+          <div class="row2">
+            <div class="field"><label for="z-GM">GM <small>attuale</small></label><div class="inbox"><input id="z-GM" inputmode="decimal" value="0,86"><span>m</span></div></div>
+            <div class="field"><label for="z-th">θ <small>sbandamento</small></label><div class="inbox"><input id="z-th" inputmode="decimal" value="6"><span>°</span></div></div>
+          </div>
+          <div class="seg" role="radiogroup" aria-label="Lato dello sbandamento">
+            <label><input type="radio" name="zside" value="dritta" checked>sbandata a dritta</label>
+            <label><input type="radio" name="zside" value="sinistra">sbandata a sinistra</label>
+          </div>
+          <div class="field"><label for="z-y">y <small>distanza trasversale tra le casse</small></label><div class="inbox"><input id="z-y" inputmode="decimal" value="15"><span>m</span></div></div>
+        </fieldset>
+        <fieldset id="z-gm-wrap" hidden>
+          <legend>Altezza metacentrica</legend>
+          <div class="row2">
+            <div class="field"><label for="z-GM0">GM <small>attuale</small></label><div class="inbox"><input id="z-GM0" inputmode="decimal" value="0,15"><span>m</span></div></div>
+            <div class="field"><label for="z-GMv">GM <small>voluta (minima)</small></label><div class="inbox"><input id="z-GMv" inputmode="decimal" value="0,20"><span>m</span></div></div>
+          </div>
+          <div class="field"><label for="z-z">z <small>distanza verticale tra le casse</small></label><div class="inbox"><input id="z-z" inputmode="decimal" value="12"><span>m</span></div></div>
+        </fieldset>
+        <label class="opt"><input type="checkbox" id="z-interp" checked><span>Interpola la tabella se T<sub>m</sub> cade tra due righe</span></label>
+        <div class="btns"><button type="button" class="btn" id="z-reset">Ripristina esempio</button></div>
+      </form>
+      <div class="results" id="r-zav" aria-live="polite"></div>
     </div>
   </section>
 
@@ -1137,6 +1186,33 @@ function calcPesi(inp, tab, mode) {
   };
 }
 
+
+/* Problema 2b – movimento di zavorra tra due casse (peso incognito, Δ costante)
+   inp.mode 'even' (chiglia piana, x) | 'sband' (raddrizzare: GM, th, side, y) | 'gm' (GM0, GMv, z) */
+function calcZav(inp, tab, mode) {
+  var Tm = (inp.TA + inp.TF) / 2;
+  var L = lookup(tab, Tm, mode);
+  if (L.error) return { error: 'fuori', Tm: Tm };
+  var D = L.v.D, MCTC = L.v.MCTC, XCF = L.v.XCF;
+  var R = { mode: inp.mode, Tm: Tm, L: L, D: D, MCTC: MCTC, XCF: XCF };
+  if (inp.mode === 'even') {
+    var t = inp.TA - inp.TF, a = Math.abs(t), sg = t > 0 ? 1 : (t < 0 ? -1 : 0);
+    R.t = t; R.tcm = a * 100; R.mom = 100 * MCTC * a; R.p = R.mom / inp.x;
+    R.verso = sg > 0 ? 'prora' : (sg < 0 ? 'poppa' : '');
+    R.dTA = XCF * a / LPP; R.dTF = (LPP - XCF) * a / LPP;
+    R.TA2 = inp.TA - sg * R.dTA; R.TF2 = inp.TF + sg * R.dTF;
+    return R;
+  }
+  if (inp.mode === 'sband') {
+    R.tanT = Math.tan(inp.th * Math.PI / 180);
+    R.mom = D * inp.GM * R.tanT; R.p = R.mom / inp.y;
+    R.verso = inp.side === 'dritta' ? 'sinistra' : 'dritta';
+    return R;
+  }
+  R.GG = inp.GMv - inp.GM0; R.p = R.GG > 0 ? D * R.GG / inp.z : 0;
+  return R;
+}
+
 /* Lettura in tabella entrando con il dislocamento (colonna Δ) */
 function lookupByD(tab, D, mode) {
   var n = tab.length;
@@ -1359,7 +1435,7 @@ function calcNeutri(inp, tab, mode) {
 
   var COLNAME = { D: 'Δ (t)', TPC: 'TPC (t/cm)', MCTC: 'MCTC (t·m/cm)', XCF: 'X<sub>CF</sub> (m)', KM: 'KM (m)' };
   var COLDEC = { D: 0, TPC: 2, MCTC: 1, XCF: 2, KM: 2 };
-  var lastUsed = [], usedBy = { dwa: [], pesi: [], imb: [], ass: [], neu: [] }, currentProblem = 'dwa';
+  var lastUsed = [], usedBy = { dwa: [], pesi: [], zav: [], imb: [], ass: [], neu: [] }, currentProblem = 'dwa';
 
   /* Passaggio "lettura in tabella", comune ai due problemi */
   function stepTabella(L, cols, perche, lab, title) {
@@ -1577,23 +1653,27 @@ function calcNeutri(inp, tab, mode) {
   /* ---------- Problema 2: spostamento pesi ---------- */
   var fP = document.getElementById('f-pesi'), outP = document.getElementById('r-pesi');
   function runPesi() {
-    var req = ['p-TA', 'p-TF', 'p-GM', 'p-p'], opt = ['p-z', 'p-x', 'p-y'], v = {}, bad = [];
+    var req = ['p-TA', 'p-TF', 'p-p'], opt = ['p-z', 'p-x', 'p-y'], v = {}, bad = [];
     req.forEach(function (id) { var x = num(id); v[id] = x; var b = !isFinite(x) || x <= 0; mark(id, b); if (b) bad.push(id); });
     opt.forEach(function (id) { var x = num(id); if (document.getElementById(id).value.trim() === '') x = 0; v[id] = x; var b = !isFinite(x) || x < 0; mark(id, b); if (b) bad.push(id); });
-    if (bad.length) { outP.innerHTML = errBox('Completa i campi evidenziati con un numero positivo. Gli spostamenti che il testo non dà vanno lasciati a 0; il verso si sceglie con i pulsanti.'); return; }
+    var gmEmpty = document.getElementById('p-GM').value.trim() === '';
+    v['p-GM'] = gmEmpty ? NaN : num('p-GM');
+    var gmBad = gmEmpty ? (v['p-z'] > 0 || v['p-y'] > 0) : !(v['p-GM'] > 0); mark('p-GM', gmBad); if (gmBad) bad.push('p-GM');
+    if (bad.length) { outP.innerHTML = exBanner('pesi') + errBox('Completa i campi evidenziati con un numero positivo. GM serve solo se il peso si sposta in verticale o di traverso. Gli spostamenti che il testo non dà vanno lasciati a 0; il verso si sceglie con i pulsanti.'); return; }
     var inp = { TA: v['p-TA'], TF: v['p-TF'], GM: v['p-GM'], p: v['p-p'], z: v['p-z'], x: v['p-x'], y: v['p-y'],
       zdir: radio('zdir', fP), xdir: radio('xdir', fP), ydir: radio('ydir', fP) };
     var mode = document.getElementById('p-interp').checked ? 'interp' : 'near';
     var R = calcPesi(inp, TAB, mode);
-    if (R.error) { outP.innerHTML = errBox('T<sub>m</sub> = ' + f(R.Tm, 3) + ' m è fuori dalla tabella (3,90 – 10,00 m). Controlla T<sub>A</sub> e T<sub>F</sub>.'); return; }
+    if (R.error) { outP.innerHTML = exBanner('pesi') + errBox('T<sub>m</sub> = ' + f(R.Tm, 3) + ' m è fuori dalla tabella (3,90 – 10,00 m). Controlla T<sub>A</sub> e T<sub>F</sub>.'); return; }
+    var noGM = !isFinite(inp.GM);
     usedBy.pesi = R.L.rows.map(function (r) { return r.T; });
     var interp = R.L.rows.length === 2;
     var alto = inp.zdir === 'alto', poppa = inp.xdir === 'poppa';
     var stab = R.GM2 > 0;
     var alphaTxt = !stab ? '—' : (inp.y === 0 ? '0°' : f(R.alpha, 2) + '° = ' + dms(R.alpha));
-    var html = '<section class="summary"><h2>Risultato</h2><div class="kpis">' +
-      kpi('GM′', f(R.GM2, 3) + ' m', inp.z === 0 ? 'nessuno spostamento verticale' : (alto ? 'diminuito di ' : 'aumentato di ') + f(R.GG, 3) + ' m', true) +
-      kpi('Sbandamento α', stab ? (inp.y === 0 ? '0°' : dms(R.alpha)) : '—', stab ? (inp.y === 0 ? 'nessuno spostamento trasversale' : f(R.alpha, 2) + '° a ' + inp.ydir) : 'GM′ ≤ 0: nave instabile', true) +
+    var html = exBanner('pesi') + '<section class="summary"><h2>Risultato</h2><div class="kpis">' +
+      (noGM ? '' : kpi('GM′', f(R.GM2, 3) + ' m', inp.z === 0 ? 'nessuno spostamento verticale' : (alto ? 'diminuito di ' : 'aumentato di ') + f(R.GG, 3) + ' m', true) +
+      kpi('Sbandamento α', stab ? (inp.y === 0 ? '0°' : dms(R.alpha)) : '—', stab ? (inp.y === 0 ? 'nessuno spostamento trasversale' : f(R.alpha, 2) + '° a ' + inp.ydir) : 'GM′ ≤ 0: nave instabile', true)) +
       kpi('T′<sub>A</sub> poppa', f(R.TA2, 3) + ' m', 'prima ' + fa(inp.TA, 2) + ' m') +
       kpi('T′<sub>F</sub> prora', f(R.TF2, 3) + ' m', 'prima ' + fa(inp.TF, 2) + ' m') + '</div>';
     var P = svgProfilo(inp.TA, inp.TF, R.TA2, R.TF2, R.XCF, inp.xdir);
@@ -1608,6 +1688,7 @@ function calcNeutri(inp, tab, mode) {
       why: 'Spostare un peso già a bordo non cambia il peso della nave, quindi il dislocamento resta quello letto al pescaggio medio iniziale.'
     });
     st.push(stepTabella(R.L, ['D', 'TPC', 'MCTC', 'XCF', 'KM'], '<b>Δ</b> è il dislocamento; <b>MCTC</b> è il momento che cambia l\'assetto di 1 cm; <b>X<sub>CF</sub></b> è la distanza del centro di galleggiamento F dalla perpendicolare addietro; TPC e KM si leggono sulla stessa riga ma non entrano nelle formule di questo esercizio.'));
+    if (!noGM) {
     var ggWhy = 'Spostando un peso p in verticale, il baricentro G della nave si sposta nello stesso verso e in modo parallelo, di una quantità piccola perché p è piccolo rispetto a Δ.';
     st.push({
       title: 'Spostamento del baricentro GG′',
@@ -1631,6 +1712,7 @@ function calcNeutri(inp, tab, mode) {
         why: inp.y === 0 ? 'Senza spostamento trasversale (y = 0) G resta sul piano diametrale e la nave non sbanda.' :
           'Il peso spostato di y verso ' + inp.ydir + ' porta G fuori dal piano diametrale. La nave si inclina finché il centro di carena B torna sulla verticale di G: l\'angolo di equilibrio è α, con la nave sbandata a <b>' + inp.ydir + '</b>, dal lato in cui è andato il peso. Si usa GM′ (già corretto per lo spostamento verticale).'
       });
+    }
     }
     var lpTxt = n(LPP, 2);
     st.push({
@@ -1668,6 +1750,74 @@ function calcNeutri(inp, tab, mode) {
   }
 
 
+
+  var fZ = document.getElementById('f-zav'), outZ = document.getElementById('r-zav');
+  function runZav() {
+    var m = radio('zmode', fZ);
+    document.getElementById('z-even-wrap').hidden = m !== 'even';
+    document.getElementById('z-sband-wrap').hidden = m !== 'sband';
+    document.getElementById('z-gm-wrap').hidden = m !== 'gm';
+    var ids = ['z-TA', 'z-TF'].concat(m === 'even' ? ['z-x'] : (m === 'sband' ? ['z-GM', 'z-th', 'z-y'] : ['z-GM0', 'z-GMv', 'z-z'])), v = {}, bad = false;
+    ids.forEach(function (id) { var x = num(id); v[id] = x; var b = !isFinite(x) || x <= 0; mark(id, b); if (b) bad = true; });
+    if (bad) { outZ.innerHTML = exBanner('zav') + errBox('Completa i campi evidenziati con un numero positivo.'); return; }
+    var inp = { mode: m, TA: v['z-TA'], TF: v['z-TF'], x: v['z-x'], GM: v['z-GM'], th: v['z-th'], side: radio('zside', fZ), y: v['z-y'], GM0: v['z-GM0'], GMv: v['z-GMv'], z: v['z-z'] };
+    var R = calcZav(inp, TAB, document.getElementById('z-interp').checked ? 'interp' : 'near');
+    if (R.error) { outZ.innerHTML = exBanner('zav') + errBox('T<sub>m</sub> = ' + f(R.Tm, 3) + ' m è fuori dalla tabella (3,90 – 10,00 m). Controlla T<sub>A</sub> e T<sub>F</sub>.'); return; }
+    usedBy.zav = R.L.rows.map(function (r) { return r.T; });
+    var interp = R.L.rows.length === 2, dD = interp ? 1 : 0, dM = interp ? 2 : 1, dX = interp ? 3 : 2;
+    var st = [{
+      title: 'Pescaggio medio',
+      body: eqs(['<i>T</i><sub>m</sub> = ' + fr('<i>T</i><sub>A</sub> + <i>T</i><sub>F</sub>', '2') + ' = ' + fr(na(inp.TA, 2) + ' + ' + na(inp.TF, 2), '2') + ' = <span class="res n">' + f(R.Tm, 3) + ' m</span>']),
+      why: 'La zavorra passa da una cassa all\'altra: il peso della nave non cambia e Δ resta quello letto al pescaggio medio.'
+    }];
+    var html = exBanner('zav') + '<section class="summary"><h2>Risultato</h2><div class="kpis">', FZ;
+    if (m === 'even') {
+      if (!R.verso) { outZ.innerHTML = exBanner('zav') + errBox('La nave è già in chiglia piana (T<sub>A</sub> = T<sub>F</sub>): non serve spostare zavorra.'); return; }
+      html += kpi('Zavorra da spostare', f(R.p, 1) + ' t', 'verso ' + R.verso + ' per ' + fa(inp.x, 1) + ' m', true) +
+        kpi('T′<sub>A</sub> poppa', f(R.TA2, 3) + ' m', 'prima ' + fa(inp.TA, 2) + ' m') + kpi('T′<sub>F</sub> prora', f(R.TF2, 3) + ' m', 'prima ' + fa(inp.TF, 2) + ' m') + '</div>';
+      var P = svgProfilo(inp.TA, inp.TF, R.TA2, R.TF2, R.XCF, R.verso);
+      html += '<div class="figs"><figure class="fig">' + P.svg + '<figcaption>Profilo: tratteggio prima, linea piena dopo. La nave ruota attorno a F' + (P.k > 1.05 ? '; variazione esagerata ×' + Math.round(P.k) : '') + '.</figcaption></figure></div></section>';
+      st.push(stepTabella(R.L, ['D', 'MCTC', 'XCF'], '<b>MCTC</b> è il momento che cambia l\'assetto di 1 cm; X<sub>CF</sub> serve per dividere la variazione tra poppa e prora.'));
+      st.push({ title: 'Assetto da annullare',
+        body: eqs(['t = <i>T</i><sub>A</sub> − <i>T</i><sub>F</sub> = ' + na(inp.TA, 2) + ' − ' + na(inp.TF, 2) + ' = <span class="res n">' + f(R.t, 2) + ' m = ' + f(R.tcm, 0) + ' cm</span>']),
+        why: 'La nave è ' + (R.t > 0 ? '<b>appoppata</b>: la zavorra va spostata <b>da poppa verso prora</b>.' : '<b>appruata</b>: la zavorra va spostata <b>da prora verso poppa</b>.') + ' Per la chiglia piana la variazione di assetto deve essere uguale a t.' });
+      st.push({ title: 'Peso da spostare',
+        body: eqs(['<i>p</i> · <i>x</i> = t<sub>cm</sub> · MCTC', '<i>p</i> = ' + fr('t<sub>cm</sub> · MCTC', '<i>x</i>') + ' = ' + fr(n(R.tcm, 0) + ' · ' + n(R.MCTC, dM), na(inp.x, 0)) + ' = <span class="res n">' + f(R.p, 1) + ' t</span>']),
+        why: 'Spostando p per x metri si crea il momento p · x; diviso per MCTC dà la variazione di assetto in cm. Si impone che sia uguale all\'assetto da annullare e si ricava p.' });
+      st.push({ title: 'Pescaggi finali',
+        body: eqs(['δ<i>T</i><sub>A</sub> = ' + fr('X<sub>CF</sub> · t', 'L<sub>pp</sub>') + ' = ' + fr(n(R.XCF, dX) + ' · ' + n(Math.abs(R.t), 2), n(LPP, 2)) + ' = <span class="n">' + f(R.dTA, 4) + ' m</span>',
+          'δ<i>T</i><sub>F</sub> = ' + fr('(L<sub>pp</sub> − X<sub>CF</sub>) · t', 'L<sub>pp</sub>') + ' = <span class="n">' + f(R.dTF, 4) + ' m</span>',
+          '<i>T</i>′<sub>A</sub> = ' + na(inp.TA, 2) + (R.t > 0 ? ' − ' : ' + ') + n(R.dTA, 4) + ' = <span class="res n">' + f(R.TA2, 3) + ' m</span>',
+          '<i>T</i>′<sub>F</sub> = ' + na(inp.TF, 2) + (R.t > 0 ? ' + ' : ' − ') + n(R.dTF, 4) + ' = <span class="res n">' + f(R.TF2, 3) + ' m</span>']),
+        why: 'La nave ruota attorno a F: la variazione di assetto si divide tra poppa e prora in proporzione alla loro distanza da F. Alla fine T′<sub>A</sub> = T′<sub>F</sub>: la nave è in chiglia piana (non al pescaggio medio, perché F non è a mezzanave).' });
+      FZ = ['t<sub>cm</sub> = (<i>T</i><sub>A</sub> − <i>T</i><sub>F</sub>) · 100    <i>p</i> = ' + fr('t<sub>cm</sub> · MCTC', '<i>x</i>'),
+        'δ<i>T</i><sub>A</sub> = ' + fr('X<sub>CF</sub> · t', 'L<sub>pp</sub>') + '    δ<i>T</i><sub>F</sub> = ' + fr('(L<sub>pp</sub> − X<sub>CF</sub>) · t', 'L<sub>pp</sub>')];
+    } else if (m === 'sband') {
+      html += kpi('Zavorra da spostare', f(R.p, 1) + ' t', 'verso ' + R.verso + ' per ' + fa(inp.y, 1) + ' m', true) + kpi('Sbandamento finale', '0°', 'nave dritta') + '</div>' +
+        '<div class="figs"><figure class="fig">' + svgSezione(inp.th, inp.side) + '<figcaption>Sezione vista da poppa: sbandamento iniziale ' + fa(inp.th, 1) + '° a ' + inp.side + '.</figcaption></figure></div></section>';
+      st.push(stepTabella(R.L, ['D'], 'Serve solo Δ: lo spostamento trasversale non cambia i pescaggi.'));
+      st.push({ title: 'Momento sbandante da annullare',
+        body: eqs(['M = Δ · GM · tan θ = ' + n(R.D, dD) + ' · ' + na(inp.GM, 2) + ' · tan ' + fa(inp.th, 1) + '° = ' + n(R.D, dD) + ' · ' + na(inp.GM, 2) + ' · ' + n(R.tanT, 5) + ' = <span class="res n">' + f(R.mom, 1) + ' t·m</span>']),
+        why: 'Con la nave sbandata di θ il baricentro è fuori dal piano diametrale: il momento che la tiene inclinata è Δ · GM · tan θ (la stessa formula di tan α = p·y / (Δ·GM), letta al contrario).' });
+      st.push({ title: 'Peso da spostare',
+        body: eqs(['<i>p</i> · <i>y</i> = Δ · GM · tan θ', '<i>p</i> = ' + fr('Δ · GM · tan θ', '<i>y</i>') + ' = ' + fr(n(R.mom, 1), na(inp.y, 0)) + ' = <span class="res n">' + f(R.p, 1) + ' t</span>']),
+        why: 'La nave è sbandata a ' + inp.side + ': la zavorra va spostata <b>verso ' + R.verso + '</b>, dal lato opposto, finché il suo momento p · y annulla quello sbandante.' });
+      FZ = ['<i>p</i> · <i>y</i> = Δ · GM · tan θ    <i>p</i> = ' + fr('Δ · GM · tan θ', '<i>y</i>')];
+    } else {
+      var ok = R.GG > 0;
+      html += kpi('Zavorra da spostare', ok ? f(R.p, 1) + ' t' : '0 t', ok ? 'verso il basso per ' + fa(inp.z, 1) + ' m (almeno)' : 'GM è già sufficiente', true) + kpi('GM finale', fa(Math.max(inp.GMv, inp.GM0), 2) + ' m', 'prima ' + fa(inp.GM0, 2) + ' m') + '</div></section>';
+      st.push(stepTabella(R.L, ['D'], 'Serve solo Δ.'));
+      st.push({ title: 'Aumento di GM richiesto',
+        body: eqs(['GG′ = GM<sub>voluta</sub> − GM = ' + na(inp.GMv, 2) + ' − ' + na(inp.GM0, 2) + ' = <span class="res n">' + f(R.GG, 3) + ' m</span>']),
+        why: ok ? 'G deve scendere di GG′: abbassando G, GM aumenta della stessa quantità.' : 'GM è già uguale o maggiore di quella voluta: non serve spostare nulla.' });
+      if (ok) st.push({ title: 'Peso da spostare',
+        body: eqs(['GG′ = ' + fr('<i>p</i> · <i>z</i>', 'Δ'), '<i>p</i> = ' + fr('Δ · GG′', '<i>z</i>') + ' = ' + fr(n(R.D, dD) + ' · ' + n(R.GG, 3), na(inp.z, 0)) + ' = <span class="res n">' + f(R.p, 1) + ' t</span>']),
+        why: 'Spostando p verso il basso di z, G scende di p · z / Δ. Il testo chiede <b>almeno</b> la GM voluta: questo è il peso minimo da spostare.' });
+      FZ = ['GG′ = GM<sub>voluta</sub> − GM    <i>p</i> = ' + fr('Δ · GG′', '<i>z</i>')];
+    }
+    outZ.innerHTML = html + renderSteps(st, ['<i>T</i><sub>m</sub> = ' + fr('<i>T</i><sub>A</sub> + <i>T</i><sub>F</sub>', '2') + ' → tabella'].concat(FZ));
+  }
+
   /* ---------- riquadro formule, banner esercizio ---------- */
   function formBox(lines) {
     return '<div class="formule"><h3>Formule usate</h3><div class="eqs">' + lines.map(function (l) { return '<div class="eq">' + l.split(/ {3,}/).map(function (x) { return '<span class="fi">' + x + '</span>'; }).join('') + '</div>'; }).join('') + '</div></div>';
@@ -1676,7 +1826,7 @@ function calcNeutri(inp, tab, mode) {
   function exBanner(sec) {
     var e = exCur[sec]; if (!e) return '';
     return '<div class="exbanner"><div class="exb-top"><b>Esercizio ' + e.n + '</b>' + (e.mod ? '<span class="exb-mod">dati modificati</span>' : '') +
-      '<button type="button" class="exb-back" data-back="' + e.n + '">Tutti gli esercizi</button></div><p>' + e.text + '</p></div>';
+      '<button type="button" class="exb-back" data-back="' + (e.id || e.n) + '">Tutti gli esercizi</button></div><p>' + e.text + '</p></div>';
   }
   function tableByD(L, cols) {
     cols = cols || ['D', 'TPC', 'MCTC', 'XCF', 'KM'];
@@ -2257,6 +2407,32 @@ function calcNeutri(inp, tab, mode) {
 
   /* ---------- Esercizi del libro ---------- */
   var EX = [
+    { n: 204, num: '4', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 7,92 m, T<sub>F</sub> = 7,96 m, ed avente GM = 1,10 m, si sposta un peso di 256 tonn per 12,0 m verso il basso; trovare la nuova GM.',
+      d: { TA: '7,92', TF: '7,96', GM: '1,10', p: '256', z: '12,0', zdir: 'basso' } },
+    { n: 206, num: '6', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 6,02 m, T<sub>F</sub> = 5,94 m, ed avente GM = 1,50 m, si sposta un peso di 108 tonn per 15,0 m verso sinistra; trovare l\'angolo di sbandamento.',
+      d: { TA: '6,02', TF: '5,94', GM: '1,50', p: '108', y: '15,0', ydir: 'sinistra' } },
+    { n: 207, num: '7', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 8,62 m, T<sub>F</sub> = 8,42 m, si sposta un peso di 205 tonn per 42,8 m verso prua; trovare le nuove immersioni estreme.',
+      d: { TA: '8,62', TF: '8,42', p: '205', x: '42,8', xdir: 'prora' } },
+    { n: 208, num: '8', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 5,85 m, T<sub>F</sub> = 5,97 m, si sposta un peso di 75 tonn per 100,0 m verso poppa; trovare le nuove immersioni estreme.',
+      d: { TA: '5,85', TF: '5,97', p: '75', x: '100,0', xdir: 'poppa' } },
+    { n: 209, num: '9', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 9,12 m, T<sub>F</sub> = 9,12 m, ed avente GM = 1,00 m, si sposta un peso di 190 tonn per 14,0 m verso l\'alto, 8,5 m verso dritta e 36,8 m verso prua; trovare la nuova GM, l\'angolo di sbandamento e le nuove immersioni estreme.',
+      d: { TA: '9,12', TF: '9,12', GM: '1,00', p: '190', z: '14,0', zdir: 'alto', y: '8,5', ydir: 'dritta', x: '36,8', xdir: 'prora' } },
+    { n: 210, num: '10', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 5,89 m, T<sub>F</sub> = 6,03 m, ed avente GM = 0,80 m, si sposta un peso di 244 tonn per 11,1 m verso l\'alto, 10,2 m verso sinistra e 68,4 m verso poppa; trovare la nuova GM, l\'angolo di sbandamento e le nuove immersioni estreme.',
+      d: { TA: '5,89', TF: '6,03', GM: '0,80', p: '244', z: '11,1', zdir: 'alto', y: '10,2', ydir: 'sinistra', x: '68,4', xdir: 'poppa' } },
+    { n: 211, num: '11', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 7,02 m, T<sub>F</sub> = 6,58 m, ed avente GM = 0,42 m, si sposta un peso di 60 tonn per 19,0 m verso il basso, 16,8 m verso dritta e 91,5 m verso prua; trovare la nuova GM, l\'angolo di sbandamento e le nuove immersioni estreme.',
+      d: { TA: '7,02', TF: '6,58', GM: '0,42', p: '60', z: '19,0', zdir: 'basso', y: '16,8', ydir: 'dritta', x: '91,5', xdir: 'prora' } },
+    { n: 212, num: '12', pg: 216, sec: 'pesi', text: 'Su una nave galleggiante con T<sub>A</sub> = 8,59 m e T<sub>F</sub> = 8,56 m, ed avente GM = 1,00 m, si sposta un peso di 350 tonn per 6,8 m verso l\'alto, 10,2 m verso dritta e 40,8 m verso prua; trovare la nuova GM, l\'angolo di sbandamento e le nuove immersioni estreme.',
+      d: { TA: '8,59', TF: '8,56', GM: '1,00', p: '350', z: '6,8', zdir: 'alto', y: '10,2', ydir: 'dritta', x: '40,8', xdir: 'prora' } },
+    { n: 213, num: '13', pg: 216, sec: 'zav', text: 'Su una nave galleggiante con T<sub>A</sub> = 7,51 m e T<sub>F</sub> = 7,37 m, si vuole raggiungere la condizione di <i>even keel</i>, sapendo che si può movimentare zavorra da poppa verso prua tra due casse distanti x = 60 m se ne determini l\'entità in termini di peso per raggiungere la condizione voluta.',
+      d: { mode: 'even', TA: '7,51', TF: '7,37', x: '60' } },
+    { n: 214, num: '14', pg: 216, sec: 'zav', text: 'Su una nave galleggiante con T<sub>A</sub> = 6,13 m e T<sub>F</sub> = 6,45 m, si vuole raggiungere la condizione di <i>even keel</i>, sapendo che si può movimentare zavorra da prua verso poppa tra due casse distanti x = 28 m se ne determini l\'entità in termini di peso per raggiungere la condizione voluta.',
+      d: { mode: 'even', TA: '6,13', TF: '6,45', x: '28' } },
+    { n: 216, num: '16', pg: 216, sec: 'zav', text: 'Su una nave galleggiante con T<sub>A</sub> = 6,40 m e T<sub>F</sub> = 6,40 m, ed avente GM = 0,86 m, si registra attualmente uno sbandamento di 6° verso dritta; sapendo che si può movimentare zavorra verso sinistra tra due casse distanti y = 15 m se ne determini l\'entità in termini di peso per raddrizzare la nave.',
+      d: { mode: 'sband', TA: '6,40', TF: '6,40', GM: '0,86', th: '6', side: 'dritta', y: '15' } },
+    { n: 217, num: '17', pg: 216, sec: 'zav', text: 'Su una nave galleggiante con T<sub>A</sub> = 8,59 m e T<sub>F</sub> = 8,41 m, ed avente GM = 1,05 m, si registra attualmente uno sbandamento di 8° verso dritta; sapendo che si può movimentare zavorra verso sinistra tra due casse distanti y = 30 m se ne determini l\'entità in termini di peso per raddrizzare la nave.',
+      d: { mode: 'sband', TA: '8,59', TF: '8,41', GM: '1,05', th: '8', side: 'dritta', y: '30' } },
+    { n: 218, num: '18', pg: 216, sec: 'zav', text: 'Su una nave galleggiante con T<sub>A</sub> = 4,50 m e T<sub>F</sub> = 4,50 m, si registra una GM di 0,15 m che deve essere portata ad un valore di almeno 0,20 m; sapendo che si può movimentare zavorra verso il basso tra due casse distanti z = 12 m se ne determini l\'entità in termini di peso per raggiungere la condizione voluta.',
+      d: { mode: 'gm', TA: '4,50', TF: '4,50', GM0: '0,15', GMv: '0,20', z: '12' } },
     { n: 9, sec: 'imb', text: 'Su una nave galleggiante con T<sub>A</sub> = 8,71 m, T<sub>F</sub> = 8,91 m, ed avente KG = 7,05 m, si eseguono i seguenti movimenti di imbarco/sbarco. Calcolare le nuove immersioni estreme e la nuova altezza metacentrica.',
       tab: [['CARGO', '-652', '108,8', '4,8'], ['CARGO', '-754', '70,5', '4,6'], ['CARGO', '-590', '21,6', '4,2'], ['BALLAST', '-135', '135,0', '1,0'], ['BALLAST', '160', '110,0', '1,0'], ['BALLAST', '140', '35,0', '2,5']],
       d: { TA: '8,71', TF: '8,91', stab: 'KG', sv: '7,05' } },
@@ -2296,6 +2472,8 @@ function calcNeutri(inp, tab, mode) {
   ];
   var EXN = {}; EX.forEach(function (e) { EXN[e.n] = e; });
   var GROUPS = [
+    { t: 'Pagina 216 · Spostamento di un peso a bordo', d: 'Scheda Spostamento pesi: Δ, MCTC e X<sub>CF</sub> a T<sub>m</sub>, poi GG′ = p·z/Δ, tan α = p·y/(Δ·GM′), δT<sub>A</sub> e δT<sub>F</sub>. Il dislocamento non cambia.', ns: [204, 206, 207, 208, 209, 210, 211, 212] },
+    { t: 'Pagina 216 · Movimento di zavorra tra due casse', d: 'Scheda Movimento zavorra: si cerca il peso da spostare. Chiglia piana p·x = t<sub>cm</sub>·MCTC; raddrizzare p·y = Δ·GM·tan θ; aumentare GM p·z = Δ·GG′.', ns: [213, 214, 216, 217, 218] },
     { t: 'Imbarco e sbarco di più pesi', d: 'Scheda Imbarco e sbarco: Σp, Δ′ e T<sub>m</sub>′ dalla tabella, TPC<sub>m</sub>, Σpx, δT<sub>A</sub> e δT<sub>F</sub>, poi KG′ con Varignon e GM′. Nelle tabelle del libro un peso negativo è uno sbarco.', ns: [9, 10] },
     { t: 'Imbarco o sbarco di un peso', d: 'Stesso metodo con un solo peso. Il testo dà GM: prima si ricava KG = KM − GM.', ns: [11, 12, 13, 14] },
     { t: 'Imbarco con sbandamento', d: 'Come sopra, più l\'angolo di sbandamento tan α = p·y / (Δ′·GM′). La posizione è data rispetto alla mezzanave (MP).', ns: [15] },
@@ -2318,6 +2496,21 @@ function calcNeutri(inp, tab, mode) {
         if (R.error) return '';
         return '<span>Risultato:</span> T′<sub>A</sub> ' + f(R.TA2, 3) + ' m · T′<sub>F</sub> ' + f(R.TF2, 3) + ' m · GM′ ' + f(R.GM1, 3) + ' m' + (d.sband && R.Spy ? ' · α ' + dms(R.alpha) + ' a ' + R.listSide : '');
       }
+      if (ex.sec === 'pesi') {
+        R = calcPesi({ TA: pn(d.TA), TF: pn(d.TF), GM: d.GM ? pn(d.GM) : NaN, p: pn(d.p), z: d.z ? pn(d.z) : 0, x: d.x ? pn(d.x) : 0, y: d.y ? pn(d.y) : 0,
+          zdir: d.zdir || 'alto', xdir: d.xdir || 'poppa', ydir: d.ydir || 'dritta' }, TAB, 'interp');
+        if (R.error) return '';
+        var pr = [];
+        if (d.z) pr.push('GM′ ' + f(R.GM2, 3) + ' m');
+        if (d.y) pr.push('α ' + dms(R.alpha) + ' a ' + (d.ydir || 'dritta'));
+        if (d.x) pr.push('T′<sub>A</sub> ' + f(R.TA2, 3) + ' m · T′<sub>F</sub> ' + f(R.TF2, 3) + ' m');
+        return '<span>Risultato:</span> ' + pr.join(' · ');
+      }
+      if (ex.sec === 'zav') {
+        R = calcZav({ mode: d.mode, TA: pn(d.TA), TF: pn(d.TF), x: pn(d.x), GM: pn(d.GM), th: pn(d.th), side: d.side, y: pn(d.y), GM0: pn(d.GM0), GMv: pn(d.GMv), z: pn(d.z) }, TAB, 'interp');
+        if (R.error) return '';
+        return '<span>Risultato:</span> spostare ' + f(R.p, 1) + ' t ' + (d.mode === 'gm' ? 'verso il basso' : 'verso ' + R.verso) + (d.mode === 'even' ? ' · T′ ' + f(R.TA2, 3) + ' m' : '');
+      }
       if (ex.sec === 'ass') {
         R = calcAssetto({ mode: d.mode, TA: pn(d.TA), TF: pn(d.TF), Tt: pn(d.Tt), x: pn(d.x) }, TAB, 'interp');
         if (R.error) return '';
@@ -2337,7 +2530,7 @@ function calcNeutri(inp, tab, mode) {
     document.getElementById('es-list').innerHTML = GROUPS.map(function (g) {
       return '<section class="esgroup"><h2>' + g.t + '</h2><p>' + g.d + '</p><div class="escards">' + g.ns.map(function (k) {
         var ex = EXN[k];
-        return '<article class="excard" id="ex-' + ex.n + '"><h3><span class="num">' + ex.n + ')</span> Esercizio ' + ex.n + '</h3><p>' + ex.text + '</p>' + (ex.tab ? exTable(ex) : '') +
+        return '<article class="excard" id="ex-' + ex.n + '"><h3><span class="num">' + (ex.num || ex.n) + ')</span> Esercizio ' + (ex.num || ex.n) + (ex.pg ? ' <small>· pag. ' + ex.pg + '</small>' : '') + '</h3><p>' + ex.text + '</p>' + (ex.tab ? exTable(ex) : '') +
           '<div class="exres">' + exSummary(ex) + '</div><button type="button" class="btn go" data-ex="' + ex.n + '">Risolvi passo per passo →</button></article>';
       }).join('') + '</div></section>';
     }).join('');
@@ -2354,6 +2547,18 @@ function calcNeutri(inp, tab, mode) {
       wList.innerHTML = ''; exPesi(ex).forEach(function (w) { addWeight(w); });
       exCur.imb = { n: ex.n, text: ex.text, mod: false };
       segs(); runImb();
+    } else if (ex.sec === 'pesi') {
+      setVal('p-TA', d.TA); setVal('p-TF', d.TF); setVal('p-GM', d.GM || ''); setVal('p-p', d.p);
+      setVal('p-z', d.z || '0'); setVal('p-x', d.x || '0'); setVal('p-y', d.y || '0');
+      setRadio(fP, 'zdir', d.zdir || 'alto'); setRadio(fP, 'xdir', d.xdir || 'poppa'); setRadio(fP, 'ydir', d.ydir || 'dritta');
+      exCur.pesi = { n: (ex.num || ex.n) + (ex.pg ? ' · pag. ' + ex.pg : ''), id: ex.n, text: ex.text, mod: false };
+      segs(); runPesi();
+    } else if (ex.sec === 'zav') {
+      setRadio(fZ, 'zmode', d.mode); setVal('z-TA', d.TA); setVal('z-TF', d.TF);
+      if (d.x) setVal('z-x', d.x); if (d.GM) setVal('z-GM', d.GM); if (d.th) setVal('z-th', d.th); if (d.side) setRadio(fZ, 'zside', d.side);
+      if (d.y) setVal('z-y', d.y); if (d.GM0) setVal('z-GM0', d.GM0); if (d.GMv) setVal('z-GMv', d.GMv); if (d.z) setVal('z-z', d.z);
+      exCur.zav = { n: (ex.num || ex.n) + (ex.pg ? ' · pag. ' + ex.pg : ''), id: ex.n, text: ex.text, mod: false };
+      segs(); runZav();
     } else if (ex.sec === 'ass') {
       setRadio(fA, 'amode', d.mode); setVal('a-TA', d.TA); setVal('a-TF', d.TF); setVal('a-Tt', d.Tt || ''); setVal('a-x', d.x || '');
       exCur.ass = { n: ex.n, text: ex.text, mod: false };
@@ -2396,7 +2601,7 @@ function calcNeutri(inp, tab, mode) {
 
   /* ---------- schede ---------- */
   var tabs = document.querySelectorAll('.tab');
-  var PROB = ['dwa', 'pesi', 'imb', 'ass', 'neu'];
+  var PROB = ['dwa', 'pesi', 'zav', 'imb', 'ass', 'neu'];
   function show(sec) {
     tabs.forEach(function (b) {
       var on = b.getAttribute('data-sec') === sec;
@@ -2425,13 +2630,14 @@ function calcNeutri(inp, tab, mode) {
   function restore(form, ex) { form.querySelectorAll('input').forEach(function (el) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = ex[el.id]; else el.value = ex[el.id]; }); }
   function segs() { document.querySelectorAll('.seg label').forEach(function (l) { var i = l.querySelector('input'); l.classList.toggle('on', i.checked); }); }
   function markMod(sec) { return function () { if (exCur[sec]) exCur[sec].mod = true; }; }
-  [[fI, 'imb', runImb], [fA, 'ass', runAss], [fN, 'neu', runNeu]].forEach(function (a) {
+  [[fI, 'imb', runImb], [fA, 'ass', runAss], [fN, 'neu', runNeu], [fZ, 'zav', runZav]].forEach(function (a) {
     a[0].addEventListener('input', markMod(a[1])); a[0].addEventListener('change', markMod(a[1]));
     a[0].addEventListener('change', segs);
     a[0].addEventListener('input', a[2]); a[0].addEventListener('change', a[2]);
     a[0].addEventListener('submit', function (e) { e.preventDefault(); });
   });
   fP.addEventListener('change', segs);
+  fP.addEventListener('input', markMod('pesi')); fP.addEventListener('change', markMod('pesi'));
   document.getElementById('i-reset').addEventListener('click', function () {
     delete exCur.imb;
     wList.innerHTML = ''; EXW.forEach(function (w) { addWeight(w); });
@@ -2445,7 +2651,8 @@ function calcNeutri(inp, tab, mode) {
   fD.addEventListener('submit', function (e) { e.preventDefault(); });
   fP.addEventListener('submit', function (e) { e.preventDefault(); });
   document.getElementById('d-reset').addEventListener('click', function () { restore(fD, exD); runDWA(); });
-  document.getElementById('p-reset').addEventListener('click', function () { restore(fP, exP); segs(); runPesi(); });
+  document.getElementById('p-reset').addEventListener('click', function () { delete exCur.pesi; restore(fP, exP); segs(); runPesi(); });
+  document.getElementById('z-reset').addEventListener('click', function () { loadEx(213, true); });
   document.addEventListener('click', function (e) {
     var g = e.target.closest('[data-ex]');
     if (g) { loadEx(+g.getAttribute('data-ex')); return; }
@@ -2454,9 +2661,9 @@ function calcNeutri(inp, tab, mode) {
   });
 
   renderEx();
-  segs(); runImb(); runPesi(); runDWA(); loadEx(16, true); loadEx(24, true);
+  segs(); runImb(); runPesi(); runDWA(); loadEx(213, true); delete exCur.zav; runZav(); loadEx(16, true); loadEx(24, true);
   var start = 'es', h = (location.hash || '').replace('#', '');
-  var SECS = ['es', 'dwa', 'pesi', 'imb', 'ass', 'neu', 'tab'];
+  var SECS = ['es', 'dwa', 'pesi', 'zav', 'imb', 'ass', 'neu', 'tab'];
   if (SECS.indexOf(h) >= 0) start = h;
   else { try { var sv = localStorage.getItem('ap-tab'); if (SECS.indexOf(sv) >= 0) start = sv; } catch (e) {} }
   show(start);

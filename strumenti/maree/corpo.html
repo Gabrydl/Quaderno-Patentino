@@ -1,0 +1,115 @@
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Maree <span class="ver" title="Versione">v1</span></h1>
+      <p>Altezza di marea, orari, ingresso in porto e passaggio sotto i ponti, risolti passo per passo col metodo del coseno.</p>
+    </div>
+    <div class="ship num">metodo del coseno<br>controllo con i <b>dodicesimi</b></div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sezioni">
+    <button class="tab" role="tab" id="tab-es" aria-controls="sec-es" aria-selected="true" data-sec="es"><span class="lg">Esercizi del libro</span><span class="sm">Esercizi</span></button>
+    <button class="tab" role="tab" id="tab-calc" aria-controls="sec-calc" aria-selected="false" data-sec="calc"><span class="lg">Calcolo</span><span class="sm">Calcolo</span></button>
+    <button class="tab" role="tab" id="tab-teo" aria-controls="sec-teo" aria-selected="false" data-sec="teo"><span class="lg">Come si fa</span><span class="sm">Come si fa</span></button>
+  </nav>
+
+  <section id="sec-es" role="tabpanel" aria-labelledby="tab-es">
+    <p class="esintro">Gli esercizi 2 – 10 del libro (Modulo 4, «I movimenti delle acque», Capitolo 22). Accanto a ogni risultato c'è quello del libro per controllo; «Risolvi» apre il calcolo con i dati già inseriti e la soluzione spiegata.</p>
+    <div id="es-list"></div>
+  </section>
+
+  <section id="sec-calc" role="tabpanel" aria-labelledby="tab-calc" hidden>
+    <div class="grid">
+      <form class="panel inputs" id="f-m" autocomplete="off" novalidate>
+        <h2>Dati di marea</h2>
+        <p class="hint">Scrivi alte e basse maree in ordine, come nelle Tide Tables (02:18 oppure 0218). Se l'ora torna indietro il dato passa al giorno dopo.</p>
+        <div id="ev-list"></div>
+        <div class="btns"><button type="button" class="btn" id="ev-add">+ Aggiungi un dato</button></div>
+        <div class="field"><label for="m-day">Giorno del primo dato <small>facoltativo</small></label><div class="inbox"><input id="m-day" inputmode="numeric" placeholder="es. 18"></div></div>
+        <h2 class="mt">Cosa calcolare</h2>
+        <div class="seg mb wrap4" role="radiogroup" aria-label="Cosa calcolare">
+          <label><input type="radio" name="mmode" value="h" checked>Altezza a un'ora</label>
+          <label><input type="radio" name="mmode" value="t">Ora per un'altezza</label>
+          <label><input type="radio" name="mmode" value="lv">Sopra / sotto un livello</label>
+          <label><input type="radio" name="mmode" value="port">Porto e ponti</label>
+        </div>
+        <fieldset id="w-h"><legend>Ora</legend>
+          <div class="field"><div class="inbox"><input id="m-t" inputmode="numeric" value="05:00" aria-label="Ora"><span>hh:mm</span></div></div>
+        </fieldset>
+        <fieldset id="w-t" hidden><legend>Altezza di marea</legend>
+          <div class="field"><div class="inbox"><input id="m-ht" inputmode="decimal" value="4,4" aria-label="Altezza"><span>m</span></div></div>
+        </fieldset>
+        <fieldset id="w-lv" hidden><legend>Livello</legend>
+          <div class="field"><div class="inbox"><input id="m-hl" inputmode="decimal" value="2,5" aria-label="Livello"><span>m</span></div></div>
+          <div class="seg" role="radiogroup" aria-label="Sopra o sotto">
+            <label><input type="radio" name="lvdir" value="sopra" checked>acqua sopra</label>
+            <label><input type="radio" name="lvdir" value="sotto">acqua sotto</label>
+          </div>
+        </fieldset>
+        <div id="w-port" hidden>
+          <fieldset><legend>Fondale (colonna d'acqua)</legend>
+            <p class="hint">Lascia vuoto il fondale se c'è solo il ponte.</p>
+            <div class="row2">
+              <div class="field"><label for="m-fond">Fondale <small>carta / portolano</small></label><div class="inbox"><input id="m-fond" inputmode="decimal"><span>m</span></div></div>
+              <div class="field"><label for="m-T">Pescaggio</label><div class="inbox"><input id="m-T" inputmode="decimal"><span>m</span></div></div>
+            </div>
+            <div class="field"><label for="m-ukc">UKC <small>Compagnia / Comandante / SMS</small></label><div class="inbox"><input id="m-ukc" inputmode="decimal"><span>m</span></div></div>
+          </fieldset>
+          <fieldset><legend>Ponte o ostruzione aerea</legend>
+            <p class="hint">Lascia vuota l'altezza del ponte se c'è solo il fondale.</p>
+            <div class="row2">
+              <div class="field"><label for="m-H">Altezza ponte <small>portolano</small></label><div class="inbox"><input id="m-H" inputmode="decimal"><span>m</span></div></div>
+              <div class="field"><label for="m-AD">Opera morta <small>air draft</small></label><div class="inbox"><input id="m-AD" inputmode="decimal"><span>m</span></div></div>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="m-OC">OC <small>overhead clearance</small></label><div class="inbox"><input id="m-OC" inputmode="decimal"><span>m</span></div></div>
+              <div class="field"><label for="m-z0">z<sub>0</sub> <small>dalla carta</small></label><div class="inbox"><input id="m-z0" inputmode="decimal"><span>m</span></div></div>
+            </div>
+            <label class="opt"><input type="checkbox" id="m-z0med"><span>z<sub>0</sub> uguale al livello medio (calcolato dai dati di marea)</span></label>
+          </fieldset>
+          <fieldset><legend>Squat e arrivo</legend>
+            <div class="row2">
+              <div class="field"><label for="m-sq">Squat <small>facoltativo</small></label><div class="inbox"><input id="m-sq" inputmode="decimal"><span>m</span></div></div>
+              <div class="field"><label for="m-eta">ETA <small>facoltativa</small></label><div class="inbox"><input id="m-eta" inputmode="numeric"><span>hh:mm</span></div></div>
+            </div>
+            <div class="row2">
+              <div class="field"><label for="m-dist">Distanza <small>facoltativa</small></label><div class="inbox"><input id="m-dist" inputmode="decimal"><span>mg</span></div></div>
+              <div class="field"><label for="m-v">Velocità <small>facoltativa</small></label><div class="inbox"><input id="m-v" inputmode="decimal"><span>kts</span></div></div>
+            </div>
+          </fieldset>
+        </div>
+        <div class="btns"><button type="button" class="btn" id="m-reset">Ripristina esempio</button></div>
+      </form>
+      <div class="results" id="r-m" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="sec-teo" role="tabpanel" aria-labelledby="tab-teo" hidden>
+    <div class="teo">
+      <article class="panel"><h2>La curva di marea tra due dati</h2>
+        <p>Tra un'alta e una bassa marea l'acqua non sale o scende in modo costante: va piano vicino agli estremi e veloce a metà. Il libro la tratta come mezza onda di coseno.</p>
+        <div class="eqs" id="teo-1"></div>
+        <p>D è la durata del semiperiodo (dall'alta alla bassa o viceversa), τ il tempo passato dal primo dato. L'angolo 180°·τ/D va da 0° (primo dato) a 180° (secondo dato).</p>
+      </article>
+      <article class="panel"><h2>L'ora per un'altezza</h2>
+        <p>È la stessa formula girata: si ricava il coseno, poi l'angolo con l'arcocoseno e infine τ.</p>
+        <div class="eqs" id="teo-2"></div>
+        <p>Con più dati la stessa altezza può essere raggiunta in più semiperiodi: nel flusso (acqua che sale) e nel riflusso (acqua che scende).</p>
+      </article>
+      <article class="panel"><h2>Regola dei dodicesimi</h2>
+        <p>Controllo a mano: si divide il semiperiodo in sei parti uguali («ore di marea»). Nelle sei parti l'acqua varia di 1, 2, 3, 3, 2, 1 dodicesimi dell'escursione, cioè in totale 1, 3, 6, 9, 11, 12 dodicesimi. Dà valori vicini al coseno ma non uguali: per l'esame si usa il coseno.</p>
+      </article>
+      <article class="panel"><h2>Ingresso in porto: UKC</h2>
+        <div class="eqs" id="teo-3"></div>
+        <p>Il fondale della carta è riferito allo zero idrografico: all'acqua della carta si somma l'altezza di marea. Lo squat abbassa la nave in moto, quindi serve più acqua.</p>
+      </article>
+      <article class="panel"><h2>Passaggio sotto un ponte: OC</h2>
+        <div class="eqs" id="teo-4"></div>
+        <p>L'altezza del ponte del portolano è riferita al livello medio, che sta z<sub>0</sub> sopra lo zero idrografico: sopra lo zero idrografico il ponte è alto H + z<sub>0</sub>. Più marea c'è, meno spazio resta: qui l'altezza di marea ha un massimo. Lo squat abbassa la nave e lascia un po' più di spazio sopra.</p>
+      </article>
+      <article class="panel"><h2>Finestra di marea</h2>
+        <p>Se ci sono sia un basso fondale sia un ponte, la marea deve stare tra h<sub>min</sub> e h<sub>max</sub>: gli intervalli in cui succede sono le <i>tidal window</i>. Se all'ETA non si può entrare, si cerca il primo istante utile e, nota la distanza, la velocità per arrivare in quell'istante.</p>
+      </article>
+    </div>
+  </section>
+</div>
