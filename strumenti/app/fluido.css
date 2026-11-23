@@ -1,0 +1,64 @@
+/* ===================== 1.06: fluidità, adattamento al telefono, disegni interattivi ===================== */
+html{background:var(--paper)}
+/* passaggio morbido anche tra l'app e le pagine degli esercizi (Chrome, Android, Safari 18) */
+@view-transition{navigation:auto}
+.top{view-transition-name:qp-top}
+.pl{view-transition-name:qp-pl}
+::view-transition-group(qp-top),::view-transition-group(qp-pl){animation-duration:0s}
+::view-transition-old(root){animation:qp-out .2s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:qp-in .38s cubic-bezier(.2,.75,.25,1) both}
+@keyframes qp-out{to{opacity:0}}
+@keyframes qp-in{from{opacity:0;transform:translateY(10px)}}
+/* cambio tema: il nuovo colore si allarga in cerchio dal pulsante */
+html.vt-theme::view-transition-old(root),html.vt-theme::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.vt-theme::view-transition-new(root){z-index:2}
+html.vt-theme::view-transition-group(qp-top),html.vt-theme::view-transition-group(qp-pl){animation:none}
+html.vt-theme .top,html.vt-theme .pl{view-transition-name:none}
+/* senza View Transitions: dissolvenza fatta a mano */
+main.in > :not([hidden]){animation:qp-in .38s cubic-bezier(.2,.75,.25,1)}
+html.vt-run main.in > :not([hidden]){animation:none}
+main.qp-out{opacity:0;transition:opacity .15s cubic-bezier(.4,0,1,1)}
+.qp-veil{position:fixed;inset:0;z-index:9998;pointer-events:none;background:var(--qp-veil);opacity:1;transition:opacity .5s cubic-bezier(.3,.6,.3,1)}
+.qp-veil.go{opacity:0}
+
+/* ---------- niente scorrimento orizzontale: formule e scritte ricompattate ---------- */
+main{overflow-x:clip}
+.topic .f,.topic p.f{max-width:min(100%,68ch)}
+.qp-fit table.tb th{font-size:.78em}
+.f.qp-wrap{white-space:normal;width:auto;line-height:1.75}
+.f.qp-wrap .fr{margin-block:2px}
+.calc.qp-wrap{white-space:pre-wrap;overflow-wrap:anywhere}
+table.tb.qp-wrap td,table.tb.qp-wrap th{white-space:normal;overflow-wrap:anywhere}
+.qp-fit{overflow-x:hidden!important}
+
+/* ---------- misure del telefono (classi messe da presto.js) ---------- */
+html.dev-xs{--gut:max(12px,env(safe-area-inset-left,0px))}
+html.dev-s{--gut:max(14px,env(safe-area-inset-left,0px))}
+html.dev-xs body{font-size:16px}
+html.dev-s body{font-size:16.75px}
+html.dev-xs .wrap,html.dev-s .wrap{padding-right:max(14px,env(safe-area-inset-right,0px))}
+html.dev-xs .hero h1{font-size:2.05rem}
+html.dev-xs .card{grid-template-columns:44px minmax(0,1fr) 16px;gap:11px}
+html.dev-xs .card .wp{width:44px;height:44px}
+html.dev-xs .route::before{left:21px}
+html.dev-tab body{font-size:18.5px}
+
+/* ---------- potenza ridotta (telefoni vecchi, risparmio energetico, batteria scarica) ---------- */
+html.lite .top{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--paper)}
+html.lite .pl{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--sheet)}
+html.lite .hero .rose{animation:none}
+html.lite .route li{animation-duration:.22s;animation-delay:0s}
+html.lite main.in > :not([hidden]){animation-duration:.2s}
+html.lite .card,html.lite .live,html.lite figure{box-shadow:none}
+
+/* ---------- disegni interattivi: si comandano solo coi tasti e i cursori sotto ---------- */
+.live{overflow:clip}
+.live-svg,.live-lens,.mob-dial{pointer-events:none;-webkit-user-select:none;user-select:none}
+.live-svg.drag .lv-w{cursor:default;touch-action:auto}
+.live-svg{position:sticky;top:calc(var(--qp-hdr,62px) - 1px);z-index:3;background:var(--sheet);max-height:calc(var(--vh,1vh) * 46);
+  transition:box-shadow .2s}
+.live-svg.stuck{box-shadow:0 10px 18px -14px rgba(12,24,38,.45)}
+html.lite .live-svg{position:static}
+.live-ctl{padding-top:10px}
+.live > .live-ctl + .live-state{margin-top:8px}
+@media (min-width:760px){.live-svg{position:static;max-height:none}}

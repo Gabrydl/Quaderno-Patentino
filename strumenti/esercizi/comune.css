@@ -1,0 +1,31 @@
+/* Pagine degli esercizi: parte comune dalla 1.06 */
+/* niente numeri di versione interni dei programmi */
+.brand .ver,#verBadge,#verBlock,#newVer{display:none!important}
+/* ingresso e uscita morbidi */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:qpx-out .2s cubic-bezier(.4,0,1,1) both}
+::view-transition-new(root){animation:qpx-in .36s cubic-bezier(.2,.75,.25,1) both}
+@keyframes qpx-out{to{opacity:0}}
+@keyframes qpx-in{from{opacity:0}}
+html:not(.qp-vtx) body{animation:qpx-in .34s cubic-bezier(.2,.75,.25,1) both}
+html.lite body,html.calm body{animation:none}
+html.qp-leave body{opacity:0;transition:opacity .16s cubic-bezier(.4,0,1,1)}
+/* righe di calcolo: dentro lo schermo */
+.eqs.qp-wrap .eq{flex-wrap:wrap;white-space:normal}
+.eqs.qp-wrap .ch{white-space:normal}
+/* "Come si fa" */
+details.qp-how{margin:10px 0 2px;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--accent) 5%,var(--surface,var(--panel,#fff)))}
+details.qp-how summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;font-weight:600;font-size:.95rem;color:var(--accent);-webkit-tap-highlight-color:transparent}
+details.qp-how summary::-webkit-details-marker{display:none}
+details.qp-how summary svg{width:19px;height:19px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+details.qp-how summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translate(-2px,-2px);transition:transform .2s;opacity:.7}
+details.qp-how[open] summary::after{transform:rotate(225deg) translate(-2px,-2px)}
+details.qp-how ul{margin:0;padding:0 14px 12px 32px;font-size:.93rem;line-height:1.5;color:var(--ink)}
+details.qp-how li{margin:6px 0}
+details.qp-how li::marker{color:var(--accent)}
+details.qp-how b{font-weight:600}
+details.qp-how kbd{font:inherit;font-size:.86em;font-weight:600;white-space:nowrap;padding:0 5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--surface,var(--panel,transparent))}
+details.qp-how[open] ul{animation:qpx-open .25s ease}
+@keyframes qpx-open{from{opacity:0;transform:translateY(-4px)}}
+section.steps > details.qp-how{margin:0 0 14px}
+@media (prefers-reduced-motion:reduce){details.qp-how[open] ul{animation:none}}

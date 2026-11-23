@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.05.00 · 23/11/2026'
+VER = '1.06.00 · 23/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -13,6 +13,10 @@ def sub1(s, old, new, n=1):
     return s.replace(old, new)
 
 s = rd('prova.html')
+
+# --- 1.06: i font di Google non bloccano la prima immagine (anche senza rete nell'APK) ---
+s = sub1(s, '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Source+Sans+3:ital,wght@0,400..700;1,400..700&display=swap">',
+         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&family=Source+Sans+3:ital,wght@0,400..700;1,400..700&display=swap" media="print" onload="this.media=\'all\'">')
 
 # --- titolo, PWA ---
 s = sub1(s, '<title>Prova grafica Quaderno Patentino</title>',
@@ -25,7 +29,8 @@ s = sub1(s, '<title>Prova grafica Quaderno Patentino</title>',
          '<link rel="icon" href="icone/icona-192.png" type="image/png">\n'
          '<link rel="apple-touch-icon" href="icone/icona-180.png">\n'
          '<meta name="apple-mobile-web-app-capable" content="yes">\n'
-         '<meta name="apple-mobile-web-app-title" content="Quaderno">')
+         '<meta name="apple-mobile-web-app-title" content="Quaderno">\n'
+         '<script>' + rd('app/presto.js') + '</script>')
 
 # --- audio: dal vecchio artefatto pubblico ---
 pm = json.load(open(os.path.join(W, 'provamap.json')))
@@ -54,13 +59,20 @@ s = s[:a] + s[b:]
 s = sub1(s, '"desc": "Appunti (MARPOL, ISM, ISPS, BLU code), SOLAS,', '"desc": "SOLAS,')
 
 # --- carta sinottica d'esempio (dopo "Simbologia dei fronti") ---
+# Dal 23/11/2026 (1.06.00) la carta sinottica completa ("Carta sinottica: esempio completo") NON è più nell'app:
+# restano le carte reali con le foto. Il codice è conservato in sinottica.html: per rimetterla basta CARTA_COMPLETA = True.
+CARTA_COMPLETA = False
 sin = rd('sinottica.html')
 arts = re.findall(r'<article[\s\S]*?</article>', sin)
 assert len(arts) == 3
 arts = [re.sub(r'<article class="topic" id="([^"]+)"[^>]*>', r'<article class="topic" id="\1" data-ref="Esempio">', x) for x in arts]
 arts = [x.replace('<figure class="fig ">', '<figure class="fig">') for x in arts]
+if not CARTA_COMPLETA:
+    assert 'id="meteo-sinottica-esempio"' in arts[0]
+    arts = arts[1:]
+    arts[-1] = arts[-1].replace('Qui c’è la stazione di Berlino presa dalla carta, appena passato il fronte freddo.',
+                                'Qui c’è una stazione d’esempio (Berlino), appena passato un fronte freddo.')
 i = s.index('<article class="topic" id="meteo-simbologia-fronti"'); j = s.index('</article>', i) + len('</article>')
-s = s[:j] + '\n\n' + '\n\n'.join(arts) + s[j:]
 # --- carte sinottiche reali (galleria Met Office a colori, pagina a parte) ---
 REALI = ('<article class="topic" id="meteo-sinottiche-reali" data-ref="Esempio">\n'
   '<h3>Carte sinottiche reali a colori<span class="pg">Esempio</span></h3>\n'
@@ -69,8 +81,7 @@ REALI = ('<article class="topic" id="meteo-sinottiche-reali" data-ref="Esempio">
   '<p><a href="esercizi/sinottiche.html" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;'
   'background:var(--blue);color:var(--on-accent);font-weight:700;text-decoration:none">Apri le carte sinottiche reali</a></p>\n'
   '</article>')
-i = s.index('<article class="topic" id="meteo-sinottica-esempio"')
-s = s[:i] + REALI + '\n\n' + s[i:]
+s = s[:j] + '\n\n' + REALI + '\n\n' + '\n\n'.join(arts) + s[j:]
 
 # --- Navigazione 1.3 (dalla chat del 30/10/2026) ---
 sys.path.insert(0, os.path.join(W, 'nav')); import build_nav
@@ -111,6 +122,16 @@ s = sub1(s, '        <li>Gli audio si ascoltano online: serve la connessione.</l
          '        <li>Gli audio partono online. La prima volta che ne ascolti uno puoi scaricarlo per sentirlo anche offline; li gestisci dall\'account, in <b>Audio scaricati</b>.</li>')
 s = sub1(s, '<p class="foot-ver">Prova grafica · contenuti della versione del 24/10/2026</p>', '<p class="foot-ver">Versione ' + VER + '</p>')
 
+# --- 1.06: cambio tema e cambio argomento morbidi (app/fluido.js) ---
+s = sub1(s, """  document.getElementById('themeBtn').addEventListener('click', () => {
+    const cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('qp-theme', next); } catch (e) {}
+  });
+""", '')
+s = sub1(s, "  window.addEventListener('hashchange', route);", "  window.addEventListener('hashchange', () => window.QP_SOFT ? QP_SOFT(route) : route());")
+
 # --- audio: lezioni scaricate per l'offline (vedi app/audio-off.js) ---
 s = sub1(s, "    au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed;\n",
          "    waitId = null;\n"
@@ -129,7 +150,7 @@ ah = rd('app/auth.html').replace('__ROSE__', rd('app/rose.txt')).replace('__TOS_
 s = sub1(s, '<body data-view="home">', '<body data-view="home" class="locked">\n' + ah)
 
 # --- stile e script ---
-css = rd('app/auth.css')
+css = rd('app/auth.css') + '\n' + rd('app/fluido.css')
 k = s.index('</style>'); s = s[:k] + '\n' + css + '\n' + s[k:]
 js = rd('app/auth.js')
 INST = ('<div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l\'app"><div class="card2">'
@@ -142,7 +163,7 @@ chip = ("<script>(function(){var c=document.getElementById('chips');if(!c)return
         "a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>\n")
 k = s.rindex('</body>'); s = s[:k] + chip + s[k:]
 k = s.rindex('</body>')
-s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + sw + '\n</script>\n' + s[k:]
+s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + rd('app/fluido.js') + '\n' + sw + '\n</script>\n' + s[k:]
 
 assert 'Prova grafica' not in s
 os.makedirs(OUT, exist_ok=True)

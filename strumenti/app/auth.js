@@ -131,6 +131,11 @@
     const ua = navigator.userAgent, d = { dispositivo: id.slice(0, 36) };
     const and = ua.match(/Android [\d.]+; ([^;)]+)/); if (and) d.modello = and[1].replace(/ Build.*/, '').trim();
     else if (/iPhone/.test(ua)) d.modello = 'iPhone'; else if (/iPad/.test(ua)) d.modello = 'iPad'; else if (/Windows/.test(ua)) d.modello = 'PC Windows'; else if (/Macintosh/.test(ua)) d.modello = 'Mac';
+    // nome dal database dei telefoni (app/presto.js): es. "Galaxy S23 Ultra (SM-S918B) · 6.8″"
+    const D = window.QP_DEV;
+    if (D && D.nome) d.modello = D.nome + (D.codice && D.codice !== D.nome ? ' (' + D.codice + ')' : '') + ' · ' + String(D.pollici).replace('.', ',') + '″';
+    else if (D && D.codice) d.modello = D.codice;
+    if (d.modello) d.modello = d.modello.slice(0, 80);
     d.sistema = (ua.match(/Android [\d.]+|iPhone OS [\d_]+|Windows NT [\d.]+|Mac OS X [\d_.]+/) || [''])[0].replace(/_/g, '.');
     d.browser = (ua.match(/(SamsungBrowser|Edg|OPR|Firefox|CriOS|Chrome|Safari)\/[\d.]+/) || [''])[0].split('.')[0];
     return d;
@@ -343,6 +348,7 @@
     const t = [['utenti', 'Utenti']];
     if (me.ruolo === 'superadmin') t.push(['accessi', 'Accessi'], ['segn', 'Segnalazioni']);
     t.push(['msg', 'Messaggi'], ['codice', 'Codice']);
+    if (me.ruolo === 'superadmin') t.push(['agg', 'Registro']);
     return '<div class="atabs">' + t.map(([k, l]) => '<button type="button" data-t="' + k + '" aria-current="' + (k === atab) + '">' + l + (k === 'segn' && adminData.nuove ? '<span class="dot">' + adminData.nuove + '</span>' : '') + '</button>').join('') + '</div>';
   }
   async function paintAdmin(fresh){
@@ -356,6 +362,7 @@
       else if (atab === 'accessi') await aAccessi(box);
       else if (atab === 'segn') await aSegn(box);
       else if (atab === 'msg') await aMsg(box);
+      else if (atab === 'agg') await aAgg(box);
       else await aCodice(box);
     } catch (x) { box.innerHTML = '<p class="err">' + esc(x.message) + '</p>'; }
   }
@@ -446,6 +453,13 @@
       if (!confirm('Ritirare il messaggio? Chi non l\'ha ancora letto non lo vedrà.')) return;
       try { await rpc('ritira_messaggio', { chi: sent[+b.dataset.i].id }); paintAdmin(false); } catch (x) { toast(x.message); }
     }));
+  }
+  // registro interno di tutti gli aggiornamenti (solo super-admin; lo aggiorna Claude a ogni versione)
+  async function aAgg(box){
+    const L = await rpc('registro_aggiornamenti');
+    const d = x => { const p = String(x).split('-'); return p[2] + '/' + p[1] + '/' + p[0]; };
+    box.innerHTML = '<p>Tutto quello che è cambiato nell\'app, dal più recente. Lo vedi solo tu.</p><ol class="agg">' + L.map(a =>
+      '<li><span class="ah"><b>' + esc(a.versione ? 'Versione ' + a.versione : 'Aggiornamento') + '</b><small>' + d(a.data) + '</small></span><span class="ad">' + esc(a.descrizione) + '</span></li>').join('') + '</ol>';
   }
   async function aCodice(box){
     const c = await rpc('codice_accesso');
