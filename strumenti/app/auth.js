@@ -253,7 +253,7 @@
     if (view === 'admin') return paintAdmin(fresh);
     const roleTxt = me.ruolo === 'superadmin' ? 'Super-admin' : me.ruolo === 'admin' ? 'Admin' : 'Utente';
     const keepOpen = id => { const d = accBody.querySelector('#' + id); return d && d.open ? ' open' : ''; };
-    const was = { p: keepOpen('pProg') || (fresh ? ' open' : ''), n: keepOpen('pNome'), s: keepOpen('pSeg'), t: keepOpen('pTos') };
+    const was = { p: keepOpen('pProg') || (fresh ? ' open' : ''), n: keepOpen('pNome'), w: keepOpen('pPw'), s: keepOpen('pSeg'), t: keepOpen('pTos') };
     accBody.innerHTML =
       '<div class="who"><button type="button" class="ph" id="phBtn" aria-label="Cambia foto profilo">' + avatar(me.foto, me.nome) +
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>' +
@@ -263,6 +263,12 @@
       '<details class="panel" id="pProg"' + was.p + '><summary>I tuoi progressi</summary><div class="in"><p>Segna gli argomenti con <b>Segna come letto</b> in fondo a ogni scheda.</p>' + progHtml() + '</div></details>' +
       '<details class="panel" id="pNome"' + was.n + '><summary>Cambia nome utente</summary><div class="in"><p>Il nuovo nome vale anche per entrare. La password resta la stessa.</p>' +
       '<form id="fNome"><label class="fld"><span>Nuovo nome utente</span><input id="nNome" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20" value="' + esc(me.nome) + '"></label><p class="err" id="nErr"></p><button class="btn" type="submit">Salva il nome</button></form></div></details>' +
+      '<details class="panel" id="pPw"' + was.w + '><summary>Cambia password</summary><div class="in"><p>Serve la password di adesso. Il nome utente resta lo stesso.</p>' +
+      '<form id="fPw"><input type="text" autocomplete="username" value="' + esc(me.nome) + '" hidden>' +
+      '<label class="fld"><span>Password attuale</span><input id="pwOld" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false"></label>' +
+      '<label class="fld"><span>Nuova password</span><input id="pwNew" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" maxlength="72"></label>' +
+      '<label class="fld"><span>Ripeti la nuova password</span><input id="pwNew2" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" maxlength="72"></label>' +
+      '<p class="err" id="pwErr"></p><button class="btn" type="submit">Salva la password</button></form></div></details>' +
       '<details class="panel" id="pSeg"' + was.s + '><summary>Segnalazioni e feedback</summary><div class="in"><p>Errori nel testo, idee o problemi con l\'app. Le legge solo il super-admin.</p>' +
       '<form id="fSeg"><label class="fld"><span>Tipo</span><select id="sTipo"><option value="errore">Errore</option><option value="suggerimento">Suggerimento</option><option value="reclamo">Reclamo</option><option value="altro">Altro</option></select></label>' +
       '<label class="fld"><span>Messaggio</span><textarea id="sMsg" maxlength="2000" placeholder="Scrivi qui. Puoi allegare fino a 3 foto o file qui sotto."></textarea></label>' +
@@ -287,6 +293,27 @@
       e.preventDefault(); const n = accBody.querySelector('#nNome').value.trim(), er = accBody.querySelector('#nErr'); er.textContent = '';
       try { const r = await rpc('cambia_nome', { nuovo: n }); await authFetch('token?grant_type=refresh_token', { refresh_token: sess.rt }).then(j => saveSess(fromToken(j))); me.nome = r.nome; toast('Nome cambiato in ' + r.nome); paintAcc(); paintAccount(false); }
       catch (x) { er.textContent = x.message; }
+    });
+    accBody.querySelector('#fPw').addEventListener('submit', async e => {
+      e.preventDefault(); const er = accBody.querySelector('#pwErr'); er.textContent = '';
+      const old = accBody.querySelector('#pwOld').value, nw = accBody.querySelector('#pwNew').value, nw2 = accBody.querySelector('#pwNew2').value;
+      if (!old) { er.textContent = 'Scrivi la password attuale.'; return; }
+      if (nw.length < 6) { er.textContent = 'La nuova password deve avere almeno 6 caratteri.'; return; }
+      if (nw !== nw2) { er.textContent = 'Le due password nuove non sono uguali.'; return; }
+      if (nw === old) { er.textContent = 'La nuova password è uguale a quella attuale.'; return; }
+      const btn = e.submitter || accBody.querySelector('#fPw [type=submit]'); btn.disabled = true;
+      try {
+        // controllo della password attuale (rientra con quella), poi cambio
+        try { saveSess(fromToken(await authFetch('token?grant_type=password', { email: me.nome.toLowerCase() + '@' + DOM, password: old }))); }
+        catch (x) { throw new Error(/invalid login credentials/i.test(x.message) ? 'La password attuale non è giusta.' : traduci(x)); }
+        const at = await token();
+        const r = await fetch(SB + '/auth/v1/user', { method: 'PUT', headers: { apikey: KEY, Authorization: 'Bearer ' + at, 'Content-Type': 'application/json' }, body: JSON.stringify({ password: nw }) });
+        if (!r.ok) { let j = {}; try { j = await r.json(); } catch (_) {} throw new Error(/same/i.test(j.error_code || j.msg || '') ? 'La nuova password è uguale a quella attuale.' : traduci({ message: j.msg || j.message || ('Errore ' + r.status) })); }
+        ['#pwOld', '#pwNew', '#pwNew2'].forEach(q => accBody.querySelector(q).value = '');
+        accBody.querySelector('#pPw').open = false;
+        toast('Password cambiata');
+      } catch (x) { er.textContent = x.message; }
+      btn.disabled = false;
     });
     let files = [];
     const fl = accBody.querySelector('#sFiles');

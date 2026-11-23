@@ -1183,7 +1183,7 @@ html.lite .sg-fig{box-shadow:none}
       <p class="err" id="gateErr" role="alert"></p>
       <button class="btn" id="gSubmit" type="submit">Entra</button>
     </form>
-    <p class="ver">Versione 1.07.03 · 23/11/2026</p>
+    <p class="ver">Versione 1.07.04 · 23/11/2026</p>
   </div>
 </div>
 <template id="tosText"><p><b>Chi gestisce l'app.</b> Il Quaderno Patentino è un progetto personale di studio, gestito dal suo autore (super-admin). È gratuito e non ha pubblicità.</p>
@@ -1259,7 +1259,7 @@ html.lite .sg-fig{box-shadow:none}
         <li>Gli audio partono online. La prima volta che ne ascolti uno puoi scaricarlo per sentirlo anche offline; li gestisci dall'account, in <b>Audio scaricati</b>.</li>
       </ul>
     </details>
-    <p class="foot-ver">Versione 1.07.03 · 23/11/2026</p>
+    <p class="foot-ver">Versione 1.07.04 · 23/11/2026</p>
   </div>
   <div id="results" hidden></div>
   <div id="sections">
@@ -18139,7 +18139,7 @@ Il giornale di navigazione è scritto e firmato dal Comandante per le guardie da
 <script>(function(){var c=document.getElementById('chips');if(!c)return;var a=document.createElement('a');a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>
 <div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l'app"><div class="card2"><p class="txt" style="font-weight:700;margin-bottom:10px">Installa il Quaderno sull'iPhone</p><ol><li>In Safari tocca <b>Condividi</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M6 11v8.5h12V11"/></svg> in basso.</li><li>Scorri e scegli <b>Aggiungi alla schermata Home</b>.</li><li>Tocca <b>Aggiungi</b>: l'icona compare tra le tue app.</li></ol><button type="button" class="btn">Ho capito</button></div></div>
 <script>
-window.QP_VERSIONE = "1.07.03 \u00b7 23/11/2026";
+window.QP_VERSIONE = "1.07.04 \u00b7 23/11/2026";
 // Account: accesso con nome utente e password (Supabase), registrazione con codice, progressi, segnalazioni,
 // messaggi in primo piano, area amministrazione. Il codice di registrazione sta solo nel database.
 (function(){
@@ -18395,7 +18395,7 @@ window.QP_VERSIONE = "1.07.03 \u00b7 23/11/2026";
     if (view === 'admin') return paintAdmin(fresh);
     const roleTxt = me.ruolo === 'superadmin' ? 'Super-admin' : me.ruolo === 'admin' ? 'Admin' : 'Utente';
     const keepOpen = id => { const d = accBody.querySelector('#' + id); return d && d.open ? ' open' : ''; };
-    const was = { p: keepOpen('pProg') || (fresh ? ' open' : ''), n: keepOpen('pNome'), s: keepOpen('pSeg'), t: keepOpen('pTos') };
+    const was = { p: keepOpen('pProg') || (fresh ? ' open' : ''), n: keepOpen('pNome'), w: keepOpen('pPw'), s: keepOpen('pSeg'), t: keepOpen('pTos') };
     accBody.innerHTML =
       '<div class="who"><button type="button" class="ph" id="phBtn" aria-label="Cambia foto profilo">' + avatar(me.foto, me.nome) +
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>' +
@@ -18405,6 +18405,12 @@ window.QP_VERSIONE = "1.07.03 \u00b7 23/11/2026";
       '<details class="panel" id="pProg"' + was.p + '><summary>I tuoi progressi</summary><div class="in"><p>Segna gli argomenti con <b>Segna come letto</b> in fondo a ogni scheda.</p>' + progHtml() + '</div></details>' +
       '<details class="panel" id="pNome"' + was.n + '><summary>Cambia nome utente</summary><div class="in"><p>Il nuovo nome vale anche per entrare. La password resta la stessa.</p>' +
       '<form id="fNome"><label class="fld"><span>Nuovo nome utente</span><input id="nNome" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20" value="' + esc(me.nome) + '"></label><p class="err" id="nErr"></p><button class="btn" type="submit">Salva il nome</button></form></div></details>' +
+      '<details class="panel" id="pPw"' + was.w + '><summary>Cambia password</summary><div class="in"><p>Serve la password di adesso. Il nome utente resta lo stesso.</p>' +
+      '<form id="fPw"><input type="text" autocomplete="username" value="' + esc(me.nome) + '" hidden>' +
+      '<label class="fld"><span>Password attuale</span><input id="pwOld" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false"></label>' +
+      '<label class="fld"><span>Nuova password</span><input id="pwNew" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" maxlength="72"></label>' +
+      '<label class="fld"><span>Ripeti la nuova password</span><input id="pwNew2" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" maxlength="72"></label>' +
+      '<p class="err" id="pwErr"></p><button class="btn" type="submit">Salva la password</button></form></div></details>' +
       '<details class="panel" id="pSeg"' + was.s + '><summary>Segnalazioni e feedback</summary><div class="in"><p>Errori nel testo, idee o problemi con l\'app. Le legge solo il super-admin.</p>' +
       '<form id="fSeg"><label class="fld"><span>Tipo</span><select id="sTipo"><option value="errore">Errore</option><option value="suggerimento">Suggerimento</option><option value="reclamo">Reclamo</option><option value="altro">Altro</option></select></label>' +
       '<label class="fld"><span>Messaggio</span><textarea id="sMsg" maxlength="2000" placeholder="Scrivi qui. Puoi allegare fino a 3 foto o file qui sotto."></textarea></label>' +
@@ -18429,6 +18435,27 @@ window.QP_VERSIONE = "1.07.03 \u00b7 23/11/2026";
       e.preventDefault(); const n = accBody.querySelector('#nNome').value.trim(), er = accBody.querySelector('#nErr'); er.textContent = '';
       try { const r = await rpc('cambia_nome', { nuovo: n }); await authFetch('token?grant_type=refresh_token', { refresh_token: sess.rt }).then(j => saveSess(fromToken(j))); me.nome = r.nome; toast('Nome cambiato in ' + r.nome); paintAcc(); paintAccount(false); }
       catch (x) { er.textContent = x.message; }
+    });
+    accBody.querySelector('#fPw').addEventListener('submit', async e => {
+      e.preventDefault(); const er = accBody.querySelector('#pwErr'); er.textContent = '';
+      const old = accBody.querySelector('#pwOld').value, nw = accBody.querySelector('#pwNew').value, nw2 = accBody.querySelector('#pwNew2').value;
+      if (!old) { er.textContent = 'Scrivi la password attuale.'; return; }
+      if (nw.length < 6) { er.textContent = 'La nuova password deve avere almeno 6 caratteri.'; return; }
+      if (nw !== nw2) { er.textContent = 'Le due password nuove non sono uguali.'; return; }
+      if (nw === old) { er.textContent = 'La nuova password è uguale a quella attuale.'; return; }
+      const btn = e.submitter || accBody.querySelector('#fPw [type=submit]'); btn.disabled = true;
+      try {
+        // controllo della password attuale (rientra con quella), poi cambio
+        try { saveSess(fromToken(await authFetch('token?grant_type=password', { email: me.nome.toLowerCase() + '@' + DOM, password: old }))); }
+        catch (x) { throw new Error(/invalid login credentials/i.test(x.message) ? 'La password attuale non è giusta.' : traduci(x)); }
+        const at = await token();
+        const r = await fetch(SB + '/auth/v1/user', { method: 'PUT', headers: { apikey: KEY, Authorization: 'Bearer ' + at, 'Content-Type': 'application/json' }, body: JSON.stringify({ password: nw }) });
+        if (!r.ok) { let j = {}; try { j = await r.json(); } catch (_) {} throw new Error(/same/i.test(j.error_code || j.msg || '') ? 'La nuova password è uguale a quella attuale.' : traduci({ message: j.msg || j.message || ('Errore ' + r.status) })); }
+        ['#pwOld', '#pwNew', '#pwNew2'].forEach(q => accBody.querySelector(q).value = '');
+        accBody.querySelector('#pPw').open = false;
+        toast('Password cambiata');
+      } catch (x) { er.textContent = x.message; }
+      btn.disabled = false;
     });
     let files = [];
     const fl = accBody.querySelector('#sFiles');
