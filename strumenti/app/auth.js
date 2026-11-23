@@ -381,18 +381,50 @@
       det.innerHTML = 'Registrato il ' + fmt(u.registrato) + '<br>Accessi registrati: ' + (u.n_accessi || 0) +
         (l.ip ? '<br>Ultimo: ' + esc([l.modello, l.sistema, l.browser].filter(Boolean).join(' · ')) + ' · IP ' + esc(l.ip) : '') +
         (u.nomi ? '<br>Nomi precedenti: ' + u.nomi.map(n => esc(n.vecchio) + ' → ' + esc(n.nuovo) + ' (' + fmt(n.quando) + ')').join(', ') : '') +
-        (u.ruolo === 'superadmin' ? '' : '<div class="acts2"><button type="button" class="btn ghost sm" data-a="msg">Scrivi</button><button type="button" class="btn ghost sm" data-a="acc">Accessi</button><button type="button" class="btn ghost sm" data-a="role">' + (u.ruolo === 'admin' ? 'Togli admin' : 'Rendi admin') + '</button><button type="button" class="btn danger sm" data-a="del">Elimina</button></div>');
+        (u.ruolo === 'superadmin' ? '' : '<div class="acts2"><button type="button" class="btn ghost sm" data-a="msg">Scrivi</button><button type="button" class="btn ghost sm" data-a="cred">Dati d\'accesso</button><button type="button" class="btn ghost sm" data-a="acc">Accessi</button><button type="button" class="btn ghost sm" data-a="role">' + (u.ruolo === 'admin' ? 'Togli admin' : 'Rendi admin') + '</button><button type="button" class="btn danger sm" data-a="del">Elimina</button></div>');
       det.hidden = false;
       det.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', async ev => {
         ev.stopPropagation(); const a = b.dataset.a;
         try {
           if (a === 'msg') { atab = 'msg'; adminData.to = u; return paintAdmin(false); }
+          if (a === 'cred') return credForm(det, u);
           if (a === 'acc') { atab = 'accessi'; adminData.chi = u; return paintAdmin(false); }
           if (a === 'role') { await rpc('imposta_ruolo', { chi: u.id, ruolo: u.ruolo === 'admin' ? '' : 'admin' }); toast('Ruolo aggiornato'); return paintAdmin(false); }
           if (a === 'del') { if (!confirm('Eliminare l\'account di ' + u.nome + '? Non si può annullare.')) return; await rpc('elimina_utente', { chi: u.id }); toast('Account eliminato'); return paintAdmin(false); }
         } catch (x) { toast(x.message); }
       }));
     }));
+  }
+  // super-admin: nuovo nome utente e/o nuova password per chi è rimasto fuori dall'app
+  function credForm(det, u){
+    if (det.querySelector('.cred')) { det.querySelector('.cred').remove(); return; }
+    const f = document.createElement('form'); f.className = 'cred';
+    f.innerHTML = '<p class="ch">Per chi non ricorda più come entrare. Cambia solo quello che serve, poi comunica i dati nuovi all\'utente.</p>' +
+      '<label class="fld"><span>Nome utente</span><input name="n" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="20" value="' + esc(u.nome) + '"></label>' +
+      '<label class="fld"><span>Nuova password</span><div class="pwrow"><input name="p" autocomplete="new-password" autocapitalize="none" spellcheck="false" maxlength="72" placeholder="lascia vuoto per non cambiarla"><button type="button" class="btn ghost sm gen">Genera</button></div></label>' +
+      '<p class="err"></p><div class="acts2"><button type="submit" class="btn sm">Salva</button><button type="button" class="btn ghost sm no">Annulla</button></div><div class="cred-ok" hidden></div>';
+    f.addEventListener('click', ev => ev.stopPropagation());
+    f.querySelector('.no').addEventListener('click', () => f.remove());
+    f.querySelector('.gen').addEventListener('click', () => {
+      const A = 'abcdefghjkmnpqrstuvwxyz23456789', r = new Uint32Array(8); crypto.getRandomValues(r);
+      f.p.value = [...r].map(x => A[x % A.length]).join('');
+    });
+    f.addEventListener('submit', async ev => {
+      ev.preventDefault(); const er = f.querySelector('.err'); er.textContent = '';
+      const n = f.n.value.trim(), pw = f.p.value;
+      if (n === u.nome && !pw) { er.textContent = 'Non hai cambiato niente.'; return; }
+      if (!confirm('Cambiare i dati d\'accesso di ' + u.nome + '?' + (pw ? ' Verrà disconnesso dai suoi dispositivi.' : ''))) return;
+      try {
+        const r = await rpc('reimposta_accesso', { chi: u.id, nuovo_nome: n !== u.nome ? n : null, nuova_password: pw || null });
+        const ok = f.querySelector('.cred-ok'); ok.hidden = false;
+        ok.innerHTML = '<b>Fatto.</b> Dati da comunicare:<br>Nome utente: <code>' + esc(r.nome) + '</code>' + (pw ? '<br>Password: <code>' + esc(pw) + '</code>' : '') +
+          '<br><button type="button" class="btn ghost sm cp">Copia</button>';
+        ok.querySelector('.cp').addEventListener('click', () => { try { navigator.clipboard.writeText('Nome utente: ' + r.nome + (pw ? '\nPassword: ' + pw : '')); toast('Copiato'); } catch (e) {} });
+        f.querySelector('.acts2').hidden = true; f.n.disabled = f.p.disabled = true; u.nome = r.nome;
+        toast('Dati d\'accesso cambiati');
+      } catch (x) { er.textContent = x.message; }
+    });
+    det.append(f); f.n.focus();
   }
   async function aAccessi(box){
     const chi = adminData.chi; adminData.chi = null;

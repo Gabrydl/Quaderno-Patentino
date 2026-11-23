@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.07.02 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.07.03 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -70,6 +70,11 @@ Dalla 1.06.00 la «Carta sinottica: esempio completo» non è più nell'app (res
 All'apertura l'APK controlla l'ultima Release su GitHub; se è più nuova chiama `QP_UPD()` nella pagina (`strumenti/app/aggiorna.js`):
 riquadro con icona, versione, «Novità» (le righe che iniziano con «- » nel messaggio del commit, che finisce nel testo della Release),
 barra di avanzamento e nota su «Installa comunque». Se la pagina non risponde usa il riquadro di Android.
+
+## Dati d'accesso di un utente (super-admin)
+Amministrazione → Utenti → tocca l'utente → **Dati d'accesso**: nuovo nome utente e/o nuova password (tasto «Genera»).
+Funzione Supabase `reimposta_accesso(chi, nuovo_nome, nuova_password)`: solo super-admin, non tocca altri super-admin,
+registra il cambio di nome in `nomi_storico`, con password nuova chiude le sessioni dell'utente sugli altri dispositivi.
 
 ## Registro degli aggiornamenti
 Tabella `aggiornamenti` (data, versione, descrizione) su Supabase, senza accesso diretto: la legge solo il super-admin dall'app

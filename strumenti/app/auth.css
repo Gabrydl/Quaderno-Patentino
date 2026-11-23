@@ -179,3 +179,11 @@ ol.agg li::before{content:"";position:absolute;left:-21px;top:5px;width:10px;hei
 ol.agg .ah{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 ol.agg .ah small{color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
 ol.agg .ad{display:block;color:var(--muted);font-size:.92rem;line-height:1.45;margin-top:2px}
+
+/* super-admin: dati d'accesso di un utente */
+form.cred{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+form.cred .ch{margin:0 0 10px;font-size:.86rem;color:var(--muted)}
+form.cred .pwrow{display:flex;gap:8px;align-items:center}
+form.cred .pwrow input{flex:1;min-width:0}
+form.cred .cred-ok{margin-top:10px;padding:10px 12px;border-radius:10px;background:var(--chip);font-size:.9rem;line-height:1.6}
+form.cred code{font-family:var(--f-mono);font-weight:600;user-select:all}
