@@ -9,7 +9,7 @@
   --bg:#E4EAEC; --panel:#FFFFFF; --paper:#FFFFFF; --ink:#17222B; --muted:#55646E; --line:#C7D1D6; --soft:#EEF2F4;
   --accent:#A3176C; --on-accent:#FFFFFF;
   --sea:#F6FAFB; --land:#EBDCA9; --coast:#2A2925; --off:#D7DEE1; --grid:#9FB4C0; --halo:#F6FAFB;
-  --magenta:#B0177A; --seatext:#2D5B7A; --arc:#8B5CF6; --pencil:#363C43; --sol:#0A7470; --cur:#9A6A00;
+  --magenta:#B0177A; --seatext:#2D5B7A; --pencil:#363C43; --sol:#0A7470; --cur:#9A6A00;
   --p1:#1B54B5; --p2:#C24E00; --p3:#2E7D32; --p4:#6A3FB5; --p5:#B3261E; --p6:#00838F;
   --ok:#17703A; --ok-bg:#E5F3EA; --warn:#8A5300; --warn-bg:#FBF0DD; --bad:#A8241C; --bad-bg:#FBE7E5;
   --f-display:"Archivo Narrow","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
@@ -22,7 +22,7 @@
     --bg:#090F14; --panel:#101920; --paper:#0E161D; --ink:#D6DFE6; --muted:#8D9BA6; --line:#25323C; --soft:#16212A;
     --accent:#E765B6; --on-accent:#1B0612;
     --sea:#0B1923; --land:#3A3322; --coast:#C8B583; --off:#05090D; --grid:#294150; --halo:#0B1923;
-    --magenta:#F06CC0; --seatext:#7FB0D0; --arc:#C4A8FF; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
+    --magenta:#F06CC0; --seatext:#7FB0D0; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
     --p1:#77A7FF; --p2:#FF8F45; --p3:#6FCF73; --p4:#B79BFF; --p5:#FF7A70; --p6:#4DD6E3;
     --ok:#62CF86; --ok-bg:#112A1B; --warn:#F2B55A; --warn-bg:#2E2210; --bad:#FF8177; --bad-bg:#33130F;
     color-scheme:dark;
@@ -32,7 +32,7 @@
   --bg:#090F14; --panel:#101920; --paper:#0E161D; --ink:#D6DFE6; --muted:#8D9BA6; --line:#25323C; --soft:#16212A;
   --accent:#E765B6; --on-accent:#1B0612;
   --sea:#0B1923; --land:#3A3322; --coast:#C8B583; --off:#05090D; --grid:#294150; --halo:#0B1923;
-  --magenta:#F06CC0; --seatext:#7FB0D0; --arc:#C4A8FF; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
+  --magenta:#F06CC0; --seatext:#7FB0D0; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
   --p1:#77A7FF; --p2:#FF8F45; --p3:#6FCF73; --p4:#B79BFF; --p5:#FF7A70; --p6:#4DD6E3;
   --ok:#62CF86; --ok-bg:#112A1B; --warn:#F2B55A; --warn-bg:#2E2210; --bad:#FF8177; --bad-bg:#33130F;
   color-scheme:dark;
@@ -681,7 +681,7 @@ const cv = $('chart'), ctx = cv.getContext('2d'), wrap = $('wrap');
 let CW = 0, CH = 0, dpr = 1, T = {}, needDraw = false, fitted = false;
 function readTokens(){
   const cs = getComputedStyle(document.documentElement);
-  ['sea', 'land', 'coast', 'off', 'grid', 'ink', 'halo', 'magenta', 'seatext', 'arc', 'pencil', 'sol', 'cur', 'accent', 'paper', 'muted', ...COLORS].forEach(k => T[k] = cs.getPropertyValue('--' + k).trim());
+  ['sea', 'land', 'coast', 'off', 'grid', 'ink', 'halo', 'magenta', 'seatext', 'pencil', 'sol', 'cur', 'accent', 'paper', 'muted', ...COLORS].forEach(k => T[k] = cs.getPropertyValue('--' + k).trim());
 }
 function resize(){
   const r = wrap.getBoundingClientRect();
@@ -724,15 +724,6 @@ function chevS(a, b, n, color, w = 1.8){
 function vecW(a, b, n, color, w = 1.9){ const A = w2s(a), B = w2s(b); lineS(A, B, color, w); chevS(A, B, n, color, w); }
 function infW(p, C, color, w = 1.2, dash = [9, 5], len = 400){ const d = wdir(C); lineW(wadd(p, wmul(d, -len)), wadd(p, wmul(d, len)), color, w, dash); }
 function circleW(c, rNM, color, w = 1.2, dash = null){ const p = w2s(c); ctx.beginPath(); ctx.arc(p.x, p.y, nm2w(rNM, c) * S.view.k, 0, Math.PI * 2); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.stroke(); ctx.setLineDash([]); }
-/* Compasso: archi (centro c, raggio r in M, inizio a0 e ampiezza sw in gradi; sw < 0 = verso sinistra) */
-const angS = C => (C - 90) * D2R;
-function arcW(c, rNM, a0, sw, color, w = 1.2, dash = null){ const p = w2s(c); ctx.beginPath(); ctx.arc(p.x, p.y, nm2w(rNM, c) * S.view.k, angS(a0), angS(a0 + sw), sw < 0); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.stroke(); ctx.setLineDash([]); }
-const arcRel = (a0, sw, b) => ((((b - a0) * (sw < 0 ? -1 : 1)) % 360) + 360) % 360;
-const onArc = (pr, w) => pr.sw == null || arcRel(pr.a0, pr.sw, wang(wsub(w, pr.c))) <= Math.abs(pr.sw) + 0.6;
-const wrap180 = a => ((a + 540) % 360) - 180;
-const ARC_HALF = 30;   // il compasso traccia un arco di 60° centrato dove appoggia la matita (allungabile fino a 180° dal riquadro)
-// arco di compasso nelle soluzioni: centrato sul punto da tagliare (come si fa a mano), non la circonferenza intera
-function arcAt(c, rNM, target, color, w = 1.1, dash = null, half = 30){ if (!target) return circleW(c, rNM, color, w, dash); const b = wang(wsub(target, c)); arcW(c, rNM, (b - half + 360) % 360, 2 * half, color, w, dash); }
 function hiW(a, b, color){ ctx.globalAlpha = .28; lineW(a, b, color, 7); ctx.globalAlpha = 1; }
 function dotW(w, color, r = 3){ const p = w2s(w); ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); }
 function labelW(w, t, color, dx = 8, dy = -8, align = 'left', size = 12.5){ const p = w2s(w); text(t, p.x + dx, p.y + dy, { color, align, font: FONT(700, size) }); }
@@ -908,10 +899,6 @@ function drawDrawings(){
     else if (d.type === 'circ'){
       circleW(d.c, d.r, col, w); const p = w2s(d.c); lineS({ x: p.x - 4, y: p.y }, { x: p.x + 4, y: p.y }, col, 1); lineS({ x: p.x, y: p.y - 4 }, { x: p.x, y: p.y + 4 }, col, 1);
       if (on) labelW(rDest(d.c, 0, d.r), 'r ' + f1(d.r) + ' M', T.accent, 6, -8);
-    } else if (d.type === 'arc'){
-      ctx.save(); ctx.globalAlpha = on ? .8 : .5;
-      arcW(d.c, d.r, d.a0, d.sw, T.arc, on ? 2.6 : 2); const p = w2s(d.c); lineS({ x: p.x - 4, y: p.y }, { x: p.x + 4, y: p.y }, T.arc, 1); lineS({ x: p.x, y: p.y - 4 }, { x: p.x, y: p.y + 4 }, T.arc, 1);
-      ctx.restore();
     } else if (d.type === 'lop'){
       const end = rDest(d.o, (d.z + 180) % 360, 40);
       lineW(d.o, end, col, on ? 2 : 1.4);
@@ -977,7 +964,7 @@ function icpSteps(P, sol){
   if (hasC) st.push({ t: `Corrente da ${A.name}`, x: `Da ${A.name} traccia la corrente: ${deg3(S.cur.dc)} per ${num(S.cur.vc)} M. La cuspide è C.`, g: () => { vecW(A, sol.Cw, 3, T.cur, 1.7); vecLab(A, sol.Cw, 'Dc ' + deg3(S.cur.dc), 'Vc ' + num(S.cur.vc), T.cur); dotW(sol.Cw, T.cur); labelW(sol.Cw, 'C', T.cur); } });
   const ctr = hasC ? 'C' : A.name;
   st.push({ t: 'Apri il compasso', x: sol.ok ? `Punta in ${ctr} con apertura ${num(P.spd)} M. L'arco taglia la parallela in P.` + (sol.two ? ' La seconda intersezione darebbe un intercetto più lento.' : '') : `Punta in ${ctr} con apertura ${num(P.spd)} M: l'arco non taglia la parallela dalla parte di ${B.name}. Con questa velocità non c'è intercetto.`,
-    g: () => { arcAt(sol.Cw, P.spd, sol.ok ? sol.P : null, S1, 1.1, [2, 3]); if (sol.ok){ dotW(sol.P, S1, 3.5); labelW(sol.P, 'P', S1); } } });
+    g: () => { circleW(sol.Cw, P.spd, S1, 1.1, [2, 3]); if (sol.ok){ dotW(sol.P, S1, 3.5); labelW(sol.P, 'P', S1); } } });
   if (sol.ok){
     st.push({ t: hasC ? 'Leggi prora e rotta' : 'Leggi la rotta', x: hasC ? `C→P è la prora: Pv ${deg3(sol.pv)}. ${A.name}→P è la rotta: Rv ${deg3(sol.rv)}, Ve ${f1(sol.ve)} kn.` : `${A.name}→P è la rotta da assumere: Rv ${deg3(sol.rv)}.`, g: () => { if (hasC){ vecW(sol.Cw, sol.P, 1, S1); vecLab(sol.Cw, sol.P, 'Pv ' + deg3(sol.pv), 'Vp ' + num(P.spd), S1); } vecW(A, sol.P, 2, S1); vecLab(A, sol.P, 'Rv ' + deg3(sol.rv), 'Ve ' + f1(sol.ve), S1); } });
     st.push({ t: "Prolunga fino all'intercetto", x: `Prolunga ${A.name}→P fino alla rotta di ${B.name}: lì trovi I. TP è la velocità relativa (${f1(sol.k)} kn), quindi il tempo è ${f1(sol.d)} ÷ ${f1(sol.k)} = ${hm(sol.t)}.`,
@@ -1091,7 +1078,7 @@ function cpSteps(P, s){
       g: () => { if (s.src === 'p'){ lineW(O, s.D, S1, 1.4); vecLab(O, s.D, 'Rv ' + deg3(s.rv), f1(s.dist) + ' M', S1); } else infW(O, s.rv, S1, 1.1, [9, 5], 60); } });
     curStep(O, s.C, { from: on, tip: 'C' });
     st.push({ t: 'Apri il compasso', x: `Punta in C con apertura uguale alla Vp, ${num(s.vp)} M: l'arco taglia la rotta in E.`,
-      g: () => { arcAt(s.C, s.vp, s.E, S1, 1.1, [2, 3]); dotW(s.E, S1, 3.5); labelW(s.E, 'E', S1); } });
+      g: () => { circleW(s.C, s.vp, S1, 1.1, [2, 3]); dotW(s.E, S1, 3.5); labelW(s.E, 'E', S1); } });
     st.push({ t: 'Leggi prora e velocità', x: `C→E è la prora da tenere: Pv ${deg3(s.pv)} (portala in ${on} con le parallele). ${on}→E è la Ve: ${f1(s.ve)} kn. Deriva ${driftStr(s.rv, s.pv)}.`,
       g: () => { vecW(s.C, s.E, 1, S1); vecLab(s.C, s.E, 'Pv ' + deg3(s.pv), 'Vp ' + num(s.vp), S1); hiW(O, s.E, S1); vecW(O, s.E, 2, S1); if (s.src !== 'p') vecLab(O, s.E, 'Rv ' + deg3(s.rv), 'Ve ' + f1(s.ve), S1); } });
     if (s.src === 'p') st.push({ t: "Tempo e ora d'arrivo", x: `Tempo = ${f1(s.dist)} ÷ ${f1(s.ve)} = ${hm(s.t)}. Partendo alle ${clock(s.start, 0)} arrivi in ${dn} alle ${clock(s.start, s.t)}.`,
@@ -1183,7 +1170,7 @@ function drawProb(){
     vecW(sol.A, sol.B, 2, S1, 1.6);
     if (len(sol.c) > 1e-9){
       vecW(sol.A, sol.Cw, 3, S1); dotW(sol.Cw, S1); labelW(sol.Cw, 'C', S1);
-      arcAt(sol.Cw, P.spd, sol.ok ? sol.Pw : null, S1, 1.1, [2, 3]);
+      circleW(sol.Cw, P.spd, S1, 1.1, [2, 3]);
       if (sol.ok){ vecW(sol.Cw, sol.Pw, 1, S1); dotW(sol.Pw, S1, 3.5); labelW(sol.Pw, 'P', S1); hiW(sol.A, sol.Pw, S1); }
     }
   } else if (P.kind === 'cor'){
@@ -1199,7 +1186,6 @@ function prims(){
     if (d.type === 'seg') L.push({ k: 'l', p: d.a, d: wsub(d.b, d.a), t0: d.ext ? -1e9 : 0, t1: d.ext ? 1e9 : 1 });
     else if (d.type === 'line') L.push({ k: 'l', p: d.p, d: wdir(d.C), t0: -1e9, t1: 1e9 });
     else if (d.type === 'circ') L.push({ k: 'c', c: d.c, r: nm2w(d.r, d.c) });
-    else if (d.type === 'arc') L.push({ k: 'c', c: d.c, r: nm2w(d.r, d.c), a0: d.a0, sw: d.sw });
     else if (d.type === 'lop') L.push({ k: 'l', p: d.o, d: wdir((d.z + 180) % 360), t0: 0, t1: 1e9 });
   }
   for (const p of S.points){ const g = vGround(p); if (len(g) > 1e-6) L.push({ k: 'l', p, d: wdir(brg(g)), t0: 0, t1: 1e9 }); }
@@ -1230,12 +1216,12 @@ function named(){
 }
 function targets(){
   const T2 = named().map(o => o.w);
-  for (const d of S.drawings){ if (d.type === 'seg') T2.push(d.a, d.b); else if (d.type === 'circ' || d.type === 'arc') T2.push(d.c); else if (d.type === 'line') T2.push(d.p); }
+  for (const d of S.drawings){ if (d.type === 'seg') T2.push(d.a, d.b); else if (d.type === 'circ') T2.push(d.c); else if (d.type === 'line') T2.push(d.p); }
   if (S.prob && S.prob.kind === 'icp'){ const s = solveIcp(S.prob); if (s.ok) T2.push(s.T, s.Cw, s.P, s.I); }
   if (S.prob && S.prob.kind === 'cp'){ const s = solveCp(S.prob); if (s.ok) T2.push(...cpPts(s)); }
   if (S.prob && S.prob.kind === 'cn'){ const s = solveCn(S.prob); if (s.ok) T2.push(...cnPts(s)); }
   const P = prims();
-  for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) T2.push(...inter(P[i], P[j]).filter(w => onArc(P[i], w) && onArc(P[j], w)));
+  for (let i = 0; i < P.length; i++) for (let j = i + 1; j < P.length; j++) T2.push(...inter(P[i], P[j]));
   return T2;
 }
 function snap(px, py){
@@ -1260,7 +1246,6 @@ function hitDrawing(px, py, tol = 9){
     if (d.type === 'seg') dd = distSegS(p, w2s(d.a), w2s(d.b), d.ext);
     else if (d.type === 'line'){ const a = w2s(d.p), b = w2s(wadd(d.p, wdir(d.C))); dd = distSegS(p, a, b, true); }
     else if (d.type === 'circ'){ const c = w2s(d.c); dd = Math.abs(Math.hypot(px - c.x, py - c.y) - nm2w(d.r, d.c) * S.view.k); }
-    else if (d.type === 'arc'){ const c = w2s(d.c); const b = ((Math.atan2(px - c.x, c.y - py) / D2R) + 360) % 360; if (arcRel(d.a0, d.sw, b) <= Math.abs(d.sw) + 2) dd = Math.abs(Math.hypot(px - c.x, py - c.y) - nm2w(d.r, d.c) * S.view.k); }
     else if (d.type === 'lop') dd = distSegS(p, w2s(d.o), w2s(rDest(d.o, (d.z + 180) % 360, 40)), false);
     if (dd < tol) return d;
   }
@@ -1286,22 +1271,12 @@ function drawPreview(){
     if (S.tool === 'ruler' || S.tool === 'measure'){
       lineS(a, b, A, 1.4, [5, 4]);
       text(deg3(r.C) + ' · ' + f1(r.d) + ' M', b.x + 14, b.y - 20, { font: FONT(700, 13.5), color: A });
-    } else if (S.tool === 'compass' && !S.arc){
-      // apertura del compasso: gamba dalla punta alla matita e un accenno d'arco dove appoggia la matita
-      const rr = Math.hypot(b.x - a.x, b.y - a.y), t = Math.atan2(b.y - a.y, b.x - a.x), half = ARC_HALF * D2R;
-      lineS(a, b, T.arc, 1, [3, 3]);
-      if (rr > 8){ ctx.save(); ctx.globalAlpha = .55; ctx.beginPath(); ctx.arc(a.x, a.y, rr, t - half, t + half); ctx.strokeStyle = T.arc; ctx.lineWidth = 2.2; ctx.stroke(); ctx.restore(); }
+    } else if (S.tool === 'compass'){
+      ctx.beginPath(); ctx.arc(a.x, a.y, Math.hypot(b.x - a.x, b.y - a.y), 0, Math.PI * 2); ctx.strokeStyle = A; ctx.lineWidth = 1.2; ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+      lineS(a, b, A, 1, [3, 3]); text('r ' + f1(r.d) + ' M', b.x + 14, b.y - 20, { font: FONT(700, 13.5), color: A });
     }
   }
   if (S.measure){ const a = w2s(S.measure.a), b = w2s(S.measure.b), r = rInv(S.measure.a, S.measure.b); lineS(a, b, A, 1.6, [5, 4]); dotW(S.measure.a, A, 3); dotW(S.measure.b, A, 3); text(deg3(r.C) + ' · ' + f1(r.d) + ' M', b.x + 14, b.y - 20, { font: FONT(700, 13.5), color: A }); }
-  if (S.arc){
-    const g = S.arc, c = w2s(g.c), rr = nm2w(g.r, g.c) * S.view.k, e = angS(g.a0 + g.acc);
-    const tip = { x: c.x + rr * Math.cos(e), y: c.y + rr * Math.sin(e) };
-    lineS(c, tip, A, 1, [3, 3]);
-    if (Math.abs(g.acc) > .2) arcW(g.c, g.r, g.a0, g.acc, A, 2);
-    dotW(g.c, A, 3.5); ctx.beginPath(); ctx.arc(tip.x, tip.y, 4, 0, Math.PI * 2); ctx.fillStyle = A; ctx.fill();
-    text('r ' + f1(g.r) + ' M · ' + Math.round(Math.abs(g.acc)) + '°', tip.x + 14, tip.y - 18, { font: FONT(700, 13.5), color: A });
-  }
   if (S.pending) dotW(S.pending, A, 3.5);
   if (S.bear){ const s = w2s(S.bear.w); ctx.beginPath(); ctx.arc(s.x, s.y, 11, 0, Math.PI * 2); ctx.strokeStyle = A; ctx.lineWidth = 2; ctx.stroke(); }
   if (h && h.snapped){ const s = w2s(h.w); ctx.beginPath(); ctx.arc(s.x, s.y, 8, 0, Math.PI * 2); ctx.strokeStyle = A; ctx.lineWidth = 1.6; ctx.stroke(); }
@@ -1348,11 +1323,6 @@ function showFloat0(){
   } else if (d.type === 'circ'){
     fl.innerHTML = `<strong>Cerchio</strong><span class="f" style="flex-direction:row;align-items:center;gap:6px"><label for="ciR">Raggio</label><span class="in"><input id="ciR" inputmode="decimal" value="${f1(d.r)}"><span>M</span></span></span><button class="btn danger" type="button" id="sgX">Elimina</button>`;
     $('ciR').oninput = () => { const r = parseNum($('ciR').value); if (r > 0){ d.r = r; save(); req(); } }; $('ciR').onfocus = () => pushHist();
-  } else if (d.type === 'arc'){
-    fl.innerHTML = `<strong>Arco</strong><span class="f" style="flex-direction:row;align-items:center;gap:6px"><label for="ciR">Raggio</label><span class="in"><input id="ciR" inputmode="decimal" value="${f1(d.r)}"><span>M</span></span></span><span class="f" style="flex-direction:row;align-items:center;gap:6px"><label for="arW">Ampiezza</label><input id="arW" type="range" min="5" max="180" step="1" value="${Math.round(Math.abs(d.sw))}" style="width:110px"><output id="arWo">${Math.round(Math.abs(d.sw))}°</output></span><button class="btn danger" type="button" id="sgX">Elimina</button>`;
-    $('ciR').oninput = () => { const r = parseNum($('ciR').value); if (r > 0){ d.r = r; save(); req(); } }; $('ciR').onfocus = () => pushHist();
-    $('arW').onpointerdown = () => pushHist();
-    $('arW').oninput = () => { const m = d.a0 + d.sw / 2, w = +$('arW').value * (d.sw < 0 ? -1 : 1); d.a0 = (m - w / 2 + 360) % 360; d.sw = w; $('arWo').textContent = Math.abs(w) + '°'; save(); req(); };
   } else if (d.type === 'line'){
     fl.innerHTML = `<strong>Parallela ${deg3(d.C)} / ${deg3((d.C + 180) % 360)}</strong><button class="btn danger" type="button" id="sgX">Elimina</button>`;
   } else if (d.type === 'lop'){
@@ -1379,7 +1349,7 @@ function hint(){
     point: 'Clicca sulla carta per mettere un punto (si aggancia a fari, capi e intersezioni).',
     ruler: S.pending ? 'Clicca o trascina fino al punto finale. Senza aggancio arrotonda a 1° e 0,1 M.' : 'Righello: clicca il punto di partenza.',
     parallel: S.parRef ? 'Ora clicca il punto da cui far passare la parallela.' : 'Parallela: clicca la linea da copiare (segmento, retta, rilevamento o rotta di un punto).',
-    compass: S.pending ? 'Secondo tocco: dove appoggi la matita nasce l\'arco (puoi trascinarlo prima di staccare il dito).' : 'Compasso: primo tocco dove puntare.',
+    compass: S.pending ? 'Clicca o trascina per aprire il compasso (raggio arrotondato a 0,1 M).' : 'Compasso: clicca dove puntare.',
     measure: 'Misura: trascina tra due punti per leggere direzione e distanza. Non lascia segni.',
     bearing: S.bear ? 'Scrivi il rilevamento nel riquadro in basso.' : 'Rilevamento: clicca un faro, un capo o un tuo punto.',
     erase: 'Gomma: clicca un tratto a matita o un punto per cancellarlo.'
@@ -1403,7 +1373,6 @@ cv.addEventListener('pointerdown', ev => {
     if (pt){ pushHist(); drag = { ...base, mode: 'point', pt }; S.sel = { k: 'p', id: pt.id }; markSel(); showFloat(); req(); return; }
     drag = { ...base, mode: 'pan', x: p.x, y: p.y, cx: S.view.cx, cy: S.view.cy, click: true }; return;
   }
-  if (S.tool === 'compass' && S.arc){ drag = { ...base, mode: 'sweep' }; if (ev.pointerType === 'mouse') arcTo(p); else { const c = w2s(S.arc.c); S.arc.last = ((Math.atan2(p.x - c.x, c.y - p.y) / D2R) + 360) % 360; } req(); return; }
   if (S.tool === 'ruler' || S.tool === 'compass'){ if (!S.pending) S.pending = snap(p.x, p.y).w; drag = { ...base, mode: 'draw' }; S.hover = endFor(p.x, p.y); req(); return; }
   if (S.tool === 'measure'){ const s = snap(p.x, p.y).w; S.measure = { a: s, b: s }; drag = { ...base, mode: 'measure' }; req(); return; }
   drag = { ...base, mode: 'click' };
@@ -1422,18 +1391,11 @@ cv.addEventListener('pointermove', ev => {
     if (drag.mode === 'pan'){ S.view.cx = drag.cx - (p.x - drag.x) / S.view.k; S.view.cy = drag.cy + (p.y - drag.y) / S.view.k; clampView(); req(); return; }
     if (drag.mode === 'point'){ const s = snap(p.x, p.y); const ww = s.snapped && !(s.w.x === drag.pt.x && s.w.y === drag.pt.y) ? s.w : { x: w.x, y: w.y }; drag.pt.x = ww.x; drag.pt.y = ww.y; updateCoord(drag.pt); req(); return; }
     if (drag.mode === 'measure'){ S.measure.b = snap(p.x, p.y).w; req(); return; }
-    if (drag.mode === 'sweep'){ arcTo(p); req(); return; }
   }
-  if (S.tool === 'compass' && S.arc){ if (ev.pointerType === 'mouse'){ arcTo(p); req(); } }
-  else if (S.tool === 'ruler' || S.tool === 'compass'){ S.hover = S.pending ? endFor(p.x, p.y) : snap(p.x, p.y); req(); }
+  if (S.tool === 'ruler' || S.tool === 'compass'){ S.hover = S.pending ? endFor(p.x, p.y) : snap(p.x, p.y); req(); }
   else if (S.tool === 'point' || S.tool === 'measure' || (S.tool === 'parallel' && S.parRef)){ S.hover = snap(p.x, p.y); req(); }
   else if (S.hover){ S.hover = null; req(); }
 });
-function arcTo(p){
-  const g = S.arc; if (!g) return;
-  const c = w2s(g.c), b = ((Math.atan2(p.x - c.x, c.y - p.y) / D2R) + 360) % 360;
-  g.acc = Math.max(-180, Math.min(180, g.acc + wrap180(b - g.last))); g.last = b;
-}
 function endPointer(ev){
   const p = evS(ev); pointers.delete(ev.pointerId);
   if (!drag) return;
@@ -1445,22 +1407,14 @@ function endPointer(ev){
   }
   if (d.mode === 'point'){ if (!d.moved) hist.pop(); save(); structural(false); return; }
   if (d.mode === 'measure'){ if (!d.moved) S.measure = null; req(); return; }
-  if (d.mode === 'sweep'){
-    const g = S.arc; if (!g) return;
-    if (!d.moved && Math.abs(g.acc) < 2){ const c = w2s(g.c); g.acc = wrap180(((Math.atan2(p.x - c.x, c.y - p.y) / D2R) + 360) % 360 - g.a0); }
-    if (Math.abs(g.acc) >= 2){ pushHist(); S.drawings.push({ id: uid++, type: 'arc', c: { x: g.c.x, y: g.c.y }, r: g.r, a0: g.acc < 0 ? (g.a0 + g.acc + 360) % 360 : g.a0, sw: Math.abs(Math.round(g.acc * 10) / 10) });
-      S.sel = { k: 'd', id: S.drawings[S.drawings.length - 1].id }; S.arc = null; save(); showFloat(); }
-    hint(); req(); return;
-  }
   if (d.mode === 'draw'){
     const end = endFor(p.x, p.y), r = rInv(S.pending, end.w);
     if (r.d > .05 && (d.moved || S.pending.__second)){
       pushHist();
       const a0 = { x: S.pending.x, y: S.pending.y };
-      if (S.tool === 'ruler'){ S.drawings.push({ id: uid++, type: 'seg', a: a0, b: { x: end.w.x, y: end.w.y }, ext: false });
-        S.sel = { k: 'd', id: S.drawings[S.drawings.length - 1].id }; S.pending = null; save(); showFloat(); }
-      else { S.drawings.push({ id: uid++, type: 'arc', c: a0, r: Math.round(r.d * 100) / 100, a0: (r.C - ARC_HALF + 360) % 360, sw: 2 * ARC_HALF });
-        S.sel = { k: 'd', id: S.drawings[S.drawings.length - 1].id }; S.pending = null; save(); showFloat(); }
+      if (S.tool === 'ruler') S.drawings.push({ id: uid++, type: 'seg', a: a0, b: { x: end.w.x, y: end.w.y }, ext: false });
+      else S.drawings.push({ id: uid++, type: 'circ', c: a0, r: Math.round(r.d * 100) / 100 });
+      S.sel = { k: 'd', id: S.drawings[S.drawings.length - 1].id }; S.pending = null; save(); showFloat();
     } else if (S.pending){ S.pending.__second = true; }
     S.hover = endFor(p.x, p.y); hint(); req(); return;
   }
@@ -1488,7 +1442,7 @@ cv.addEventListener('wheel', ev => { ev.preventDefault(); const p = evS(ev); zoo
 document.addEventListener('keydown', e => {
   const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName);
   if (e.key === ' ' && !typing){ spaceDown = true; e.preventDefault(); }
-  if (e.key === 'Escape'){ S.arc = null; S.pending = null; S.parRef = null; S.bear = null; S.measure = null; S.sel = null; markSel(); showFloat(); hint(); req(); }
+  if (e.key === 'Escape'){ S.pending = null; S.parRef = null; S.bear = null; S.measure = null; S.sel = null; markSel(); showFloat(); hint(); req(); }
   if (!typing && (e.key === 'Delete' || e.key === 'Backspace') && S.sel){
     e.preventDefault(); pushHist();
     if (S.sel.k === 'd') S.drawings = S.drawings.filter(x => x.id !== S.sel.id); else S.points = S.points.filter(x => x.id !== S.sel.id);
@@ -1502,7 +1456,7 @@ document.addEventListener('keyup', e => { if (e.key === ' ') spaceDown = false; 
 
 /* Tools & zoom */
 function setTool(t){
-  S.tool = t; S.arc = null; S.pending = null; S.parRef = null; S.hover = null; S.measure = null; if (t !== 'bearing') S.bear = null;
+  S.tool = t; S.pending = null; S.parRef = null; S.hover = null; S.measure = null; if (t !== 'bearing') S.bear = null;
   document.querySelectorAll('.tool[data-tool]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tool === t ? 'true' : 'false'));
   wrap.dataset.tool = t; showFloat(); hint(); req();
 }
@@ -1786,7 +1740,7 @@ $('fxGo').addEventListener('click', () => {
   const tm = $('fxT').value ? clock($('fxT').value, 0) : '';
   const lop = (o, z) => S.drawings.push({ id: uid++, type: 'lop', o: { x: o.w.x, y: o.w.y }, n: o.n, z, t: tm });
   if (mode === 'zz'){ lop(r.o1, z1); lop(r.o2, z2); }
-  else { const z = mode === 'd1' ? z1 : z2, d = mode === 'd1' ? d1 : d2; lop(r.o1, z); S.drawings.push({ id: uid++, type: 'arc', c: { x: r.o1.w.x, y: r.o1.w.y }, r: d, a0: (z + 180 - 30) % 360, sw: 60 }); }
+  else { const z = mode === 'd1' ? z1 : z2, d = mode === 'd1' ? d1 : d2; lop(r.o1, z); S.drawings.push({ id: uid++, type: 'circ', c: { x: r.o1.w.x, y: r.o1.w.y }, r: d }); }
   const name = ($('fxN').value || '').trim().slice(0, 12) || nextName();
   const np = { id: uid++, name, x: fx.x, y: fx.y, color: nextColor(), mode: 'none', dir: 0, spd: 0 };
   S.points.push(np); S.sel = { k: 'p', id: np.id };
@@ -1844,7 +1798,7 @@ function cnSteps(P, s){
   if (conv.length) st.push({ t: 'Trasforma in valori veri', x: conv.join('. ') + '.', g: () => {} });
   const lop = ln => { const far = rDest(ln.l.o.w, (ln.l.z + 180) % 360, Math.max(2.5, rInv(ln.l.o.w, ln.pos).d * 1.35)); lineW(ln.l.o.w, far, PEN, 1.5); vecLab(ln.l.o.w, ln.pos, 'Rilv ' + deg3(ln.l.z), ln.l.t, PEN); };
   s.lines.forEach((ln, i) => {
-    if (ln.l.d) st.push({ t: `Rilevamento e distanza · ${ln.l.t}`, x: `Da ${esc(ln.l.o.n)} traccia la retta del Rilv ${deg3(ln.l.z)} e con il compasso, apertura ${num(ln.l.d)} M, taglia la retta: alle ${ln.l.t} la nave è in quel punto.`, g: () => { lop(ln); arcAt(ln.l.o.w, ln.l.d, ln.pos, T.pencil, 1.1, [2, 3]); dotW(ln.pos, S1, 3.5); } });
+    if (ln.l.d) st.push({ t: `Rilevamento e distanza · ${ln.l.t}`, x: `Da ${esc(ln.l.o.n)} traccia la retta del Rilv ${deg3(ln.l.z)} e con il compasso, apertura ${num(ln.l.d)} M, taglia la retta: alle ${ln.l.t} la nave è in quel punto.`, g: () => { lop(ln); circleW(ln.l.o.w, ln.l.d, T.pencil, 1.1, [2, 3]); dotW(ln.pos, S1, 3.5); } });
     else st.push({ t: `${i + 1}° rilevamento · ${ln.l.t}`, x: `Da ${esc(ln.l.o.n)} traccia la retta del Rilv ${deg3(ln.l.z)}: alle ${ln.l.t} la nave è su questa retta.`, g: () => lop(ln) });
     if (ln.dt > 0) st.push({ t: `Trasporta la retta delle ${ln.l.t}`, x: `Dalle ${ln.l.t} alle ${last.t} percorri ${f1(s.v)} × ${hm(ln.dt)} = ${f1(s.v * ln.dt)} M per Rv ${deg3(s.C)}. Da un punto della retta riporta questo vettore e traccia la parallela dalla sua cuspide.`,
       g: () => { vecW(ln.pos, s.fix, 2, S1); vecLab(ln.pos, s.fix, 'Rv ' + deg3(s.C), f1(s.v * ln.dt) + ' M', S1); infW(s.fix, ln.l.z, S1, 1.2, [9, 5], 5); } });
@@ -1933,7 +1887,7 @@ $('rfGo').addEventListener('click', () => {
   if (r.err){ e.textContent = r.err; e.hidden = false; res.hidden = true; return; }
   e.hidden = true; pushHist();
   const h = $('rfH').value, tm = h ? clock(h, 0) : '';
-  if (dMode) S.drawings.push({ id: uid++, type: 'lop', o: { x: r.o1.w.x, y: r.o1.w.y }, n: r.o1.n, z: z1, t: tm }, { id: uid++, type: 'arc', c: { x: r.o1.w.x, y: r.o1.w.y }, r: dist, a0: (z1 + 180 - 30) % 360, sw: 60 });
+  if (dMode) S.drawings.push({ id: uid++, type: 'lop', o: { x: r.o1.w.x, y: r.o1.w.y }, n: r.o1.n, z: z1, t: tm }, { id: uid++, type: 'circ', c: { x: r.o1.w.x, y: r.o1.w.y }, r: dist });
   else S.drawings.push({ id: uid++, type: 'lop', o: { x: r.o1.w.x, y: r.o1.w.y }, n: r.o1.n, z: z1, t: tm }, { id: uid++, type: 'lop', o: { x: r.o2.w.x, y: r.o2.w.y }, n: r.o2.n, z: z2, t: tm });
   const name = ($('rfN').value || '').trim().slice(0, 12) || nextName();
   let pt = S.points.find(q => q.name.trim().toLowerCase() === name.toLowerCase()); const moved = !!pt;
@@ -2139,7 +2093,7 @@ function exPoint(pp, W){
   if (pp.ll) return ll2w(dm(pp.ll[0], pp.ll[1]), dm(pp.ll[2], pp.ll[3]));
   if (pp.obj) return ow(pp.obj).w;
   if (pp.fix){ const r = computeFix(ov(pp.fix[0]), pp.fix[1], ov(pp.fix[2]), pp.fix[3]); if (r.err) throw new Error(r.err); lop(r.o1, pp.fix[1]); lop(r.o2, pp.fix[3]); return r.fx; }
-  if (pp.bd){ const o = ow(pp.bd[0]); lop(o, pp.bd[1]); S.drawings.push({ id: uid++, type: 'arc', c: { x: o.w.x, y: o.w.y }, r: pp.bd[2], a0: (pp.bd[1] + 180 - 30) % 360, sw: 60 }); return rDest(o.w, (pp.bd[1] + 180) % 360, pp.bd[2]); }
+  if (pp.bd){ const o = ow(pp.bd[0]); lop(o, pp.bd[1]); S.drawings.push({ id: uid++, type: 'circ', c: { x: o.w.x, y: o.w.y }, r: pp.bd[2] }); return rDest(o.w, (pp.bd[1] + 180) % 360, pp.bd[2]); }
   if (pp.dr){ const from = W[pp.dr[0]]; return rDest(from, pp.dr[1], pp.dr[2] * pp.dr[3]); }
   if (pp.ald){ const near = ow(pp.ald[0]), far = ow(pp.ald[1]); S.drawings.push({ id: uid++, type: 'seg', a: { x: far.w.x, y: far.w.y }, b: { x: near.w.x, y: near.w.y }, ext: true }); return rDest(near.w, rInv(far.w, near.w).C, pp.ald[2]); }
   if (pp.al){ const a = ow(pp.al[0]), b = ow(pp.al[1]), c = ow(pp.al[2]); S.drawings.push({ id: uid++, type: 'seg', a: { x: a.w.x, y: a.w.y }, b: { x: b.w.x, y: b.w.y }, ext: true }); lop(c, pp.al[3]);

@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.06.01 · 23/11/2026'
+VER = '1.07.00 · 23/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -165,7 +165,7 @@ chip = ("<script>(function(){var c=document.getElementById('chips');if(!c)return
         "a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>\n")
 k = s.rindex('</body>'); s = s[:k] + chip + s[k:]
 k = s.rindex('</body>')
-s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + rd('app/fluido.js') + '\n' + rd('app/aggiorna.js') + '\n' + rd('sinottiche/sgal.js') + '\n' + sw + '\n</script>\n' + s[k:]
+s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + rd('app/fluido.js') + '\n' + rd('app/swipe.js') + '\n' + rd('app/aggiorna.js') + '\n' + rd('sinottiche/sgal.js') + '\n' + sw + '\n</script>\n' + s[k:]
 
 assert 'Prova grafica' not in s
 os.makedirs(OUT, exist_ok=True)

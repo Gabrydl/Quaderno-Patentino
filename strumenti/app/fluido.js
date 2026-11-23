@@ -82,6 +82,7 @@
   let busy = false, lastNav = 0;
   window.QP_SOFT = function (fn){
     const now = performance.now(), quick = now - lastNav < 900; lastNav = now;
+    if (window.QP_SOFT.skip){ window.QP_SOFT.skip = false; R.classList.add('qp-fast'); fn(); setTimeout(() => R.classList.remove('qp-fast'), 400); return; }
     if (busy || quick){ R.classList.add('qp-fast'); fn(); clearTimeout(window.QP_SOFT.t); window.QP_SOFT.t = setTimeout(() => R.classList.remove('qp-fast'), 900); return; }
     if (vtOk()){
       busy = true; R.classList.add('vt-run');

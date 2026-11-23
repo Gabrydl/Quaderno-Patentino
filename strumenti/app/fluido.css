@@ -93,3 +93,17 @@ html.lite .live-svg{position:static}
 .upd-bar i{display:block;height:100%;width:2%;border-radius:99px;background:var(--blue);transition:width .25s ease}
 .upd-st{margin:8px 0 0;font-size:.88rem;color:var(--muted)}
 html.calm .upd-card,html.calm .upd{transition:none}
+
+/* ---------- 1.07: scorrere tra gli argomenti col dito ---------- */
+body[data-view="topic"] .sec.focus article.topic.on{touch-action:pan-y pinch-zoom}
+.swp-peek{position:fixed;bottom:0;z-index:4;overflow:hidden;pointer-events:none;opacity:.35;will-change:transform}
+.swp-peek > .sec{margin:0;padding:0}
+html.swp-on .sec.focus .pnav{visibility:hidden}
+html.swp-on body{overflow-x:clip}
+/* suggerimento delle prime volte: piccolo accenno di scorrimento e linguetta sul bordo destro, senza scritte */
+article.topic.swp-nudge{animation:swp-nudge 1.3s cubic-bezier(.35,.1,.25,1) both}
+@keyframes swp-nudge{0%{transform:none}35%{transform:translateX(-22px)}60%{transform:translateX(-22px)}100%{transform:none}}
+.swp-tab{position:fixed;right:0;width:5px;height:56px;border-radius:5px 0 0 5px;background:var(--blue);opacity:0;z-index:5;pointer-events:none;
+  animation:swp-tab 1.6s ease both}
+@keyframes swp-tab{0%{opacity:0;transform:translateX(5px)}25%,65%{opacity:.55;transform:none}100%{opacity:0;transform:translateX(5px)}}
+html.lite article.topic.swp-nudge{animation-duration:1s}

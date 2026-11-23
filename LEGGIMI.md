@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.06.01 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.07.00 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -18,8 +18,9 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
   `esercizi/sinottiche.html`: galleria di 15 carte sinottiche Met Office a colori, generata da `strumenti/sinottiche/galleria.html` con
   `python3 -I strumenti/sinottiche/gen_sinottiche.py .` (riquadro in home e argomento "Carte sinottiche reali a colori" in Meteorologia).
   - Assetto e pescaggi e Carteggio: si modificano solo `strumenti/assetto.html` e `strumenti/carteggio.html`, poi si lancia `build_esercizi.py`.
-  - Carteggio: dalla 1.06.01 il compasso traccia un **arco** viola semitrasparente: primo tocco la punta, secondo tocco (trascinabile) crea subito
-    un arco di 60° dove appoggia la matita, senza scritta del raggio; dal riquadro si allunga fino a 180°,
+  - Carteggio: dalla 1.07.00 il compasso è di nuovo **a circonferenza intera (stile VRM)**, come prima della 1.06.00 (richiesto dall'utente).
+    Nella 1.06.00–1.06.01 c'era il compasso ad arco: il codice è nella storia git (commit 46c6f81) se servisse di nuovo.
+  - (vecchia nota sull'arco)
     tipo di disegno `arc` (c, r, a0, sw); anche le costruzioni delle soluzioni usano archi intorno al punto. I vecchi cerchi salvati (`circ`) si vedono ancora.
   - Carte sinottiche a colori: dalla 1.06.01 sono un argomento di **Meteorologia** (`meteo-sinottiche-reali`), non più una pagina degli esercizi.
     `strumenti/sinottiche/gen_sinottiche.py` (lanciato da `build_esercizi.py`) crea `strumenti/sinottiche/articolo.html` e `dati/sinottiche.html`
@@ -38,6 +39,12 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
     fotogrammi lenti; si può forzare con `localStorage['qp-potenza'] = 'lite' | 'piena'`). Il nome del telefono finisce anche nel registro accessi.
   - `app/fluido.css` e `app/fluido.js`: passaggi morbidi tra argomenti (View Transitions, se manca dissolvenza), cambio chiaro/scuro a cerchio,
     formule/calcoli/tabelle ricompattati per non scorrere mai di lato, disegni interattivi comandati solo dai cursori messi subito sotto il disegno.
+  - `app/swipe.js` (1.07.00): dentro un argomento si passa al precedente/successivo trascinando il dito di lato, come tra le foto:
+    parte solo oltre 26 px di lato e con movimento almeno 2,1 volte quello verticale; l'argomento segue il dito, il vicino entra dal lato
+    (copia temporanea), oltre il 32 % della larghezza o con un colpo veloce si passa, altrimenti torna indietro. Escluse le zone con cursori,
+    tabelle, galleria delle carte, lettore audio.
+    Suggerimento muto: nelle prime 10 aperture l'argomento accenna uno scorrimento e compare una linguetta sul bordo destro; smette dopo
+    10 volte o dopo 4 scorrimenti fatti dall'utente (`localStorage` qp-swp-hint / qp-swp-ok).
   - `prova.html`: la nuova grafica (artefatto "Prova grafica Quaderno Patentino", anteprima 11 del 21/11/2026), contenuti del 24/10/2026.
   - `build.py`: applica le modifiche e aggiunge account, carta sinottica, esercizi. Uso: `python3 -I strumenti/build.py .`
   - `app/`: schermata d'accesso, pannello account e amministrazione (`auth.html`, `auth.css`, `auth.js`), termini di servizio (`tos.html`).
