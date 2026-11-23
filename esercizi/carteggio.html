@@ -161,7 +161,7 @@ section.steps > details.qp-how{margin:0 0 14px}
   --bg:#E4EAEC; --panel:#FFFFFF; --paper:#FFFFFF; --ink:#17222B; --muted:#55646E; --line:#C7D1D6; --soft:#EEF2F4;
   --accent:#A3176C; --on-accent:#FFFFFF;
   --sea:#F6FAFB; --land:#EBDCA9; --coast:#2A2925; --off:#D7DEE1; --grid:#9FB4C0; --halo:#F6FAFB;
-  --magenta:#B0177A; --seatext:#2D5B7A; --pencil:#363C43; --sol:#0A7470; --cur:#9A6A00;
+  --magenta:#B0177A; --seatext:#2D5B7A; --arc:#8B5CF6; --pencil:#363C43; --sol:#0A7470; --cur:#9A6A00;
   --p1:#1B54B5; --p2:#C24E00; --p3:#2E7D32; --p4:#6A3FB5; --p5:#B3261E; --p6:#00838F;
   --ok:#17703A; --ok-bg:#E5F3EA; --warn:#8A5300; --warn-bg:#FBF0DD; --bad:#A8241C; --bad-bg:#FBE7E5;
   --f-display:"Archivo Narrow","Arial Narrow","Roboto Condensed",system-ui,sans-serif;
@@ -174,7 +174,7 @@ section.steps > details.qp-how{margin:0 0 14px}
     --bg:#090F14; --panel:#101920; --paper:#0E161D; --ink:#D6DFE6; --muted:#8D9BA6; --line:#25323C; --soft:#16212A;
     --accent:#E765B6; --on-accent:#1B0612;
     --sea:#0B1923; --land:#3A3322; --coast:#C8B583; --off:#05090D; --grid:#294150; --halo:#0B1923;
-    --magenta:#F06CC0; --seatext:#7FB0D0; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
+    --magenta:#F06CC0; --seatext:#7FB0D0; --arc:#C4A8FF; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
     --p1:#77A7FF; --p2:#FF8F45; --p3:#6FCF73; --p4:#B79BFF; --p5:#FF7A70; --p6:#4DD6E3;
     --ok:#62CF86; --ok-bg:#112A1B; --warn:#F2B55A; --warn-bg:#2E2210; --bad:#FF8177; --bad-bg:#33130F;
     color-scheme:dark;
@@ -184,7 +184,7 @@ section.steps > details.qp-how{margin:0 0 14px}
   --bg:#090F14; --panel:#101920; --paper:#0E161D; --ink:#D6DFE6; --muted:#8D9BA6; --line:#25323C; --soft:#16212A;
   --accent:#E765B6; --on-accent:#1B0612;
   --sea:#0B1923; --land:#3A3322; --coast:#C8B583; --off:#05090D; --grid:#294150; --halo:#0B1923;
-  --magenta:#F06CC0; --seatext:#7FB0D0; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
+  --magenta:#F06CC0; --seatext:#7FB0D0; --arc:#C4A8FF; --pencil:#C3CBD2; --sol:#4FD1C5; --cur:#F2C14E;
   --p1:#77A7FF; --p2:#FF8F45; --p3:#6FCF73; --p4:#B79BFF; --p5:#FF7A70; --p6:#4DD6E3;
   --ok:#62CF86; --ok-bg:#112A1B; --warn:#F2B55A; --warn-bg:#2E2210; --bad:#FF8177; --bad-bg:#33130F;
   color-scheme:dark;
@@ -833,7 +833,7 @@ const cv = $('chart'), ctx = cv.getContext('2d'), wrap = $('wrap');
 let CW = 0, CH = 0, dpr = 1, T = {}, needDraw = false, fitted = false;
 function readTokens(){
   const cs = getComputedStyle(document.documentElement);
-  ['sea', 'land', 'coast', 'off', 'grid', 'ink', 'halo', 'magenta', 'seatext', 'pencil', 'sol', 'cur', 'accent', 'paper', 'muted', ...COLORS].forEach(k => T[k] = cs.getPropertyValue('--' + k).trim());
+  ['sea', 'land', 'coast', 'off', 'grid', 'ink', 'halo', 'magenta', 'seatext', 'arc', 'pencil', 'sol', 'cur', 'accent', 'paper', 'muted', ...COLORS].forEach(k => T[k] = cs.getPropertyValue('--' + k).trim());
 }
 function resize(){
   const r = wrap.getBoundingClientRect();
@@ -882,6 +882,7 @@ function arcW(c, rNM, a0, sw, color, w = 1.2, dash = null){ const p = w2s(c); ct
 const arcRel = (a0, sw, b) => ((((b - a0) * (sw < 0 ? -1 : 1)) % 360) + 360) % 360;
 const onArc = (pr, w) => pr.sw == null || arcRel(pr.a0, pr.sw, wang(wsub(w, pr.c))) <= Math.abs(pr.sw) + 0.6;
 const wrap180 = a => ((a + 540) % 360) - 180;
+const ARC_HALF = 30;   // il compasso traccia un arco di 60° centrato dove appoggia la matita (allungabile fino a 180° dal riquadro)
 // arco di compasso nelle soluzioni: centrato sul punto da tagliare (come si fa a mano), non la circonferenza intera
 function arcAt(c, rNM, target, color, w = 1.1, dash = null, half = 30){ if (!target) return circleW(c, rNM, color, w, dash); const b = wang(wsub(target, c)); arcW(c, rNM, (b - half + 360) % 360, 2 * half, color, w, dash); }
 function hiW(a, b, color){ ctx.globalAlpha = .28; lineW(a, b, color, 7); ctx.globalAlpha = 1; }
@@ -1060,8 +1061,9 @@ function drawDrawings(){
       circleW(d.c, d.r, col, w); const p = w2s(d.c); lineS({ x: p.x - 4, y: p.y }, { x: p.x + 4, y: p.y }, col, 1); lineS({ x: p.x, y: p.y - 4 }, { x: p.x, y: p.y + 4 }, col, 1);
       if (on) labelW(rDest(d.c, 0, d.r), 'r ' + f1(d.r) + ' M', T.accent, 6, -8);
     } else if (d.type === 'arc'){
-      arcW(d.c, d.r, d.a0, d.sw, col, w); const p = w2s(d.c); lineS({ x: p.x - 4, y: p.y }, { x: p.x + 4, y: p.y }, col, 1); lineS({ x: p.x, y: p.y - 4 }, { x: p.x, y: p.y + 4 }, col, 1);
-      if (on) labelW(rDest(d.c, (d.a0 + d.sw / 2 + 360) % 360, d.r), 'r ' + f1(d.r) + ' M', T.accent, 8, -8);
+      ctx.save(); ctx.globalAlpha = on ? .8 : .5;
+      arcW(d.c, d.r, d.a0, d.sw, T.arc, on ? 2.6 : 2); const p = w2s(d.c); lineS({ x: p.x - 4, y: p.y }, { x: p.x + 4, y: p.y }, T.arc, 1); lineS({ x: p.x, y: p.y - 4 }, { x: p.x, y: p.y + 4 }, T.arc, 1);
+      ctx.restore();
     } else if (d.type === 'lop'){
       const end = rDest(d.o, (d.z + 180) % 360, 40);
       lineW(d.o, end, col, on ? 2 : 1.4);
@@ -1438,10 +1440,9 @@ function drawPreview(){
       text(deg3(r.C) + ' · ' + f1(r.d) + ' M', b.x + 14, b.y - 20, { font: FONT(700, 13.5), color: A });
     } else if (S.tool === 'compass' && !S.arc){
       // apertura del compasso: gamba dalla punta alla matita e un accenno d'arco dove appoggia la matita
-      const rr = Math.hypot(b.x - a.x, b.y - a.y), t = Math.atan2(b.y - a.y, b.x - a.x);
-      lineS(a, b, A, 1.1, [3, 3]);
-      if (rr > 8){ ctx.beginPath(); ctx.arc(a.x, a.y, rr, t - .09, t + .09); ctx.strokeStyle = A; ctx.lineWidth = 1.4; ctx.setLineDash([4, 3]); ctx.stroke(); ctx.setLineDash([]); }
-      text('r ' + f1(r.d) + ' M', b.x + 14, b.y - 20, { font: FONT(700, 13.5), color: A });
+      const rr = Math.hypot(b.x - a.x, b.y - a.y), t = Math.atan2(b.y - a.y, b.x - a.x), half = ARC_HALF * D2R;
+      lineS(a, b, T.arc, 1, [3, 3]);
+      if (rr > 8){ ctx.save(); ctx.globalAlpha = .55; ctx.beginPath(); ctx.arc(a.x, a.y, rr, t - half, t + half); ctx.strokeStyle = T.arc; ctx.lineWidth = 2.2; ctx.stroke(); ctx.restore(); }
     }
   }
   if (S.measure){ const a = w2s(S.measure.a), b = w2s(S.measure.b), r = rInv(S.measure.a, S.measure.b); lineS(a, b, A, 1.6, [5, 4]); dotW(S.measure.a, A, 3); dotW(S.measure.b, A, 3); text(deg3(r.C) + ' · ' + f1(r.d) + ' M', b.x + 14, b.y - 20, { font: FONT(700, 13.5), color: A }); }
@@ -1530,7 +1531,7 @@ function hint(){
     point: 'Clicca sulla carta per mettere un punto (si aggancia a fari, capi e intersezioni).',
     ruler: S.pending ? 'Clicca o trascina fino al punto finale. Senza aggancio arrotonda a 1° e 0,1 M.' : 'Righello: clicca il punto di partenza.',
     parallel: S.parRef ? 'Ora clicca il punto da cui far passare la parallela.' : 'Parallela: clicca la linea da copiare (segmento, retta, rilevamento o rotta di un punto).',
-    compass: S.arc ? 'Ora trascina intorno alla punta: l\'arco si allunga (fino a 180°) per tagliare le altre linee. Un tocco disegna l\'arco fin lì.' : S.pending ? 'Trascina (o tocca) dove appoggiare la matita: è l\'apertura del compasso, arrotondata a 0,1 M.' : 'Compasso: tocca dove puntare.',
+    compass: S.pending ? 'Secondo tocco: dove appoggi la matita nasce l\'arco (puoi trascinarlo prima di staccare il dito).' : 'Compasso: primo tocco dove puntare.',
     measure: 'Misura: trascina tra due punti per leggere direzione e distanza. Non lascia segni.',
     bearing: S.bear ? 'Scrivi il rilevamento nel riquadro in basso.' : 'Rilevamento: clicca un faro, un capo o un tuo punto.',
     erase: 'Gomma: clicca un tratto a matita o un punto per cancellarlo.'
@@ -1610,7 +1611,8 @@ function endPointer(ev){
       const a0 = { x: S.pending.x, y: S.pending.y };
       if (S.tool === 'ruler'){ S.drawings.push({ id: uid++, type: 'seg', a: a0, b: { x: end.w.x, y: end.w.y }, ext: false });
         S.sel = { k: 'd', id: S.drawings[S.drawings.length - 1].id }; S.pending = null; save(); showFloat(); }
-      else { hist.pop(); S.arc = { c: a0, r: Math.round(r.d * 100) / 100, a0: r.C, acc: 0, last: r.C }; S.pending = null; S.hover = null; }
+      else { S.drawings.push({ id: uid++, type: 'arc', c: a0, r: Math.round(r.d * 100) / 100, a0: (r.C - ARC_HALF + 360) % 360, sw: 2 * ARC_HALF });
+        S.sel = { k: 'd', id: S.drawings[S.drawings.length - 1].id }; S.pending = null; save(); showFloat(); }
     } else if (S.pending){ S.pending.__second = true; }
     S.hover = endFor(p.x, p.y); hint(); req(); return;
   }

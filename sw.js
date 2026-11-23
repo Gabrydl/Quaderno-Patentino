@@ -1,9 +1,9 @@
 // Quaderno Patentino: le pagine dell'app funzionano anche senza rete.
 // Dalla 1.06: prima la copia salvata (apertura subito), intanto si scarica quella nuova. Supabase e audio non passano di qui.
-const VERSIONE = '1.06.00';
+const VERSIONE = '1.06.01';
 const CACHE = 'qp-' + VERSIONE;
 const FILE = ['./', 'index.html', 'manifest.webmanifest', 'icone/icona-192.png', 'icone/icona-512.png',
-  'esercizi/assetto.html', 'esercizi/maree.html', 'esercizi/bussole.html', 'esercizi/carteggio.html', 'esercizi/sinottiche.html', 'frasario/', 'frasario/dati.json'];
+  'esercizi/assetto.html', 'esercizi/maree.html', 'esercizi/bussole.html', 'esercizi/carteggio.html', 'dati/sinottiche.html', 'frasario/', 'frasario/dati.json'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('qp-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

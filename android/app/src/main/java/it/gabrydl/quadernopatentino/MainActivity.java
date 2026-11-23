@@ -71,6 +71,8 @@ public class MainActivity extends Activity {
     ValueCallback<Uri[]> fileCb;
     Uri cameraUri;
     File apkPending;
+    String updUrl;          // aggiornamento proposto (riquadro nella pagina)
+    boolean updWeb;         // true se il riquadro è quello della pagina (avanzamento mostrato lì)
     final Handler ui = new Handler(Looper.getMainLooper());
 
     @Override
@@ -244,6 +246,12 @@ public class MainActivity extends Activity {
     // ---------- colore barre ----------
     class Ponte {
         @JavascriptInterface
+        public void aggiorna() { String u = updUrl; if (u != null) ui.post(() -> scarica(u)); }
+
+        @JavascriptInterface
+        public void piuTardi() { updUrl = null; }
+
+        @JavascriptInterface
         public void tinta(String css) {
             Matcher m = Pattern.compile("(\\d+)\\D+(\\d+)\\D+(\\d+)").matcher(css == null ? "" : css);
             if (!m.find()) return;
@@ -281,13 +289,34 @@ public class MainActivity extends Activity {
                 }
                 if (url == null) return;
                 String nome = j.optString("name", "nuova versione");
-                String dl = url;
-                ui.post(() -> chiediAggiornamento(nome, dl));
+                String dl = url, body = j.optString("body", "");
+                ui.post(() -> chiediAggiornamento(nome, dl, body, 0));
             } catch (Exception ignored) { }
         }).start();
     }
 
-    void chiediAggiornamento(String nome, String url) {
+    // riquadro nella pagina, con lo stile dell'app (strumenti/app/aggiorna.js); se la pagina non è pronta riprova, poi usa quello di Android
+    void chiediAggiornamento(String nome, String url, String body, int tentativo) {
+        if (isFinishing()) return;
+        updUrl = url;
+        try {
+            JSONObject d = new JSONObject();
+            d.put("nome", nome);
+            d.put("versione", nome.replaceAll("^.*?([0-9]+\\.[0-9]+\\.[0-9]+).*$", "$1"));
+            d.put("novita", body);
+            web.evaluateJavascript("window.QP_UPD ? QP_UPD(" + d + ") : false", v -> {
+                if ("true".equals(v)) { updWeb = true; return; }
+                if (tentativo < 6) ui.postDelayed(() -> chiediAggiornamento(nome, url, body, tentativo + 1), 1500);
+                else { updWeb = false; dialogoAggiornamento(nome, url); }
+            });
+        } catch (Exception e) { updWeb = false; dialogoAggiornamento(nome, url); }
+    }
+
+    void progresso(int pc, String fase) {
+        if (updWeb) web.evaluateJavascript("window.QP_UPD_PROG && QP_UPD_PROG(" + pc + "," + (fase == null ? "null" : "'" + fase + "'") + ")", null);
+    }
+
+    void dialogoAggiornamento(String nome, String url) {
         if (isFinishing()) return;
         new AlertDialog.Builder(this)
                 .setTitle("Aggiornamento disponibile")
@@ -298,6 +327,7 @@ public class MainActivity extends Activity {
     }
 
     void scarica(String url) {
+        if (updWeb) { scaricaFile(url, null, null); return; }
         LinearLayout box = new LinearLayout(this);
         box.setOrientation(LinearLayout.VERTICAL);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
@@ -307,6 +337,10 @@ public class MainActivity extends Activity {
         pb.setMax(100);
         box.addView(tx); box.addView(pb);
         AlertDialog dlg = new AlertDialog.Builder(this).setView(box).setCancelable(false).show();
+        scaricaFile(url, dlg, pb);
+    }
+
+    void scaricaFile(String url, AlertDialog dlg, ProgressBar pb) {
         new Thread(() -> {
             try {
                 HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
@@ -319,12 +353,12 @@ public class MainActivity extends Activity {
                     byte[] buf = new byte[64 * 1024]; long letti = 0; int n, ultimo = -1;
                     while ((n = in.read(buf)) > 0) {
                         out.write(buf, 0, n); letti += n;
-                        if (tot > 0) { int pc = (int) (letti * 100 / tot); if (pc != ultimo) { ultimo = pc; ui.post(() -> pb.setProgress(pc)); } }
+                        if (tot > 0) { int pc = (int) (letti * 100 / tot); if (pc != ultimo) { ultimo = pc; ui.post(() -> { if (pb != null) pb.setProgress(pc); progresso(pc, null); }); } }
                     }
                 }
-                ui.post(() -> { dlg.dismiss(); installa(f); });
+                ui.post(() -> { if (dlg != null) dlg.dismiss(); progresso(100, "installa"); installa(f); });
             } catch (Exception e) {
-                ui.post(() -> { dlg.dismiss(); Toast.makeText(this, "Download non riuscito: riprova più tardi", Toast.LENGTH_LONG).show(); });
+                ui.post(() -> { if (dlg != null) dlg.dismiss(); progresso(0, "errore"); if (!updWeb) Toast.makeText(this, "Download non riuscito: riprova più tardi", Toast.LENGTH_LONG).show(); });
             }
         }).start();
     }

@@ -34,7 +34,7 @@ jobs:
         run: |
           W=android/app/src/main/assets/www
           rm -rf "$W"; mkdir -p "$W"
-          cp -r index.html manifest.webmanifest icone esercizi frasario "$W"/
+          cp -r index.html manifest.webmanifest icone esercizi frasario dati "$W"/
           echo "VNAME=$(grep -oP "VERSIONE = '\K[^']+" sw.js)" >> "$GITHUB_ENV"
           echo "VCODE=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
 
@@ -75,5 +75,7 @@ jobs:
           body: |
             Versione ${{ env.VNAME }} (build ${{ env.VCODE }}).
             Scarica **QuadernoPatentino.apk** e installalo. Le versioni successive si aggiornano da sole all'apertura dell'app.
+
+            ${{ github.event.head_commit.message }}
           files: QuadernoPatentino.apk
           make_latest: true

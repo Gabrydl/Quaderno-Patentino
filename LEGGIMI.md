@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.06.00 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.06.01 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -18,9 +18,13 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
   `esercizi/sinottiche.html`: galleria di 15 carte sinottiche Met Office a colori, generata da `strumenti/sinottiche/galleria.html` con
   `python3 -I strumenti/sinottiche/gen_sinottiche.py .` (riquadro in home e argomento "Carte sinottiche reali a colori" in Meteorologia).
   - Assetto e pescaggi e Carteggio: si modificano solo `strumenti/assetto.html` e `strumenti/carteggio.html`, poi si lancia `build_esercizi.py`.
-  - Carteggio: dalla 1.06.00 il compasso traccia un **arco** (punta → apertura → trascinando l'arco si allunga fino a 180°, un tocco lo chiude),
+  - Carteggio: dalla 1.06.01 il compasso traccia un **arco** viola semitrasparente: primo tocco la punta, secondo tocco (trascinabile) crea subito
+    un arco di 60° dove appoggia la matita, senza scritta del raggio; dal riquadro si allunga fino a 180°,
     tipo di disegno `arc` (c, r, a0, sw); anche le costruzioni delle soluzioni usano archi intorno al punto. I vecchi cerchi salvati (`circ`) si vedono ancora.
-  - Carte sinottiche: dalla 1.06.00 i tasti spariscono dopo 5 s senza cambiare carta; «Apri a schermo intero» parte dalla carta intera (pizzica, doppio tocco, +/−, «Intera»).
+  - Carte sinottiche a colori: dalla 1.06.01 sono un argomento di **Meteorologia** (`meteo-sinottiche-reali`), non più una pagina degli esercizi.
+    `strumenti/sinottiche/gen_sinottiche.py` (lanciato da `build_esercizi.py`) crea `strumenti/sinottiche/articolo.html` e `dati/sinottiche.html`
+    (le carte, scaricate solo quando si apre l'argomento); comandi in `sinottiche/sgal.css` e `sgal.js`. Testi anonimi (nessun riferimento al professore).
+    Cercando «carta sinottica» esce solo questo argomento e Invio lo apre. Tasti che spariscono dopo 5 s, schermo intero con pizzica/doppio tocco/+/−.
     Dal 23/11/2026 ha anche gli esercizi di pag. 216 (4, 6–14, 16–18; il 5 e il 15 hanno T<sub>m</sub> sotto la tabella) e la scheda "Movimento zavorra".
   - Maree: sorgenti in `strumenti/maree/` (`corpo.html`, `maree.js`, `extra.css`); `python3 -I strumenti/maree/gen_maree.py .` crea
     `strumenti/maree.html` (anteprima) ed `esercizi/maree.html` prendendo grafica e controllo dell'accesso da Assetto e pescaggi.
@@ -53,6 +57,11 @@ tolleranza 1° da confermare col professore. Mancano l'es. 3 (λ tagliata) e gli
 ## Carta sinottica completa (archiviata)
 Dalla 1.06.00 la «Carta sinottica: esempio completo» non è più nell'app (restano le carte reali con le foto, «Fenomeni della carta sinottica» e
 «Modello di stazione»). Il codice è tutto in `strumenti/sinottica.html`: per rimetterla basta `CARTA_COMPLETA = True` in `build.py`.
+
+## Aggiornamento dell'APK
+All'apertura l'APK controlla l'ultima Release su GitHub; se è più nuova chiama `QP_UPD()` nella pagina (`strumenti/app/aggiorna.js`):
+riquadro con icona, versione, «Novità» (le righe che iniziano con «- » nel messaggio del commit, che finisce nel testo della Release),
+barra di avanzamento e nota su «Installa comunque». Se la pagina non risponde usa il riquadro di Android.
 
 ## Registro degli aggiornamenti
 Tabella `aggiornamenti` (data, versione, descrizione) su Supabase, senza accesso diretto: la legge solo il super-admin dall'app

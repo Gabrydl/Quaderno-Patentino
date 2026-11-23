@@ -78,9 +78,11 @@
 
   /* ---------- cambio di argomento: dissolvenza morbida ---------- */
   // route() dell'app viene chiamata da hashchange: qui la si avvolge in una transizione
-  let busy = false;
+  // solo dissolvenza (nessun movimento); se si cambia argomento di seguito velocemente niente animazione
+  let busy = false, lastNav = 0;
   window.QP_SOFT = function (fn){
-    if (busy){ fn(); return; }
+    const now = performance.now(), quick = now - lastNav < 900; lastNav = now;
+    if (busy || quick){ R.classList.add('qp-fast'); fn(); clearTimeout(window.QP_SOFT.t); window.QP_SOFT.t = setTimeout(() => R.classList.remove('qp-fast'), 900); return; }
     if (vtOk()){
       busy = true; R.classList.add('vt-run');
       const t = document.startViewTransition(() => { fn(); });
@@ -89,7 +91,7 @@
     }
     if (lite()){ fn(); return; }
     busy = true; main.classList.add('qp-out');
-    setTimeout(() => { fn(); main.classList.remove('qp-out'); busy = false; }, 150);
+    setTimeout(() => { fn(); main.classList.remove('qp-out'); busy = false; }, 120);
   };
 
   /* ---------- tema chiaro / scuro: transizione morbida ---------- */

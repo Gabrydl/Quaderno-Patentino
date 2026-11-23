@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.06.00 · 23/11/2026'
+VER = '1.06.01 · 23/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -73,14 +73,9 @@ if not CARTA_COMPLETA:
     arts[-1] = arts[-1].replace('Qui c’è la stazione di Berlino presa dalla carta, appena passato il fronte freddo.',
                                 'Qui c’è una stazione d’esempio (Berlino), appena passato un fronte freddo.')
 i = s.index('<article class="topic" id="meteo-simbologia-fronti"'); j = s.index('</article>', i) + len('</article>')
-# --- carte sinottiche reali (galleria Met Office a colori, pagina a parte) ---
-REALI = ('<article class="topic" id="meteo-sinottiche-reali" data-ref="Esempio">\n'
-  '<h3>Carte sinottiche reali a colori<span class="pg">Esempio</span></h3>\n'
-  '<p>15 carte di <b>analisi</b> del Met Office ridisegnate a colori, a partire da quella del professore (06 UTC del 2 febbraio 2015). '
-  'Per ogni carta: data e ora, fenomeni, legenda dei simboli presenti e la spiegazione di ogni numero. Si scorrono con le frecce o col dito.</p>\n'
-  '<p><a href="esercizi/sinottiche.html" style="display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;'
-  'background:var(--blue);color:var(--on-accent);font-weight:700;text-decoration:none">Apri le carte sinottiche reali</a></p>\n'
-  '</article>')
+# --- carte sinottiche a colori: argomento di Meteorologia (dalla 1.06.01, prima era una pagina degli esercizi) ---
+# strumenti/sinottiche/gen_sinottiche.py crea articolo.html e dati/sinottiche.html (le carte si scaricano all'apertura)
+REALI = rd('sinottiche/articolo.html')
 s = s[:j] + '\n\n' + REALI + '\n\n' + '\n\n'.join(arts) + s[j:]
 
 # --- Navigazione 1.3 (dalla chat del 30/10/2026) ---
@@ -109,7 +104,6 @@ extra = ('<section class="extra" aria-label="Esercizi"><h2>Esercizi</h2><ol clas
  '<li style="--i:10"><a class="card" href="esercizi/assetto.html"><span class="wp">' + EX_IC['assetto'] + '</span><span class="tx"><span class="n">Assetto e pescaggi</span><span class="m">Esercizi svolti</span><span class="d">Esercizi del libro (pag. 216 e 9–25): cambio di densità, spostamento pesi, movimento di zavorra, imbarco e sbarco, assetto voluto, punti neutri</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '<li style="--i:11"><a class="card" href="esercizi/maree.html"><span class="wp">' + EX_IC['maree'] + '</span><span class="tx"><span class="n">Maree</span><span class="m">Esercizi svolti</span><span class="d">Esercizi 2–10 del libro: altezza e ora di marea, ingresso in porto (UKC), passaggio sotto i ponti (OC), finestre di marea</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '<li style="--i:12"><a class="card" href="esercizi/bussole.html"><span class="wp">' + EX_IC['bussole'] + '</span><span class="tx"><span class="n">Controllo bussole</span><span class="m">Esercizi svolti</span><span class="d">Azimut del Sole e dei pianeti, errore della girobussola e deviazione della magnetica, effemeridi per qualsiasi anno</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
- '<li style="--i:13"><a class="card" href="esercizi/sinottiche.html"><span class="wp">' + EX_IC['sinottiche'] + '</span><span class="tx"><span class="n">Carte sinottiche</span><span class="m">Carte reali a colori</span><span class="d">15 carte di analisi Met Office ridisegnate a colori, con la spiegazione di ogni fenomeno</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '<li style="--i:14"><a class="card" href="esercizi/carteggio.html"><span class="wp">' + EX_IC['carteggio'] + '</span><span class="tx"><span class="n">Carteggio con carta 5D</span><span class="m">Strumento di carteggio</span><span class="d">Rilevamenti, rotte e punto nave sulla carta 5D dell\'Arcipelago Toscano</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '</ol></section>')
 fras = ('<section class="extra frs" aria-label="Frasario"><h2>Inglese nautico</h2><ol class="route">'
@@ -132,6 +126,14 @@ s = sub1(s, """  document.getElementById('themeBtn').addEventListener('click', (
 """, '')
 s = sub1(s, "  window.addEventListener('hashchange', route);", "  window.addEventListener('hashchange', () => window.QP_SOFT ? QP_SOFT(route) : route());")
 
+# --- 1.06.01: cercando "carta sinottica" si trovano solo le carte sinottiche a colori; Invio le apre subito ---
+s = sub1(s, "    hits.sort((x,y) => y.score - x.score);",
+  "    hits.sort((x,y) => y.score - x.score);\n"
+  "    if (/^(la |le |una )?(carta|carte) sinottic(a|he)?$|^sinottic(a|he)$/.test(norm(raw))){ const g = index.find(x => x.a.id === 'meteo-sinottiche-reali'); if (g){ hits.length = 0; hits.push({it: g, score: 1}); } }\n"
+  "    search.hits = hits;")
+s = sub1(s, "  q.addEventListener('keydown', e => { if (e.key === 'Enter'){ q.blur(); }",
+  "  q.addEventListener('keydown', e => { if (e.key === 'Enter'){ clearTimeout(tmr); search(); q.blur(); if (search.hits && search.hits.length === 1 && search.hits[0].it.a.id === 'meteo-sinottiche-reali') openHit(search.hits[0].it, []); }")
+
 # --- audio: lezioni scaricate per l'offline (vedi app/audio-off.js) ---
 s = sub1(s, "    au.src = MEM[id] || srcOf(t.src); au.playbackRate = speed;\n",
          "    waitId = null;\n"
@@ -150,7 +152,7 @@ ah = rd('app/auth.html').replace('__ROSE__', rd('app/rose.txt')).replace('__TOS_
 s = sub1(s, '<body data-view="home">', '<body data-view="home" class="locked">\n' + ah)
 
 # --- stile e script ---
-css = rd('app/auth.css') + '\n' + rd('app/fluido.css')
+css = rd('app/auth.css') + '\n' + rd('app/fluido.css') + '\n' + rd('sinottiche/sgal.css')
 k = s.index('</style>'); s = s[:k] + '\n' + css + '\n' + s[k:]
 js = rd('app/auth.js')
 INST = ('<div class="msgbox" id="instBox" hidden role="dialog" aria-modal="true" aria-label="Installa l\'app"><div class="card2">'
@@ -163,7 +165,7 @@ chip = ("<script>(function(){var c=document.getElementById('chips');if(!c)return
         "a.className='chip chip-uk';a.href='frasario/';a.textContent='Frasario e Traduttore SMCP';c.append(a);})();</script>\n")
 k = s.rindex('</body>'); s = s[:k] + chip + s[k:]
 k = s.rindex('</body>')
-s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + rd('app/fluido.js') + '\n' + sw + '\n</script>\n' + s[k:]
+s = s[:k] + INST + '<script>\nwindow.QP_VERSIONE = ' + json.dumps(VER) + ';\n' + js + '\n' + rd('app/install.js') + '\n' + rd('app/audio-off.js') + '\n' + rd('app/fluido.js') + '\n' + rd('app/aggiorna.js') + '\n' + rd('sinottiche/sgal.js') + '\n' + sw + '\n</script>\n' + s[k:]
 
 assert 'Prova grafica' not in s
 os.makedirs(OUT, exist_ok=True)

@@ -1,7 +1,7 @@
 # Ricostruisce tutte le pagine in esercizi/ e aggiunge la parte comune (dalla 1.06.00).
 # Uso: python3 -I strumenti/esercizi/build_esercizi.py REPO_DIR
 #  1) esercizi/assetto.html e esercizi/carteggio.html dalle sorgenti in strumenti/ (+ controllo dell'accesso e tasto "Quaderno")
-#  2) Maree, Controllo bussole, Carte sinottiche con i loro generatori
+#  2) Maree e Controllo bussole con i loro generatori; le Carte sinottiche (dalla 1.06.01 in Meteorologia) creano dati/sinottiche.html
 #  3) a tutte: tema e telefono subito (app/presto.js), niente lampo bianco, niente versioni interne, "Come si fa", formule nello schermo
 import os, re, subprocess, sys
 R = os.path.abspath(sys.argv[1]); S = os.path.join(R, 'strumenti'); E = os.path.join(R, 'esercizi')
@@ -35,7 +35,7 @@ CSS = rd(os.path.join(S, 'esercizi', 'comune.css'))
 JS = rd(os.path.join(S, 'esercizi', 'comune.js'))
 BG = {  # colore di fondo della pagina, chiaro / scuro (prima che arrivi il resto dello stile)
     'assetto': ('#F2F5F8', '#0E1420'), 'maree': ('#F2F5F8', '#0E1420'), 'bussole': ('#F2F5F8', '#0E1420'),
-    'carteggio': ('#E4EAEC', '#090F14'), 'sinottiche': ('#f2f5f8', '#090f16')}
+    'carteggio': ('#E4EAEC', '#090F14')}
 WRAP_OLD = ':root{color-scheme:light;box-sizing:border-box;'
 for n, (lt, dk) in BG.items():
     p = os.path.join(E, n + '.html'); s = rd(p)
