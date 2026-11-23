@@ -198,7 +198,7 @@ mark{background:var(--hit);color:inherit;border-radius:3px;padding:0 1px}
   function paintDir(){ $('#l1').textContent = dir.toUpperCase(); $('#l2').textContent = dir === 'it' ? 'EN' : 'IT'; $('#auto').textContent = manual ? 'lingua scelta da te' : 'riconosce la lingua da solo'; }
   $('#swap').addEventListener('click', () => { dir = dir === 'it' ? 'en' : 'it'; manual = true; paintDir(); cerca(); });
   const IT_W = new Set('il lo la le gli un una uno di da in con su per tra fra che non sono siamo avete abbiamo nave nella nello della dello delle degli al alla ai alle è e o si ci mi ti vi'.split(' '));
-  const EN_W = new Set('the a an of to in on with for at is are am be have has we you i my your our vessel ship not do does what where which please'.split(' '));
+  const EN_W = new Set('the an of to in on with for at is are am be have has we you i my your our vessel ship not do does what where which please'.split(' '));
   function lingua(t){
     const w = norm(t).split(/[^a-z']+/).filter(Boolean); let it = 0, en = 0;
     w.forEach(x => { if (IT_W.has(x)) it++; if (EN_W.has(x)) en++; });

@@ -3,7 +3,7 @@
 App per telefono (PWA) con gli appunti, i disegni e le lezioni audio per l'esame di Ufficiale di coperta.
 Sito: GitHub Pages di questo repository (Settings → Pages → Branch `main`, cartella `/`).
 
-**Versione attuale: 1.04.01 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
+**Versione attuale: 1.04.02 (23/11/2026).** Numerazione 1.MM.PP: media (grafica, disegni, nuovi argomenti o sezioni) → 1.MM+1.00;
 piccola (pulsanti, piccole funzioni, correzioni) → 1.MM.PP+1; 2.00.00 solo per una svolta vera.
 La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggiornarle insieme.
 
@@ -20,7 +20,7 @@ La versione sta in `strumenti/build.py` (`VER`) e in `sw.js` (`VERSIONE`): aggio
   - `nav/`: argomenti di Navigazione 1.3 (`build_nav.py`) e i loro disegni (`fig/safety.py`, `fig/altri.py`, `fig/pp_extra.py`,
     `sin/gen_oceaniche.js` per pilot chart e routeing chart: `npm i d3-geo d3-contour topojson-client world-atlas`).
   - `fras/`: Frasario. `lavoro/it_*.txt` = traduzioni italiane delle frasi (riga `numero|testo`), `generale.py`, `tavole.json`,
-    `glos_smcp_it.py`, `glos_extra.txt` (801 termini). `funzione/index.ts` = sorgente della funzione Supabase `traduci` (Gemini).
+    `glos_smcp_it.py`, `glos_extra.txt` (803 termini). `funzione/index.ts` = sorgente della funzione Supabase `traduci` (Gemini).
   - `test_telefono.py`, `test_frasario_nav.py`: prove a misura di telefono con Supabase simulato (Playwright).
 
 ## Audio

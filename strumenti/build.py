@@ -3,7 +3,7 @@
 import json, re, sys, os
 W = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1]
-VER = '1.04.01 · 23/11/2026'
+VER = '1.04.02 · 23/11/2026'
 AUDIO_ORIGIN = 'https://6bbf845c-0fc1-48bc-8004-6d0e2237602e.frame.claudeusercontent.com'
 
 def rd(n): return open(os.path.join(W, n), encoding='utf8').read()
@@ -86,7 +86,7 @@ extra = ('<section class="extra" aria-label="Esercizi"><h2>Esercizi</h2><ol clas
  '<li style="--i:11"><a class="card" href="esercizi/carteggio.html"><span class="wp">' + EX_IC['carteggio'] + '</span><span class="tx"><span class="n">Carteggio con carta 5D</span><span class="m">Strumento di carteggio</span><span class="d">Rilevamenti, rotte e punto nave sulla carta 5D dell\'Arcipelago Toscano</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '</ol></section>')
 fras = ('<section class="extra frs" aria-label="Frasario"><h2>Inglese nautico</h2><ol class="route">'
- '<li style="--i:9"><a class="card" href="frasario/"><span class="wp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5h10a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H8l-3 2.5V12H3.5A1.5 1.5 0 0 1 2 10.5V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M17 9h3.5A1.5 1.5 0 0 1 22 10.5V15a1.5 1.5 0 0 1-1.5 1.5H20V19l-3-2.5h-5A1.5 1.5 0 0 1 10.5 15v-1"/><path d="M5.5 8.5h6M13.5 13h5"/></svg></span><span class="tx"><span class="n">Frasario e Traduttore SMCP</span><span class="m">Inglese nautico · IT ⇄ EN</span><span class="d">Frasi IMO SMCP, glossario di 801 termini nautici, traduttore con foto e Gemini</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
+ '<li style="--i:9"><a class="card" href="frasario/"><span class="wp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4.5h10a1.5 1.5 0 0 1 1.5 1.5v5a1.5 1.5 0 0 1-1.5 1.5H8l-3 2.5V12H3.5A1.5 1.5 0 0 1 2 10.5V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M17 9h3.5A1.5 1.5 0 0 1 22 10.5V15a1.5 1.5 0 0 1-1.5 1.5H20V19l-3-2.5h-5A1.5 1.5 0 0 1 10.5 15v-1"/><path d="M5.5 8.5h6M13.5 13h5"/></svg></span><span class="tx"><span class="n">Frasario e Traduttore SMCP</span><span class="m">Inglese nautico · IT ⇄ EN</span><span class="d">Frasi IMO SMCP, glossario di 803 termini nautici, traduttore con foto e Gemini</span></span><svg class="go" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></a></li>'
  '</ol></section>')
 s = sub1(s, '    <ol class="route" id="cards"></ol>', '    <ol class="route" id="cards"></ol>\n    ' + fras + '\n    ' + extra)
 s = sub1(s, '        <li>Gli audio si ascoltano online: serve la connessione.</li>',

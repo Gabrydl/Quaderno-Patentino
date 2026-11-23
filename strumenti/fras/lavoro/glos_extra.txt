@@ -216,6 +216,8 @@ weigh anchor | salpare l'ancora | Ormeggio |  |
 heave up anchor | salpare l'ancora | Ormeggio |  |
 anchor aweigh | ancora spedata | Ormeggio | L'ancora si è staccata dal fondo. |
 anchor up and down | catena a picco | Ormeggio |  |
+up and down | a picco | Ormeggio | Detto dell'ancora: la catena è verticale sopra l'ancora, subito prima che si stacchi dal fondo. |
+back the anchor | appennellare l'ancora | Ormeggio | Collegare all'ancora principale una seconda ancora più piccola (pennello) per aumentarne la tenuta. |
 anchor clear of water | ancora fuori dall'acqua | Ormeggio |  |
 anchor home | ancora a posto (in cubia) | Ormeggio |  |
 anchor dragging | ancora che ara | Ormeggio |  |
