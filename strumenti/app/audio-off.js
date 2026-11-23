@@ -43,9 +43,14 @@
     async lista(){
       if (!ok) return [];
       await pronto; const c = await caches.open(CN), ks = await c.keys(), out = [];
-      for (const r of ks){ const x = await c.match(r); const b = x ? await x.clone().blob() : null; out.push({ url: r.url, size: b ? b.size : 0 }); }
+      // titolo della lezione: dal riquadro audio dell'argomento con lo stesso indirizzo
+      const T = {}; document.querySelectorAll('.aud[data-src]').forEach(el => { T[abs(el.dataset.src)] = el.dataset.title || ((el.closest('article') || {}).querySelector ? el.closest('article').querySelector('h3').firstChild.textContent.trim() : ''); });
+      for (const r of ks){ const x = await c.match(r); const b = x ? await x.clone().blob() : null; out.push({ url: r.url, size: b ? b.size : 0, title: T[r.url] || 'Lezione' }); }
+      out.sort((p, q) => p.title.localeCompare(q.title, 'it'));
       return out;
     },
+    // elimina una sola lezione scaricata (torna in streaming)
+    async togli(url){ if (!ok) return; const c = await caches.open(CN); await c.delete(url); HAS.delete(url); document.dispatchEvent(new CustomEvent('qp-audio-off')); },
     async svuota(){ if (!ok) return; await caches.delete(CN); HAS.clear(); Object.keys(localStorage).filter(k => k.indexOf('qp-dl-no-') === 0).forEach(k => localStorage.removeItem(k)); }
   };
 })();
